@@ -12,18 +12,17 @@
 using CjLib;
 using UnityEngine;
 
-public class Main : MonoBehaviour
+public class CircleComponent : CjLibDemoComponent
 {
+  [Range(0.1f, 10.0f)]
+  public float radius = 1.0f;
 
-  void Update()
-  {
-    DebugUtil.DrawSphere(new Vector3(0.0f, 0.0f, 1.0f), 2.0f, Quaternion.identity, 1, 5, Color.white);
-    DebugUtil.DrawCapsule(new Vector3(3.0f, 3.0f, 0.0f), new Vector3(-1.0f, -1.0f, 0.0f), 0.5f, 3, 7, Color.white);
-  }
+  [Range(2, 64)]
+  public int segments = 16;
 
-  void OnDrawGizmos()
+  protected override void Draw()
   {
-    DebugUtil.DrawSphere(transform.position, 2.0f, Quaternion.identity, 1, 5, Color.white);
+    DebugUtil.DrawCircle(transform.position, transform.rotation * Vector3.up, radius, segments, Color.white);
   }
 
 }
