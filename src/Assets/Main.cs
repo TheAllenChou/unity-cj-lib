@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using CjLib;
 
 public class Main : MonoBehaviour
 {
 
   void Update()
   {
-    DebugUtil.DrawSphereCircles(Vector3.zero, 2.0f, 32, Color.white);
+    DebugUtil.DrawSphere(Vector3.zero, 2.0f, Quaternion.AxisAngle(new Vector3(1.0f, 1.0f, 0.0f), Time.time), 32, 16, Color.white);
   }
 
 }
