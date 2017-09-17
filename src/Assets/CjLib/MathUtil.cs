@@ -9,16 +9,10 @@
 */
 /******************************************************************************/
 
-using CjLib;
-using UnityEngine;
-
-public class Main : MonoBehaviour
+namespace CjLib
 {
-
-  void Update()
+  public class MathUtil
   {
-    DebugUtil.DrawSphere(Vector3.zero, 2.0f, Quaternion.AxisAngle(new Vector3(1.0f, 1.0f, 0.0f), Time.time), 32, 16, Color.white);
-    DebugUtil.DrawCylinder(new Vector3(3.0f, 3.0f, 0.0f), new Vector3(-1.0f, -1.0f, 0.0f), 0.5f, 12, Color.white);
+    public static readonly float kEpsilon = 1.0e-16f;
   }
-
 }

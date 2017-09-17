@@ -1,20 +1,34 @@
-﻿using UnityEngine;
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
+using UnityEngine;
 
 namespace CjLib
 {
   public class DebugUtil
   {
+    
+    // circle
+    // ------------------------------------------------------------------------
 
-    public static void DrawCircle(Vector3 center, float radius, Vector3 normal, uint numSegments, Color color, float duration, bool depthTest = true)
+    public static void DrawCircle(Vector3 center, float radius, Vector3 normal, uint numSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
       if (numSegments <= 1)
         return;
 
       Vector3 binormal = Vector3.Dot(normal, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 axisX = Vector3.Normalize(Vector3.Cross(normal, binormal));
-      Vector3 axisY = Vector3.Cross(normal, axisX);
+      Vector3 axisZ = Vector3.Cross(normal, axisX);
       Vector3 baseX = radius * axisX;
-      Vector3 baseB = radius * axisY;
+      Vector3 baseZ = radius * axisZ;
 
       float angleIncrement = 2.0f * Mathf.PI / numSegments;
       float angle = 0.0f;
@@ -22,11 +36,60 @@ namespace CjLib
       for (uint i = 0; i < numSegments; ++i)
       {
         angle += angleIncrement;
-        Vector3 currPos = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseB;
+        Vector3 currPos = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
         Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
         prevPos = currPos;
       }
     }
+
+    // ------------------------------------------------------------------------
+    // end: circle
+
+
+    // cylinder
+    // ------------------------------------------------------------------------
+
+    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, uint numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    {
+      if (numSegments <= 1)
+        return;
+
+      Vector3 axisY = point1 - point0;
+      float axisYSelfDot = Vector3.Dot(axisY, axisY);
+      if (axisYSelfDot < MathUtil.kEpsilon)
+        return;
+
+      axisY = Vector3.Normalize(axisY);
+      Vector3 axisYPerp = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisX = Vector3.Normalize(Vector3.Cross(axisY, axisYPerp));
+      Vector3 axisZ = Vector3.Cross(axisY, axisX);
+      Vector3 baseX = radius * axisX;
+      Vector3 baseZ = radius * axisZ;
+
+      float angleIncrement = 2.0f * Mathf.PI / numSegments;
+      float angle = 0.0f;
+      Vector3 prevPos0 = point0 + baseX;
+      Vector3 prevPos1 = point1 + baseX;
+      for (uint i = 0; i < numSegments; ++i)
+      {
+        angle += angleIncrement;
+        Vector3 offset = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
+        Vector3 currPos0 = point0 + offset;
+        Vector3 currPos1 = point1 + offset;
+        Debug.DrawLine(currPos0, currPos1, color, duration, depthTest);
+        Debug.DrawLine(currPos0, prevPos0, color, duration, depthTest);
+        Debug.DrawLine(currPos1, prevPos1, color, duration, depthTest);
+        prevPos0 = currPos0;
+        prevPos1 = currPos1;
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // cylinder
+
+
+    // sphere
+    // ------------------------------------------------------------------------
 
     public static void DrawSphereTripleCircles(Vector3 center, float radius, Quaternion rotation, uint numSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
@@ -101,5 +164,7 @@ namespace CjLib
       DrawSphere(center, radius, Quaternion.identity, latSegments, longSegments, color, duration, depthTest);
     }
 
+    // ------------------------------------------------------------------------
+    // end: sphere
   }
 }
