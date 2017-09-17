@@ -19,7 +19,7 @@ namespace CjLib
     // circle
     // ------------------------------------------------------------------------
 
-    public static void DrawCircle(Vector3 center, float radius, Vector3 normal, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
       if (numSegments <= 1)
         return;
@@ -32,11 +32,11 @@ namespace CjLib
 
       float angleIncrement = 2.0f * Mathf.PI / numSegments;
       float angle = 0.0f;
-      Vector3 prevPos = baseX;
+      Vector3 prevPos = center + baseX;
       for (int i = 0; i < numSegments; ++i)
       {
         angle += angleIncrement;
-        Vector3 currPos = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
+        Vector3 currPos = center + Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
         Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
         prevPos = currPos;
       }
@@ -91,23 +91,23 @@ namespace CjLib
     // sphere
     // ------------------------------------------------------------------------
 
-    public static void DrawSphereTripleCircles(Vector3 center, float radius, Quaternion rotation, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
       Vector3 axisX = rotation * Vector3.right;
       Vector3 axisY = rotation * Vector3.up;
       Vector3 axisZ = rotation * Vector3.forward;
-      DrawCircle(center, radius, axisX, numSegments, color, duration, depthTest);
-      DrawCircle(center, radius, axisY, numSegments, color, duration, depthTest);
-      DrawCircle(center, radius, axisZ, numSegments, color, duration, depthTest);
+      DrawCircle(center, axisX, radius, numSegments, color, duration, depthTest);
+      DrawCircle(center, axisY, radius, numSegments, color, duration, depthTest);
+      DrawCircle(center, axisZ, radius, numSegments, color, duration, depthTest);
     }
 
     // identity rotation
     public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
-      DrawSphereTripleCircles(center, radius, Quaternion.identity, numSegments, color, duration, depthTest);
+      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color, duration, depthTest);
     }
 
-    public static void DrawSphere(Vector3 center, float radius, Quaternion rotation, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
       if (latSegments <= 0 || longSegments <= 1)
         return;
@@ -187,7 +187,7 @@ namespace CjLib
     // identity rotation
     public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
     {
-      DrawSphere(center, radius, Quaternion.identity, latSegments, longSegments, color, duration, depthTest);
+      DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color, duration, depthTest);
     }
 
     // ------------------------------------------------------------------------
@@ -211,8 +211,6 @@ namespace CjLib
       Vector3 axisYPerp = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 axisX = Vector3.Normalize(Vector3.Cross(axisY, axisYPerp));
       Vector3 axisZ = Vector3.Cross(axisY, axisX);
-      Vector3 baseX = radius * axisX;
-      Vector3 baseZ = radius * axisZ;
 
       Vector3 end0 = point0 - radius * axisY;
       Vector3 end1 = point1 + radius * axisY;
@@ -269,7 +267,7 @@ namespace CjLib
         Debug.DrawLine(end1, point1 + aCurrLongOffset[0], color, duration, depthTest);
         for (int iLat = 0; iLat <= latSegments / 2; ++iLat)
         {
-          if (iLat < latSegments - 1)
+          if (iLat < latSegments / 2)
           {
             Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aCurrLongOffset[iLat + 1], color, duration, depthTest);
           }
