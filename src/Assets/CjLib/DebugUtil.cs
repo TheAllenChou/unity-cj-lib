@@ -16,6 +16,47 @@ namespace CjLib
   public class DebugUtil
   {
 
+    // box
+    // ------------------------------------------------------------------------
+
+    public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, float duration = 0.0f, bool depthTest = true)
+    {
+      Vector3 extents = 0.5f * dimensions;
+      Vector3 offsetX = rotation * (extents.x * Vector3.right);
+      Vector3 offsetY = rotation * (extents.y * Vector3.up);
+      Vector3 offsetZ = rotation * (extents.z * Vector3.forward);
+
+      Vector3 p0 = center - offsetX - offsetY - offsetZ;
+      Vector3 p1 = center - offsetX + offsetY - offsetZ;
+      Vector3 p2 = center + offsetX + offsetY - offsetZ;
+      Vector3 p3 = center + offsetX - offsetY - offsetZ;
+      Vector3 p4 = center - offsetX - offsetY + offsetZ;
+      Vector3 p5 = center - offsetX + offsetY + offsetZ;
+      Vector3 p6 = center + offsetX + offsetY + offsetZ;
+      Vector3 p7 = center + offsetX - offsetY + offsetZ;
+
+      Debug.DrawLine(p0, p1, color, duration, depthTest);
+      Debug.DrawLine(p1, p2, color, duration, depthTest);
+      Debug.DrawLine(p2, p3, color, duration, depthTest);
+      Debug.DrawLine(p3, p0, color, duration, depthTest);
+
+      Debug.DrawLine(p2, p6, color, duration, depthTest);
+      Debug.DrawLine(p6, p7, color, duration, depthTest);
+      Debug.DrawLine(p7, p3, color, duration, depthTest);
+
+      Debug.DrawLine(p7, p4, color, duration, depthTest);
+      Debug.DrawLine(p4, p5, color, duration, depthTest);
+      Debug.DrawLine(p5, p6, color, duration, depthTest);
+
+      Debug.DrawLine(p5, p1, color, duration, depthTest);
+      Debug.DrawLine(p1, p0, color, duration, depthTest);
+      Debug.DrawLine(p0, p4, color, duration, depthTest);
+    }
+
+    // ------------------------------------------------------------------------
+    // end: box
+    
+
     // circle
     // ------------------------------------------------------------------------
 
@@ -37,6 +78,28 @@ namespace CjLib
       {
         angle += angleIncrement;
         Vector3 currPos = center + Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
+        Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
+        prevPos = currPos;
+      }
+    }
+
+    public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    {
+      if (numSegments <= 1)
+        return;
+
+      Vector3 axisX = Vector3.right;
+      Vector3 axisY = Vector3.up;
+      Vector3 baseX = radius * axisX;
+      Vector3 baseY = radius * axisY;
+
+      float angleIncrement = 2.0f * Mathf.PI / numSegments;
+      float angle = 0.0f;
+      Vector3 prevPos = center + baseX;
+      for (int i = 0; i < numSegments; ++i)
+      {
+        angle += angleIncrement;
+        Vector3 currPos = center + Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseY;
         Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
         prevPos = currPos;
       }

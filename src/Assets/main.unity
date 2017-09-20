@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d63f0334b605648aa61967e42db902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 2.15
+  radius: 1
   segments: 16
 --- !u!4 &74076249
 Transform:
@@ -143,13 +143,56 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 74076247}
-  m_LocalRotation: {x: -0.44287518, y: -0.68550646, z: -0.30826142, w: 0.48879173}
+  m_LocalRotation: {x: -0.08110793, y: -0.77812535, z: -0.36473784, w: 0.504885}
   m_LocalPosition: {x: -3.27, y: 1.4, z: -2.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: -58.824, y: -129.908, z: 36.213}
+  m_LocalEulerAnglesHint: {x: -40.506, y: -107.143005, z: -18.565}
+--- !u!1 &759452908
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 759452910}
+  - component: {fileID: 759452909}
+  m_Layer: 0
+  m_Name: Box
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &759452909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 759452908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a65b571a3e8feb740aa1642a12bfc716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dimensionX: 1
+  dimensionY: 1
+  dimensionZ: 1
+--- !u!4 &759452910
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 759452908}
+  m_LocalRotation: {x: -0.18966588, y: 0.06349718, z: -0.1607635, w: 0.96651447}
+  m_LocalPosition: {x: 1.18, y: 2.603904, z: -2.93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: -20.256, y: 11.294001, z: -20.911001}
 --- !u!1 &1036094987
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,8 +285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a353a04bcb4c9b4c9ba88f0f0a30d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 2.32
-  height: 5.1
+  radius: 1
+  height: 2
   latSegments: 3
   longSegments: 7
 --- !u!4 &1158852121
@@ -286,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37eed9bdd52c4748b87fdb976581e93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 1.8
+  radius: 1
   height: 1.89
   segments: 14
 --- !u!4 &1272607717
