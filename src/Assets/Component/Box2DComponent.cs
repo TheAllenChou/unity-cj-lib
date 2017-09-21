@@ -22,7 +22,8 @@ public class Box2DComponent : CjLibDemoComponent
 
   protected override void Draw()
   {
-    DebugUtil.DrawBox2D(transform.position, new Vector2(dimensionX, dimensionY), MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z, Color.white);
+    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
+    DebugUtil.DrawBox2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
   }
 
 }

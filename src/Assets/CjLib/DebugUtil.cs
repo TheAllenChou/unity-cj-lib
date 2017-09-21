@@ -275,9 +275,9 @@ namespace CjLib
     // capsule
     // ------------------------------------------------------------------------
 
-    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, float duration = 0.0f, bool depthTest = true)
     {
-      if (latSegments <= 0 || longSegments <= 1)
+      if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return;
 
       Vector3 axisY = point1 - point0;
@@ -293,13 +293,13 @@ namespace CjLib
       Vector3 end0 = point0 - radius * axisY;
       Vector3 end1 = point1 + radius * axisY;
 
-      latSegments = latSegments * 2 - 1;
-      float[] aLatSin = new float[latSegments];
-      float[] aLatCos = new float[latSegments];
+      latSegmentsPerCap = latSegmentsPerCap * 2 - 1;
+      float[] aLatSin = new float[latSegmentsPerCap];
+      float[] aLatCos = new float[latSegmentsPerCap];
       {
-        float latAngleIncrement = Mathf.PI / (latSegments + 1);
+        float latAngleIncrement = Mathf.PI / (latSegmentsPerCap + 1);
         float latAngle = 0.0f;
-        for (int iLat = 0; iLat < latSegments; ++iLat)
+        for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
         {
           latAngle += latAngleIncrement;
           aLatSin[iLat] = Mathf.Sin(latAngle);
@@ -307,12 +307,12 @@ namespace CjLib
         }
       }
 
-      float[] aLongSin = new float[longSegments];
-      float[] aLongCos = new float[longSegments];
+      float[] aLongSin = new float[longSegmentsPerCap];
+      float[] aLongCos = new float[longSegmentsPerCap];
       {
-        float longAngleIncrement = 2.0f * Mathf.PI / longSegments;
+        float longAngleIncrement = 2.0f * Mathf.PI / longSegmentsPerCap;
         float longAngle = 0.0f;
-        for (int iLong = 0; iLong < longSegments; ++iLong)
+        for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
         {
           longAngle += longAngleIncrement;
           aLongSin[iLong] = Mathf.Sin(longAngle);
@@ -320,21 +320,21 @@ namespace CjLib
         }
       }
 
-      Vector3[] aPrevLongOffset = new Vector3[latSegments];
-      for (int iLat = 0; iLat < latSegments; ++iLat)
+      Vector3[] aPrevLongOffset = new Vector3[latSegmentsPerCap];
+      for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
       {
         float latSin = aLatSin[iLat];
         float latCos = aLatCos[iLat];
         aPrevLongOffset[iLat] = radius * (axisX * latSin + axisY * latCos);
       }
 
-      Vector3[] aCurrLongOffset = new Vector3[latSegments];
-      for (int iLong = 0; iLong < longSegments; ++iLong)
+      Vector3[] aCurrLongOffset = new Vector3[latSegmentsPerCap];
+      for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
       {
         float longSin = aLongSin[iLong];
         float longCos = aLongCos[iLong];
 
-        for (int iLat = 0; iLat < latSegments; ++iLat)
+        for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
         {
           float latSin = aLatSin[iLat];
           float latCos = aLatCos[iLat];
@@ -343,28 +343,62 @@ namespace CjLib
         }
 
         Debug.DrawLine(end1, point1 + aCurrLongOffset[0], color, duration, depthTest);
-        for (int iLat = 0; iLat <= latSegments / 2; ++iLat)
+        for (int iLat = 0; iLat <= latSegmentsPerCap / 2; ++iLat)
         {
-          if (iLat < latSegments / 2)
+          if (iLat < latSegmentsPerCap / 2)
           {
             Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aCurrLongOffset[iLat + 1], color, duration, depthTest);
           }
           Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aPrevLongOffset[iLat], color, duration, depthTest);
         }
-        Debug.DrawLine(point1 + aCurrLongOffset[latSegments / 2], point0 + aCurrLongOffset[latSegments / 2], color, duration, depthTest);
-        for (int iLat = latSegments / 2; iLat < latSegments; ++iLat)
+        Debug.DrawLine(point1 + aCurrLongOffset[latSegmentsPerCap / 2], point0 + aCurrLongOffset[latSegmentsPerCap / 2], color, duration, depthTest);
+        for (int iLat = latSegmentsPerCap / 2; iLat < latSegmentsPerCap; ++iLat)
         {
-          if (iLat < latSegments - 1)
+          if (iLat < latSegmentsPerCap - 1)
           {
             Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aCurrLongOffset[iLat + 1], color, duration, depthTest);
           }
           Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aPrevLongOffset[iLat], color, duration, depthTest);
         }
-        Debug.DrawLine(point0 + aCurrLongOffset[latSegments - 1], end0);
+        Debug.DrawLine(point0 + aCurrLongOffset[latSegmentsPerCap - 1], end0);
 
         Vector3[] aLongTempOffset = aPrevLongOffset;
         aPrevLongOffset = aCurrLongOffset;
         aCurrLongOffset = aLongTempOffset;
+      }
+    }
+
+    public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, float duration = 0.0f, bool depthTest = false)
+    {
+      Vector3 axisY = point1 - point0;
+      float axisYSelfDot = Vector3.Dot(axisY, axisY);
+      if (axisYSelfDot < MathUtil.kEpsilon)
+        return;
+
+      axisY = Vector3.Normalize(axisY);
+      Vector3 axisX = VectorUtil.Rotate2D(axisY, 0.5f * Mathf.PI);
+
+      Debug.DrawLine(point0 - radius * axisX, point1 - radius * axisX, color, duration, depthTest);
+      Debug.DrawLine(point0 + radius * axisX, point1 + radius * axisX, color, duration, depthTest);
+
+      if (capSegments <= 1)
+        return;
+
+      float angleIncrement = Mathf.PI / capSegments;
+      float angle = 0.0f;
+      Vector3 prevCapX = radius * axisX;
+      Vector3 prevCapY = Vector3.zero;
+      for (int i = 0; i < capSegments; ++i)
+      {
+        angle += angleIncrement;
+        Vector3 currCapX = radius * Mathf.Cos(angle) * axisX;
+        Vector3 currCapY = radius * Mathf.Sin(angle) * axisY;
+
+        Debug.DrawLine(point0 + prevCapX - prevCapY, point0 + currCapX - currCapY, color, duration, depthTest);
+        Debug.DrawLine(point1 + prevCapX + prevCapY, point1 + currCapX + currCapY, color, duration, depthTest);
+
+        prevCapX = currCapX;
+        prevCapY = currCapY;
       }
     }
 
