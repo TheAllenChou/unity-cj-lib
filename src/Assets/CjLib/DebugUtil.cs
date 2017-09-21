@@ -15,7 +15,6 @@ namespace CjLib
 {
   public class DebugUtil
   {
-
     // box
     // ------------------------------------------------------------------------
 
@@ -51,6 +50,22 @@ namespace CjLib
       Debug.DrawLine(p5, p1, color, duration, depthTest);
       Debug.DrawLine(p1, p0, color, duration, depthTest);
       Debug.DrawLine(p0, p4, color, duration, depthTest);
+    }
+
+    public static void DrawBox2D(Vector3 center, Vector2 dimensions, float rotation, Color color, float duration = 0.0f, bool depthTest = true)
+    {
+      Vector3 offsetX = VectorUtil.Rotate2D(Vector3.right, rotation);
+      Vector3 offsetY = VectorUtil.Rotate2D(Vector3.up, rotation);
+
+      Vector3 p0 = center - offsetX - offsetY;
+      Vector3 p1 = center - offsetX + offsetY;
+      Vector3 p2 = center + offsetX + offsetY;
+      Vector3 p3 = center + offsetX - offsetY;
+
+      Debug.DrawLine(p0, p1, color, duration, depthTest);
+      Debug.DrawLine(p1, p2, color, duration, depthTest);
+      Debug.DrawLine(p2, p3, color, duration, depthTest);
+      Debug.DrawLine(p3, p0, color, duration, depthTest);
     }
 
     // ------------------------------------------------------------------------

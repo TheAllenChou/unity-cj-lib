@@ -13,12 +13,18 @@ using UnityEngine;
 
 namespace CjLib
 {
-  public class MathUtil
+  public class VectorUtil
   {
-
-    public static readonly float kEpsilon = 1.0e-16f;
-    public static readonly float kRad2Deg = 180.0f / Mathf.PI;
-    public static readonly float kDeg2Rad = Mathf.PI / 180.0f;
+   
+    public static Vector3 Rotate2D(Vector3 vector, float rotation)
+    {
+      Vector3 results = vector;
+      float cos = Mathf.Cos(rotation);
+      float sin = Mathf.Sin(rotation);
+      results.x = cos * vector.x - sin * vector.y;
+      results.y = sin * vector.x + cos * vector.y;
+      return results;
+    }
 
   }
 }

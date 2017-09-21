@@ -9,16 +9,20 @@
 */
 /******************************************************************************/
 
+using CjLib;
 using UnityEngine;
 
-namespace CjLib
+public class Box2DComponent : CjLibDemoComponent
 {
-  public class MathUtil
+  [Range(0.1f, 10.0f)]
+  public float dimensionX = 1.0f;
+
+  [Range(0.1f, 10.0f)]
+  public float dimensionY = 1.0f;
+
+  protected override void Draw()
   {
-
-    public static readonly float kEpsilon = 1.0e-16f;
-    public static readonly float kRad2Deg = 180.0f / Mathf.PI;
-    public static readonly float kDeg2Rad = Mathf.PI / 180.0f;
-
+    DebugUtil.DrawBox2D(transform.position, new Vector2(dimensionX, dimensionY), MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z, Color.white);
   }
+
 }
