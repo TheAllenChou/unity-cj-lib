@@ -73,7 +73,7 @@ namespace CjLib
       return;
     }
 
-    public static void DrawBox2D(Vector3 center, Vector2 dimensions, float rotation, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawRect2D(Vector3 center, Vector2 dimensions, float rotation, Color color, float duration = 0.0f, bool depthTest = true)
     {
       Vector3 offsetX = VectorUtil.Rotate2D(Vector3.right, rotation);
       Vector3 offsetY = VectorUtil.Rotate2D(Vector3.up, rotation);

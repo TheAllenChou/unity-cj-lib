@@ -12,7 +12,7 @@
 using CjLib;
 using UnityEngine;
 
-public class Box2DComponent : CjLibDemoComponent
+public class Rect2DComponent : CjLibDemoComponent
 {
   [Range(0.1f, 10.0f)]
   public float dimensionX = 1.0f;
@@ -23,7 +23,7 @@ public class Box2DComponent : CjLibDemoComponent
   protected override void DebugDraw()
   {
     float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
-    DebugUtil.DrawBox2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
+    DebugUtil.DrawRect2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
   }
 
 }
