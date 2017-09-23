@@ -24,48 +24,45 @@ namespace CjLib
 
     public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, float duration = 0.0f, bool depthTest = true)
     {
-      lock (s_boxLock)
+      if (!s_boxWireframeMesh)
       {
-        if (!s_boxWireframeMesh)
+        s_boxWireframeMesh = new Mesh();
+
+        Vector3[] aVert =
         {
-          s_boxWireframeMesh = new Mesh();
+          new Vector3(-1.0f, -1.0f, -1.0f),
+          new Vector3(-1.0f,  1.0f, -1.0f),
+          new Vector3( 1.0f,  1.0f, -1.0f),
+          new Vector3( 1.0f, -1.0f, -1.0f),
+          new Vector3(-1.0f, -1.0f,  1.0f),
+          new Vector3(-1.0f,  1.0f,  1.0f),
+          new Vector3( 1.0f,  1.0f,  1.0f),
+          new Vector3( 1.0f, -1.0f,  1.0f),
+        };
 
-          Vector3[] aVert =
-          {
-            new Vector3(-1.0f, -1.0f, -1.0f),
-            new Vector3(-1.0f,  1.0f, -1.0f),
-            new Vector3( 1.0f,  1.0f, -1.0f),
-            new Vector3( 1.0f, -1.0f, -1.0f),
-            new Vector3(-1.0f, -1.0f,  1.0f),
-            new Vector3(-1.0f,  1.0f,  1.0f),
-            new Vector3( 1.0f,  1.0f,  1.0f),
-            new Vector3( 1.0f, -1.0f,  1.0f),
-          };
+        int[] aIndex =
+        {
+          0, 1,
+          1, 2,
+          2, 3,
+          3, 0,
+          2, 6,
+          6, 7,
+          7, 3,
+          7, 4,
+          4, 5,
+          5, 6,
+          5, 1,
+          1, 0,
+          0, 4,
+        };
 
-          int[] aIndex =
-          {
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0,
-            2, 6,
-            6, 7,
-            7, 3,
-            7, 4,
-            4, 5,
-            5, 6,
-            5, 1,
-            1, 0,
-            0, 4,
-          };
-
-          s_boxWireframeMesh.vertices = aVert;
-          s_boxWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
-        }
-
-        if (!s_boxWireframeMaterial)
-          s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
+        s_boxWireframeMesh.vertices = aVert;
+        s_boxWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
       }
+
+      if (!s_boxWireframeMaterial)
+        s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
 
       s_boxWireframeMaterial.SetColor("_Color", color);
       s_boxWireframeMaterial.SetVector("_Dimensions", dimensions);
