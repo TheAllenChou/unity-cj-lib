@@ -3,16 +3,17 @@
 public class CjLibDemoComponent : MonoBehaviour
 {
 
-  protected virtual void Draw() { }
+  protected virtual void DebugDraw() { }
+  protected virtual void DrawGizmos() { }
 
   void Update()
   {
-    Draw();
+    DebugDraw();
   }
 
   void OnDrawGizmos()
   {
-    Draw();
+    DrawGizmos();
   }
 
 }

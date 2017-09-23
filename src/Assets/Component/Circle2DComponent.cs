@@ -20,7 +20,7 @@ public class Circle2DComponent : CjLibDemoComponent
   [Range(2, 64)]
   public int segments = 16;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     DebugUtil.DrawCircle2D(transform.position, radius, segments, Color.white);
   }

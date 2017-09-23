@@ -18,38 +18,98 @@ namespace CjLib
     // box
     // ------------------------------------------------------------------------
 
+    private static Object s_boxLock = new Object();
+    private static Mesh s_boxWireframeMesh;
+    private static Material s_boxWireframeMaterial;
+
+    private static Mesh BuildBoxMesh()
+    {
+      Mesh mesh = new Mesh();
+
+      Vector3[] aVert =
+      {
+        new Vector3(-1.0f, -1.0f, -1.0f),
+        new Vector3(-1.0f,  1.0f, -1.0f),
+        new Vector3( 1.0f,  1.0f, -1.0f),
+        new Vector3( 1.0f, -1.0f, -1.0f),
+        new Vector3(-1.0f, -1.0f,  1.0f),
+        new Vector3(-1.0f,  1.0f,  1.0f),
+        new Vector3( 1.0f,  1.0f,  1.0f),
+        new Vector3( 1.0f, -1.0f,  1.0f),
+      };
+
+      int[] aIndex =
+      {
+        0, 1,
+        1, 2,
+        2, 3,
+        3, 0,
+        2, 6,
+        6, 7,
+        7, 3,
+        7, 4,
+        4, 5,
+        5, 6,
+        5, 1,
+        1, 0,
+        0, 4,
+      };
+
+      mesh.vertices = aVert;
+      mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+      return mesh;
+    }
+
     public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, float duration = 0.0f, bool depthTest = true)
     {
-      Vector3 extents = 0.5f * dimensions;
-      Vector3 offsetX = rotation * (extents.x * Vector3.right);
-      Vector3 offsetY = rotation * (extents.y * Vector3.up);
-      Vector3 offsetZ = rotation * (extents.z * Vector3.forward);
+      lock (s_boxLock)
+      {
+        if (!s_boxWireframeMesh)
+        {
+          s_boxWireframeMesh = new Mesh();
 
-      Vector3 p0 = center - offsetX - offsetY - offsetZ;
-      Vector3 p1 = center - offsetX + offsetY - offsetZ;
-      Vector3 p2 = center + offsetX + offsetY - offsetZ;
-      Vector3 p3 = center + offsetX - offsetY - offsetZ;
-      Vector3 p4 = center - offsetX - offsetY + offsetZ;
-      Vector3 p5 = center - offsetX + offsetY + offsetZ;
-      Vector3 p6 = center + offsetX + offsetY + offsetZ;
-      Vector3 p7 = center + offsetX - offsetY + offsetZ;
+          Vector3[] aVert =
+          {
+            new Vector3(-1.0f, -1.0f, -1.0f),
+            new Vector3(-1.0f,  1.0f, -1.0f),
+            new Vector3( 1.0f,  1.0f, -1.0f),
+            new Vector3( 1.0f, -1.0f, -1.0f),
+            new Vector3(-1.0f, -1.0f,  1.0f),
+            new Vector3(-1.0f,  1.0f,  1.0f),
+            new Vector3( 1.0f,  1.0f,  1.0f),
+            new Vector3( 1.0f, -1.0f,  1.0f),
+          };
 
-      Debug.DrawLine(p0, p1, color, duration, depthTest);
-      Debug.DrawLine(p1, p2, color, duration, depthTest);
-      Debug.DrawLine(p2, p3, color, duration, depthTest);
-      Debug.DrawLine(p3, p0, color, duration, depthTest);
+          int[] aIndex =
+          {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+            2, 6,
+            6, 7,
+            7, 3,
+            7, 4,
+            4, 5,
+            5, 6,
+            5, 1,
+            1, 0,
+            0, 4,
+          };
 
-      Debug.DrawLine(p2, p6, color, duration, depthTest);
-      Debug.DrawLine(p6, p7, color, duration, depthTest);
-      Debug.DrawLine(p7, p3, color, duration, depthTest);
+          s_boxWireframeMesh.vertices = aVert;
+          s_boxWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+        }
 
-      Debug.DrawLine(p7, p4, color, duration, depthTest);
-      Debug.DrawLine(p4, p5, color, duration, depthTest);
-      Debug.DrawLine(p5, p6, color, duration, depthTest);
+        if (!s_boxWireframeMaterial)
+          s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
+      }
 
-      Debug.DrawLine(p5, p1, color, duration, depthTest);
-      Debug.DrawLine(p1, p0, color, duration, depthTest);
-      Debug.DrawLine(p0, p4, color, duration, depthTest);
+      s_boxWireframeMaterial.SetColor("_Color", color);
+      s_boxWireframeMaterial.SetVector("_Dimensions", dimensions);
+      Graphics.DrawMesh(s_boxWireframeMesh, center, rotation, s_boxWireframeMaterial, 0);
+      return;
     }
 
     public static void DrawBox2D(Vector3 center, Vector2 dimensions, float rotation, Color color, float duration = 0.0f, bool depthTest = true)

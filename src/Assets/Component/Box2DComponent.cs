@@ -20,7 +20,7 @@ public class Box2DComponent : CjLibDemoComponent
   [Range(0.1f, 10.0f)]
   public float dimensionY = 1.0f;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
     DebugUtil.DrawBox2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);

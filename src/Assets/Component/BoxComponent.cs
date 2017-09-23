@@ -23,9 +23,16 @@ public class BoxComponent : CjLibDemoComponent
   [Range(0.1f, 10.0f)]
   public float dimensionZ = 1.0f;
 
-  protected override void Draw()
+  public Color color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+
+  protected override void DebugDraw()
   {
-    DebugUtil.DrawBox(transform.position, new Vector3(dimensionX, dimensionY, dimensionZ), transform.rotation, Color.white);
+    DebugUtil.DrawBox(transform.position, new Vector3(dimensionX, dimensionY, dimensionZ), transform.rotation, color);
+  }
+
+  protected override void DrawGizmos()
+  {
+    DebugUtil.DrawBox(transform.position, new Vector3(dimensionX, dimensionY, dimensionZ), transform.rotation, color);
   }
 
 }

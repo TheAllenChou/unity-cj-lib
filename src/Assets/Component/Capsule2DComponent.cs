@@ -23,7 +23,7 @@ public class Capsule2DComponent : CjLibDemoComponent
   [Range(2, 64)]
   public int capSegments = 4;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
     Vector3 up = VectorUtil.Rotate2D(Vector3.up, rotation);

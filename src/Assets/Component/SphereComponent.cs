@@ -23,7 +23,7 @@ public class SphereComponent : CjLibDemoComponent
   [Range(2, 128)]
   public int longSegments = 16;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     DebugUtil.DrawSphere(transform.position, transform.rotation, radius, latSegments, longSegments, Color.white);
   }

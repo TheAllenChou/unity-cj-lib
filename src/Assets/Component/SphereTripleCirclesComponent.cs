@@ -20,7 +20,7 @@ public class SphereTripleCirclesComponent : CjLibDemoComponent
   [Range(2, 64)]
   public int segments = 16;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     DebugUtil.DrawSphereTripleCircles(transform.position, transform.rotation, radius, segments, Color.white);
   }

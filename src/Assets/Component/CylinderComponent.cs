@@ -23,7 +23,7 @@ public class CylinderComponent : CjLibDemoComponent
   [Range(2, 64)]
   public int segments = 16;
 
-  protected override void Draw()
+  protected override void DebugDraw()
   {
     Vector3 up = transform.rotation * Vector3.up;
     Vector3 point0 = transform.position - 0.5f * height * up;
