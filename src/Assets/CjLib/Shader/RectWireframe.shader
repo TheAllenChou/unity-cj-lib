@@ -9,12 +9,12 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/BoxWireframe"
+Shader "CjLib/RectWireframe"
 {
   Properties
   {
     _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-    _Dimensions ("Dimensions", Vector) = (1.0, 1.0, 1.0, 0.0)
+    _Dimensions ("Dimensions", Vector) = (1.0, 1.0, 0.0, 0.0)
     _MainTex ("Texture", 2D) = "white" {}
   }
   SubShader
@@ -52,7 +52,7 @@ Shader "CjLib/BoxWireframe"
       v2f vert (appdata v)
       {
         v2f o;
-        v.vertex.xyz *= _Dimensions.xyz;
+        v.vertex.xz *= _Dimensions.xz;
         o.vertex = UnityObjectToClipPos(v.vertex);
         UNITY_TRANSFER_FOG(o,o.vertex);
         return o;

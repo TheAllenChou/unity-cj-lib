@@ -18,11 +18,9 @@ namespace CjLib
     // box
     // ------------------------------------------------------------------------
 
-    private static Object s_boxLock = new Object();
     private static Mesh s_boxWireframeMesh;
     private static Material s_boxWireframeMaterial;
-
-    public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, bool depthTest = true)
     {
       if (!s_boxWireframeMesh)
       {
@@ -65,25 +63,60 @@ namespace CjLib
         s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
 
       s_boxWireframeMaterial.SetColor("_Color", color);
-      s_boxWireframeMaterial.SetVector("_Dimensions", dimensions);
+      s_boxWireframeMaterial.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
       Graphics.DrawMesh(s_boxWireframeMesh, center, rotation, s_boxWireframeMaterial, 0);
-      return;
     }
 
-    public static void DrawRect2D(Vector3 center, Vector2 dimensions, float rotation, Color color, float duration = 0.0f, bool depthTest = true)
+    private static Mesh s_rectWireframeMesh;
+    private static Material s_rectWireframeMaterial;
+    public static void DrawRect(Vector3 center, Vector2 dimensions, Quaternion rotation, Color color, bool depthTest = true)
     {
-      Vector3 offsetX = VectorUtil.Rotate2D(Vector3.right, rotation);
-      Vector3 offsetY = VectorUtil.Rotate2D(Vector3.up, rotation);
+      if (!s_rectWireframeMesh)
+      {
+        s_rectWireframeMesh = new Mesh();
+
+        Vector3[] aVert =
+        {
+          new Vector3(-1.0f, 0.0f, -1.0f),
+          new Vector3(-1.0f, 0.0f,  1.0f),
+          new Vector3( 1.0f, 0.0f,  1.0f),
+          new Vector3( 1.0f, 0.0f, -1.0f),
+        };
+
+        int[] aIndex =
+        {
+          0, 1,
+          1, 2,
+          2, 3,
+          3, 0,
+        };
+
+        s_rectWireframeMesh.vertices = aVert;
+        s_rectWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+      }
+
+      if (!s_rectWireframeMaterial)
+        s_rectWireframeMaterial = new Material(Shader.Find("CjLib/RectWireframe"));
+
+      s_rectWireframeMaterial.SetColor("_Color", color);
+      s_rectWireframeMaterial.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
+      Graphics.DrawMesh(s_rectWireframeMesh, center, rotation, s_rectWireframeMaterial, 0);
+    }
+
+    public static void DrawRect2D(Vector3 center, Vector2 dimensions, float rotation, Color color, bool depthTest = true)
+    {
+      Vector3 offsetX = dimensions.x * VectorUtil.Rotate2D(Vector3.right, rotation);
+      Vector3 offsetY = dimensions.y * VectorUtil.Rotate2D(Vector3.up, rotation);
 
       Vector3 p0 = center - offsetX - offsetY;
       Vector3 p1 = center - offsetX + offsetY;
       Vector3 p2 = center + offsetX + offsetY;
       Vector3 p3 = center + offsetX - offsetY;
 
-      Debug.DrawLine(p0, p1, color, duration, depthTest);
-      Debug.DrawLine(p1, p2, color, duration, depthTest);
-      Debug.DrawLine(p2, p3, color, duration, depthTest);
-      Debug.DrawLine(p3, p0, color, duration, depthTest);
+      Debug.DrawLine(p0, p1, color, 0.0f, depthTest);
+      Debug.DrawLine(p1, p2, color, 0.0f, depthTest);
+      Debug.DrawLine(p2, p3, color, 0.0f, depthTest);
+      Debug.DrawLine(p3, p0, color, 0.0f, depthTest);
     }
 
     // ------------------------------------------------------------------------
@@ -93,7 +126,7 @@ namespace CjLib
     // circle
     // ------------------------------------------------------------------------
 
-    public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, bool depthTest = true)
     {
       if (numSegments <= 1)
         return;
@@ -111,12 +144,12 @@ namespace CjLib
       {
         angle += angleIncrement;
         Vector3 currPos = center + Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
-        Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
+        Debug.DrawLine(prevPos, currPos, color, 0.0f, depthTest);
         prevPos = currPos;
       }
     }
 
-    public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true)
     {
       if (numSegments <= 1)
         return;
@@ -133,7 +166,7 @@ namespace CjLib
       {
         angle += angleIncrement;
         Vector3 currPos = center + Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseY;
-        Debug.DrawLine(prevPos, currPos, color, duration, depthTest);
+        Debug.DrawLine(prevPos, currPos, color, 0.0f, depthTest);
         prevPos = currPos;
       }
     }
@@ -145,7 +178,7 @@ namespace CjLib
     // cylinder
     // ------------------------------------------------------------------------
 
-    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color, bool depthTest = true)
     {
       if (numSegments <= 1)
         return;
@@ -172,9 +205,9 @@ namespace CjLib
         Vector3 offset = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
         Vector3 currPos0 = point0 + offset;
         Vector3 currPos1 = point1 + offset;
-        Debug.DrawLine(currPos0, currPos1, color, duration, depthTest);
-        Debug.DrawLine(currPos0, prevPos0, color, duration, depthTest);
-        Debug.DrawLine(currPos1, prevPos1, color, duration, depthTest);
+        Debug.DrawLine(currPos0, currPos1, color, 0.0f, depthTest);
+        Debug.DrawLine(currPos0, prevPos0, color, 0.0f, depthTest);
+        Debug.DrawLine(currPos1, prevPos1, color, 0.0f, depthTest);
         prevPos0 = currPos0;
         prevPos1 = currPos1;
       }
@@ -187,23 +220,23 @@ namespace CjLib
     // sphere
     // ------------------------------------------------------------------------
 
-    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true)
     {
       Vector3 axisX = rotation * Vector3.right;
       Vector3 axisY = rotation * Vector3.up;
       Vector3 axisZ = rotation * Vector3.forward;
-      DrawCircle(center, axisX, radius, numSegments, color, duration, depthTest);
-      DrawCircle(center, axisY, radius, numSegments, color, duration, depthTest);
-      DrawCircle(center, axisZ, radius, numSegments, color, duration, depthTest);
+      DrawCircle(center, axisX, radius, numSegments, color, depthTest);
+      DrawCircle(center, axisY, radius, numSegments, color, depthTest);
+      DrawCircle(center, axisZ, radius, numSegments, color, depthTest);
     }
 
     // identity rotation
-    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true)
     {
-      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color, duration, depthTest);
+      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color, depthTest);
     }
 
-    public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, bool depthTest = true)
     {
       if (latSegments <= 0 || longSegments <= 1)
         return;
@@ -263,14 +296,14 @@ namespace CjLib
           aCurrLongSample[iLat] = center + radius * (vecXz * latSin + axisY * latCos);
         }
 
-        Debug.DrawLine(top, aCurrLongSample[0], color, duration, depthTest);
+        Debug.DrawLine(top, aCurrLongSample[0], color, 0.0f, depthTest);
         for (int iLat = 0; iLat < latSegments; ++iLat)
         {
           if (iLat < latSegments - 1)
           {
-            Debug.DrawLine(aCurrLongSample[iLat], aCurrLongSample[iLat + 1], color, duration, depthTest);
+            Debug.DrawLine(aCurrLongSample[iLat], aCurrLongSample[iLat + 1], color, 0.0f, depthTest);
           }
-          Debug.DrawLine(aCurrLongSample[iLat], aPrevLongSample[iLat], color, duration, depthTest);
+          Debug.DrawLine(aCurrLongSample[iLat], aPrevLongSample[iLat], color, 0.0f, depthTest);
         }
         Debug.DrawLine(aCurrLongSample[latSegments - 1], bottom);
 
@@ -281,9 +314,9 @@ namespace CjLib
     }
 
     // identity rotation
-    public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, bool depthTest = true)
     {
-      DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color, duration, depthTest);
+      DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color, depthTest);
     }
 
     // ------------------------------------------------------------------------
@@ -293,7 +326,7 @@ namespace CjLib
     // capsule
     // ------------------------------------------------------------------------
 
-    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, float duration = 0.0f, bool depthTest = true)
+    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return;
@@ -360,23 +393,23 @@ namespace CjLib
           aCurrLongOffset[iLat] = radius * (vecXz * latSin + axisY * latCos);
         }
 
-        Debug.DrawLine(end1, point1 + aCurrLongOffset[0], color, duration, depthTest);
+        Debug.DrawLine(end1, point1 + aCurrLongOffset[0], color, 0.0f, depthTest);
         for (int iLat = 0; iLat <= latSegmentsPerCap / 2; ++iLat)
         {
           if (iLat < latSegmentsPerCap / 2)
           {
-            Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aCurrLongOffset[iLat + 1], color, duration, depthTest);
+            Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aCurrLongOffset[iLat + 1], color, 0.0f, depthTest);
           }
-          Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aPrevLongOffset[iLat], color, duration, depthTest);
+          Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aPrevLongOffset[iLat], color, 0.0f, depthTest);
         }
-        Debug.DrawLine(point1 + aCurrLongOffset[latSegmentsPerCap / 2], point0 + aCurrLongOffset[latSegmentsPerCap / 2], color, duration, depthTest);
+        Debug.DrawLine(point1 + aCurrLongOffset[latSegmentsPerCap / 2], point0 + aCurrLongOffset[latSegmentsPerCap / 2], color, 0.0f, depthTest);
         for (int iLat = latSegmentsPerCap / 2; iLat < latSegmentsPerCap; ++iLat)
         {
           if (iLat < latSegmentsPerCap - 1)
           {
-            Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aCurrLongOffset[iLat + 1], color, duration, depthTest);
+            Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aCurrLongOffset[iLat + 1], color, 0.0f, depthTest);
           }
-          Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aPrevLongOffset[iLat], color, duration, depthTest);
+          Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aPrevLongOffset[iLat], color, 0.0f, depthTest);
         }
         Debug.DrawLine(point0 + aCurrLongOffset[latSegmentsPerCap - 1], end0);
 
@@ -386,7 +419,7 @@ namespace CjLib
       }
     }
 
-    public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, float duration = 0.0f, bool depthTest = false)
+    public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, bool depthTest = false)
     {
       Vector3 axisY = point1 - point0;
       float axisYSelfDot = Vector3.Dot(axisY, axisY);
@@ -396,8 +429,8 @@ namespace CjLib
       axisY = Vector3.Normalize(axisY);
       Vector3 axisX = VectorUtil.Rotate2D(axisY, 0.5f * Mathf.PI);
 
-      Debug.DrawLine(point0 - radius * axisX, point1 - radius * axisX, color, duration, depthTest);
-      Debug.DrawLine(point0 + radius * axisX, point1 + radius * axisX, color, duration, depthTest);
+      Debug.DrawLine(point0 - radius * axisX, point1 - radius * axisX, color, 0.0f, depthTest);
+      Debug.DrawLine(point0 + radius * axisX, point1 + radius * axisX, color, 0.0f, depthTest);
 
       if (capSegments <= 1)
         return;
@@ -412,8 +445,8 @@ namespace CjLib
         Vector3 currCapX = radius * Mathf.Cos(angle) * axisX;
         Vector3 currCapY = radius * Mathf.Sin(angle) * axisY;
 
-        Debug.DrawLine(point0 + prevCapX - prevCapY, point0 + currCapX - currCapY, color, duration, depthTest);
-        Debug.DrawLine(point1 + prevCapX + prevCapY, point1 + currCapX + currCapY, color, duration, depthTest);
+        Debug.DrawLine(point0 + prevCapX - prevCapY, point0 + currCapX - currCapY, color, 0.0f, depthTest);
+        Debug.DrawLine(point1 + prevCapX + prevCapY, point1 + currCapX + currCapY, color, 0.0f, depthTest);
 
         prevCapX = currCapX;
         prevCapY = currCapY;

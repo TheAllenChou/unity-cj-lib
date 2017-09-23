@@ -12,7 +12,7 @@
 using CjLib;
 using UnityEngine;
 
-public class Rect2DComponent : CjLibDemoComponent
+public class RectComponent : CjLibDemoComponent
 {
   [Range(0.1f, 10.0f)]
   public float dimensionX = 1.0f;
@@ -22,14 +22,12 @@ public class Rect2DComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
-    DebugUtil.DrawRect2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
+    DebugUtil.DrawRect(transform.position, new Vector2(dimensionX, dimensionY), transform.rotation, Color.white);
   }
 
   protected override void DrawGizmos()
   {
-    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
-    DebugUtil.DrawRect2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
+    DebugUtil.DrawRect(transform.position, new Vector2(dimensionX, dimensionY), transform.rotation, Color.white);
   }
 
 }

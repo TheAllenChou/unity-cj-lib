@@ -177,9 +177,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a65b571a3e8feb740aa1642a12bfc716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dimensionX: 1
+  dimensionX: 2.49
   dimensionY: 1
   dimensionZ: 1
+  color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &759452910
 Transform:
   m_ObjectHideFlags: 0
@@ -187,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 759452908}
   m_LocalRotation: {x: -0.18966588, y: 0.06349718, z: -0.1607635, w: 0.96651447}
-  m_LocalPosition: {x: 1.18, y: 2.603904, z: -2.93}
+  m_LocalPosition: {x: -3.557, y: 5.049, z: -2.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -235,6 +236,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &937674436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 937674438}
+  - component: {fileID: 937674437}
+  m_Layer: 0
+  m_Name: Rect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &937674437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 937674436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c1e59d0fa887741ac621d0994558e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dimensionX: 1
+  dimensionY: 1.86
+--- !u!4 &937674438
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 937674436}
+  m_LocalRotation: {x: -0.43430087, y: 0.07917734, z: -0.12069045, w: 0.88912743}
+  m_LocalPosition: {x: 1.14, y: 9.43, z: -6.15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: -48.867, y: 21.926, z: -25.519001}
 --- !u!1 &964692300
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +288,7 @@ GameObject:
   - component: {fileID: 964692302}
   - component: {fileID: 964692301}
   m_Layer: 0
-  m_Name: Box2D
+  m_Name: Rect2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
