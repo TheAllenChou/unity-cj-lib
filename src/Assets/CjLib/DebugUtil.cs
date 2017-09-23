@@ -22,45 +22,6 @@ namespace CjLib
     private static Mesh s_boxWireframeMesh;
     private static Material s_boxWireframeMaterial;
 
-    private static Mesh BuildBoxMesh()
-    {
-      Mesh mesh = new Mesh();
-
-      Vector3[] aVert =
-      {
-        new Vector3(-1.0f, -1.0f, -1.0f),
-        new Vector3(-1.0f,  1.0f, -1.0f),
-        new Vector3( 1.0f,  1.0f, -1.0f),
-        new Vector3( 1.0f, -1.0f, -1.0f),
-        new Vector3(-1.0f, -1.0f,  1.0f),
-        new Vector3(-1.0f,  1.0f,  1.0f),
-        new Vector3( 1.0f,  1.0f,  1.0f),
-        new Vector3( 1.0f, -1.0f,  1.0f),
-      };
-
-      int[] aIndex =
-      {
-        0, 1,
-        1, 2,
-        2, 3,
-        3, 0,
-        2, 6,
-        6, 7,
-        7, 3,
-        7, 4,
-        4, 5,
-        5, 6,
-        5, 1,
-        1, 0,
-        0, 4,
-      };
-
-      mesh.vertices = aVert;
-      mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
-
-      return mesh;
-    }
-
     public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color, float duration = 0.0f, bool depthTest = true)
     {
       lock (s_boxLock)
