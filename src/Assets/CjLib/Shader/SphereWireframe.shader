@@ -9,7 +9,7 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/CircleWireframe"
+Shader "CjLib/SphereWireframe"
 {
   Properties
   {
@@ -51,7 +51,7 @@ Shader "CjLib/CircleWireframe"
       v2f vert (appdata v)
       {
         v2f o;
-        v.vertex.xz *= _Radius;
+        v.vertex.xyz *= _Radius;
         o.vertex = UnityObjectToClipPos(v.vertex);
         return o;
       }

@@ -221,6 +221,7 @@ namespace CjLib
         Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
         Vector3 top = new Vector3(0.0f, 0.5f, 0.0f);
 
+        int iIndex = 0;
         float angleIncrement = 2.0f * Mathf.PI / numSegments;
         float angle = 0.0f;
         for (int i = 0; i < numSegments; ++i)
@@ -229,14 +230,14 @@ namespace CjLib
           aVert[i] = bottom + offset;
           aVert[numSegments + i] = top + offset;
 
-          aIndex[i * 2    ] = i;
-          aIndex[i * 2 + 1] = ((i + 1) % numSegments);
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = ((i + 1) % numSegments);
 
-          aIndex[numSegments * 2 + i * 2   ] = i;
-          aIndex[numSegments * 2 + i * 2 + 1] = numSegments + i;
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = numSegments + i;
 
-          aIndex[numSegments * 4 + i * 2    ] = numSegments + i;
-          aIndex[numSegments * 4 + i * 2 + 1] = numSegments + ((i + 1) % numSegments);
+          aIndex[iIndex++] = numSegments + i;
+          aIndex[iIndex++] = numSegments + ((i + 1) % numSegments);
 
           angle += angleIncrement;
         }
@@ -296,81 +297,113 @@ namespace CjLib
       DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color);
     }
 
+    private static Dictionary<int, Mesh> s_sphereWireframeMeshPool;
+    private static Material s_sphereWireframeMaterial;
+
     public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color)
     {
       if (latSegments <= 0 || longSegments <= 1)
         return;
 
-      Vector3 axisX = rotation * Vector3.right;
-      Vector3 axisY = rotation * Vector3.up;
-      Vector3 axisZ = rotation * Vector3.forward;
+      if (s_sphereWireframeMeshPool == null)
+        s_sphereWireframeMeshPool = new Dictionary<int, Mesh>();
 
-      Vector3 top = center + radius * axisY;
-      Vector3 bottom = center - radius * axisY;
-
-      float[] aLatSin = new float[latSegments];
-      float[] aLatCos = new float[latSegments];
+      int meshKey = (latSegments << 16 ^ longSegments);
+      Mesh mesh;
+      if (!s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh))
       {
-        float latAngleIncrement = Mathf.PI / (latSegments + 1);
-        float latAngle = 0.0f;
-        for (int iLat = 0; iLat < latSegments; ++iLat)
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[longSegments * (latSegments - 1) + 2];
+        int[] aIndex = new int[(longSegments * (latSegments * 2 - 1)) * 2];
+
+        Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
+        Vector3 bottom = new Vector3(0.0f, -1.0f, 0.0f);
+        int iTop = aVert.Length - 2;
+        int iBottom = aVert.Length - 1;
+        aVert[iTop] = top;
+        aVert[iBottom] = bottom;
+
+        float[] aLatSin = new float[latSegments];
+        float[] aLatCos = new float[latSegments];
         {
-          latAngle += latAngleIncrement;
-          aLatSin[iLat] = Mathf.Sin(latAngle);
-          aLatCos[iLat] = Mathf.Cos(latAngle);
+          float latAngleIncrement = Mathf.PI / latSegments;
+          float latAngle = 0.0f;
+          for (int iLat = 0; iLat < latSegments; ++iLat)
+          {
+            latAngle += latAngleIncrement;
+            aLatSin[iLat] = Mathf.Sin(latAngle);
+            aLatCos[iLat] = Mathf.Cos(latAngle);
+          }
         }
-      }
 
-      float[] aLongSin = new float[longSegments];
-      float[] aLongCos = new float[longSegments];
-      {
-        float longAngleIncrement = 2.0f * Mathf.PI / longSegments;
-        float longAngle = 0.0f;
+        float[] aLongSin = new float[longSegments];
+        float[] aLongCos = new float[longSegments];
+        {
+          float longAngleIncrement = 2.0f * Mathf.PI / longSegments;
+          float longAngle = 0.0f;
+          for (int iLong = 0; iLong < longSegments; ++iLong)
+          {
+            longAngle += longAngleIncrement;
+            aLongSin[iLong] = Mathf.Sin(longAngle);
+            aLongCos[iLong] = Mathf.Cos(longAngle);
+          }
+        }
+
+        int iIndex = 0;
+        Vector3[] aCurrLongSample = new Vector3[latSegments];
         for (int iLong = 0; iLong < longSegments; ++iLong)
         {
-          longAngle += longAngleIncrement;
-          aLongSin[iLong] = Mathf.Sin(longAngle);
-          aLongCos[iLong] = Mathf.Cos(longAngle);
-        }
-      }
+          float longSin = aLongSin[iLong];
+          float longCos = aLongCos[iLong];
 
-      Vector3[] aPrevLongSample = new Vector3[latSegments];
-      for (int iLat = 0; iLat < latSegments; ++iLat)
-      {
-        float latSin = aLatSin[iLat];
-        float latCos = aLatCos[iLat];
-        aPrevLongSample[iLat] = center + radius * (axisX * latSin + axisY * latCos);
-      }
-
-      Vector3[] aCurrLongSample = new Vector3[latSegments];
-      for (int iLong = 0; iLong < longSegments; ++iLong)
-      {
-        float longSin = aLongSin[iLong];
-        float longCos = aLongCos[iLong];
-
-        for (int iLat = 0; iLat < latSegments; ++iLat)
-        {
-          float latSin = aLatSin[iLat];
-          float latCos = aLatCos[iLat];
-          Vector3 vecXz = axisX * longCos + axisZ * longSin;
-          aCurrLongSample[iLat] = center + radius * (vecXz * latSin + axisY * latCos);
-        }
-
-        Debug.DrawLine(top, aCurrLongSample[0], color, 0.0f);
-        for (int iLat = 0; iLat < latSegments; ++iLat)
-        {
-          if (iLat < latSegments - 1)
+          for (int iLat = 0; iLat < latSegments - 1; ++iLat)
           {
-            Debug.DrawLine(aCurrLongSample[iLat], aCurrLongSample[iLat + 1], color, 0.0f);
-          }
-          Debug.DrawLine(aCurrLongSample[iLat], aPrevLongSample[iLat], color, 0.0f);
-        }
-        Debug.DrawLine(aCurrLongSample[latSegments - 1], bottom);
+            int iVert = iLong * (latSegments - 1) + iLat;
+            float latSin = aLatSin[iLat];
+            float latCos = aLatCos[iLat];
 
-        Vector3[] aLongTempSample = aPrevLongSample;
-        aPrevLongSample = aCurrLongSample;
-        aCurrLongSample = aLongTempSample;
+            aVert[iVert] = new Vector3(longCos * latSin, latCos, longSin * latSin);
+
+            if (iLat == 0)
+            {
+              aIndex[iIndex++] = iTop;
+              aIndex[iIndex++] = iVert;
+            }
+            else
+            {
+              aIndex[iIndex++] = iVert - 1;
+              aIndex[iIndex++] = iVert;
+            }
+
+            if (iLat < latSegments - 1)
+            {
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
+            }
+            
+            if (iLat == latSegments - 2)
+            {
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = iBottom;
+            }
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        s_sphereWireframeMeshPool.Add(meshKey, mesh);
       }
+
+      if (s_sphereWireframeMaterial == null)
+        s_sphereWireframeMaterial = new Material(Shader.Find("CjLib/SphereWireframe"));
+
+      MaterialPropertyBlock properties = new MaterialPropertyBlock();
+      properties.SetColor("_Color", color);
+      properties.SetFloat("_Radius", radius);
+
+      Graphics.DrawMesh(mesh, center, rotation, s_sphereWireframeMaterial, 0, null, 0, properties);
     }
 
     // identity rotation
