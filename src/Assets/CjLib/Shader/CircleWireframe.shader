@@ -9,12 +9,12 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/RectWireframe"
+Shader "CjLib/CircleWireframe"
 {
   Properties
   {
     _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-    _Dimensions ("Dimensions", Vector) = (1.0, 1.0, 0.0, 0.0)
+    _Radius ("Radius", Float) = 1.0
     _MainTex ("Texture", 2D) = "white" {}
   }
   SubShader
@@ -41,7 +41,7 @@ Shader "CjLib/RectWireframe"
       };
 
       float4 _Color;
-      float4 _Dimensions;
+      float _Radius;
 
       sampler2D _MainTex;
       float4 _MainTex_ST;
@@ -49,7 +49,7 @@ Shader "CjLib/RectWireframe"
       v2f vert (appdata v)
       {
         v2f o;
-        v.vertex.xz *= _Dimensions.xz;
+        v.vertex.xyz *= _Radius;
         o.vertex = UnityObjectToClipPos(v.vertex);
         return o;
       }

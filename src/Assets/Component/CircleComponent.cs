@@ -22,7 +22,7 @@ public class CircleComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    DebugUtil.DrawCircle(transform.position, transform.rotation * Vector3.up, radius, segments, Color.white);
+    DebugUtil.DrawCircle(transform.position, transform.rotation, radius, segments, Color.white);
   }
 
 }

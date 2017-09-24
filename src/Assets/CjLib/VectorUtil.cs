@@ -16,11 +16,11 @@ namespace CjLib
   public class VectorUtil
   {
    
-    public static Vector3 Rotate2D(Vector3 vector, float rotation)
+    public static Vector3 Rotate2D(Vector3 vector, float rotationDeg)
     {
       Vector3 results = vector;
-      float cos = Mathf.Cos(rotation);
-      float sin = Mathf.Sin(rotation);
+      float cos = Mathf.Cos(MathUtil.kDeg2Rad * rotationDeg);
+      float sin = Mathf.Sin(MathUtil.kDeg2Rad * rotationDeg);
       results.x = cos * vector.x - sin * vector.y;
       results.y = sin * vector.x + cos * vector.y;
       return results;

@@ -22,13 +22,13 @@ public class Rect2DComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
+    float rotation = transform.rotation.eulerAngles.z;
     DebugUtil.DrawRect2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
   }
 
   protected override void DrawGizmos()
   {
-    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
+    float rotation = transform.rotation.eulerAngles.z;
     DebugUtil.DrawRect2D(transform.position, new Vector2(dimensionX, dimensionY), rotation, Color.white);
   }
 

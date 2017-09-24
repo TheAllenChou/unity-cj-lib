@@ -27,8 +27,6 @@ Shader "CjLib/BoxWireframe"
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
-      // make fog work
-      #pragma multi_compile_fog
 
       #include "UnityCG.cginc"
 
@@ -39,7 +37,6 @@ Shader "CjLib/BoxWireframe"
 
       struct v2f
       {
-        UNITY_FOG_COORDS(1)
         float4 vertex : SV_POSITION;
       };
 
@@ -54,13 +51,11 @@ Shader "CjLib/BoxWireframe"
         v2f o;
         v.vertex.xyz *= _Dimensions.xyz;
         o.vertex = UnityObjectToClipPos(v.vertex);
-        UNITY_TRANSFER_FOG(o,o.vertex);
         return o;
       }
 
       fixed4 frag (v2f i) : SV_Target
       {
-        UNITY_APPLY_FOG(i.fogCoord, _Color);
         return _Color;
       }
       ENDCG

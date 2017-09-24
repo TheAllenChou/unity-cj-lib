@@ -25,7 +25,7 @@ public class Capsule2DComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    float rotation = MathUtil.kDeg2Rad * transform.rotation.eulerAngles.z;
+    float rotation = transform.rotation.eulerAngles.z;
     Vector3 up = VectorUtil.Rotate2D(Vector3.up, rotation);
     Vector3 point0 = transform.position - 0.5f * height * up;
     Vector3 point1 = transform.position + 0.5f * height * up;
