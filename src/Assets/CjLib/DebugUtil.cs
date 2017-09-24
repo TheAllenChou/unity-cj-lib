@@ -113,7 +113,7 @@ namespace CjLib
 
       MaterialPropertyBlock properties = new MaterialPropertyBlock();
       properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
+      properties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y));
 
       Graphics.DrawMesh(s_rectWireframeMesh, center, rotation, s_rectWireframeMaterial, 0, null, 0, properties);
     }
@@ -121,6 +121,7 @@ namespace CjLib
     public static void DrawRect2D(Vector3 center, Vector2 dimensions, float rotationDeg, Color color)
     {
       Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
+
       DrawRect(center, dimensions, rotation, color);
     }
 
@@ -182,6 +183,7 @@ namespace CjLib
       Vector3 normalCrosser = Vector3.Dot(normal, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(normalCrosser, normal));
       Quaternion rotation = Quaternion.LookRotation(tangent, normal);
+
       DrawCircle(center, rotation, radius, numSegments, color);
     }
 
@@ -197,39 +199,78 @@ namespace CjLib
     // cylinder
     // ------------------------------------------------------------------------
 
-    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color)
+    private static Dictionary<int, Mesh> s_cylinderWireframeMeshPool;
+    private static Material s_cylinderWireframeMaterial;
+
+    public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color)
     {
       if (numSegments <= 1)
         return;
 
+      if (s_cylinderWireframeMeshPool == null)
+        s_cylinderWireframeMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments * 2];
+        int[] aIndex = new int[numSegments * 6];
+
+        Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
+        Vector3 top = new Vector3(0.0f, 0.5f, 0.0f);
+
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          Vector3 offset = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          aVert[i] = bottom + offset;
+          aVert[numSegments + i] = top + offset;
+
+          aIndex[i * 2    ] = i;
+          aIndex[i * 2 + 1] = ((i + 1) % numSegments);
+
+          aIndex[numSegments * 2 + i * 2   ] = i;
+          aIndex[numSegments * 2 + i * 2 + 1] = numSegments + i;
+
+          aIndex[numSegments * 4 + i * 2    ] = numSegments + i;
+          aIndex[numSegments * 4 + i * 2 + 1] = numSegments + ((i + 1) % numSegments);
+
+          angle += angleIncrement;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        s_cylinderWireframeMeshPool.Add(numSegments, mesh);
+      }
+
+      if (s_cylinderWireframeMaterial == null)
+        s_cylinderWireframeMaterial = new Material(Shader.Find("CjLib/CylinderWireframe"));
+
+      MaterialPropertyBlock properties = new MaterialPropertyBlock();
+      properties.SetColor("_Color", color);
+      properties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, rotation, s_cylinderWireframeMaterial, 0, null, 0, properties);
+    }
+
+    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color)
+    {
       Vector3 axisY = point1 - point0;
-      float axisYSelfDot = Vector3.Dot(axisY, axisY);
-      if (axisYSelfDot < MathUtil.kEpsilon)
+      float height = axisY.magnitude;
+      if (height < MathUtil.kEpsilon)
         return;
 
-      axisY = Vector3.Normalize(axisY);
-      Vector3 axisYPerp = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
-      Vector3 axisX = Vector3.Normalize(Vector3.Cross(axisY, axisYPerp));
-      Vector3 axisZ = Vector3.Cross(axisY, axisX);
-      Vector3 baseX = radius * axisX;
-      Vector3 baseZ = radius * axisZ;
+      Vector3 center = 0.5f * (point0 + point1);
 
-      float angleIncrement = 2.0f * Mathf.PI / numSegments;
-      float angle = 0.0f;
-      Vector3 prevPos0 = point0 + baseX;
-      Vector3 prevPos1 = point1 + baseX;
-      for (int i = 0; i < numSegments; ++i)
-      {
-        angle += angleIncrement;
-        Vector3 offset = Mathf.Cos(angle) * baseX + Mathf.Sin(angle) * baseZ;
-        Vector3 currPos0 = point0 + offset;
-        Vector3 currPos1 = point1 + offset;
-        Debug.DrawLine(currPos0, currPos1, color, 0.0f);
-        Debug.DrawLine(currPos0, prevPos0, color, 0.0f);
-        Debug.DrawLine(currPos1, prevPos1, color, 0.0f);
-        prevPos0 = currPos0;
-        prevPos1 = currPos1;
-      }
+      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
+      Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
+
+      DrawCylinder(center, rotation, height, radius, numSegments, color);
     }
 
     // ------------------------------------------------------------------------
@@ -446,7 +487,7 @@ namespace CjLib
         return;
 
       axisY = Vector3.Normalize(axisY);
-      Vector3 axisX = VectorUtil.Rotate2D(axisY, 0.5f * Mathf.PI);
+      Vector3 axisX = VectorUtil.Rotate2D(axisY, 90.0f);
 
       Debug.DrawLine(point0 - radius * axisX, point1 - radius * axisX, color, 0.0f);
       Debug.DrawLine(point0 + radius * axisX, point1 + radius * axisX, color, 0.0f);

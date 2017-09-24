@@ -30,9 +30,4 @@ public class BoxComponent : CjLibDemoComponent
     DebugUtil.DrawBox(transform.position, new Vector3(dimensionX, dimensionY, dimensionZ), transform.rotation, color);
   }
 
-  protected override void DrawGizmos()
-  {
-    DebugUtil.DrawBox(transform.position, new Vector3(dimensionX, dimensionY, dimensionZ), transform.rotation, color);
-  }
-
 }

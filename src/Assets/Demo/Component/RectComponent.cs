@@ -25,9 +25,4 @@ public class RectComponent : CjLibDemoComponent
     DebugUtil.DrawRect(transform.position, new Vector2(dimensionX, dimensionY), transform.rotation, Color.white);
   }
 
-  protected override void DrawGizmos()
-  {
-    DebugUtil.DrawRect(transform.position, new Vector2(dimensionX, dimensionY), transform.rotation, Color.white);
-  }
-
 }

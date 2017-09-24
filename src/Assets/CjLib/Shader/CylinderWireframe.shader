@@ -14,7 +14,7 @@ Shader "CjLib/CylinderWireframe"
   Properties
   {
     _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-    _Height ("Height", Float) = 1.0
+    _Dimensions ("Dimensions", Vector) = (1.0, 1.0, 0.0, 0.0) // height, radius
     _MainTex ("Texture", 2D) = "white" {}
   }
   SubShader
@@ -43,7 +43,7 @@ Shader "CjLib/CylinderWireframe"
       };
 
       float4 _Color;
-      float _Height;
+      float4 _Dimensions;
 
       sampler2D _MainTex;
       float4 _MainTex_ST;
@@ -51,7 +51,7 @@ Shader "CjLib/CylinderWireframe"
       v2f vert (appdata v)
       {
         v2f o;
-        v.vertex.y *= _Height;
+        v.vertex.xyz *= _Dimensions.yxy;
         o.vertex = UnityObjectToClipPos(v.vertex);
         return o;
       }

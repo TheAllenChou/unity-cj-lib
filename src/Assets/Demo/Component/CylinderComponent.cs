@@ -25,10 +25,7 @@ public class CylinderComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    Vector3 up = transform.rotation * Vector3.up;
-    Vector3 point0 = transform.position - 0.5f * height * up;
-    Vector3 point1 = transform.position + 0.5f * height * up;
-    DebugUtil.DrawCylinder(point0, point1, radius, segments, Color.white);
+    DebugUtil.DrawCylinder(transform.position, transform.rotation, height, radius, segments, Color.white);
   }
 
 }
