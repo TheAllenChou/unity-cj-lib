@@ -19,11 +19,13 @@ Shader "CjLib/RectWireframe"
   }
   SubShader
   {
-    Tags { "RenderType"="Opaque" }
+    Tags { "Queue"="Transparent" "RenderType"="Transparent" }
     LOD 100
 
     Pass
     {
+      Blend SrcAlpha OneMinusSrcAlpha
+
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
