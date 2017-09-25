@@ -21,8 +21,9 @@ namespace CjLib
 
     private static Mesh s_boxWireframeMesh;
     private static Material s_boxWireframeMaterial;
+    private static MaterialPropertyBlock s_boxWireframeMaterialProperties;
 
-    public static void DrawBox(Vector3 center, Vector3 dimensions, Quaternion rotation, Color color)
+    public static void DrawBox(Vector3 center, Quaternion rotation, Vector3 dimensions, Color color)
     {
       if (s_boxWireframeMesh == null)
       {
@@ -64,11 +65,13 @@ namespace CjLib
       if (s_boxWireframeMaterial == null)
         s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
+      if (s_boxWireframeMaterialProperties == null)
+        s_boxWireframeMaterialProperties = new MaterialPropertyBlock();
+      
+      s_boxWireframeMaterialProperties.SetColor("_Color", color);
+      s_boxWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
 
-      Graphics.DrawMesh(s_boxWireframeMesh, center, rotation, s_boxWireframeMaterial, 0, null, 0, properties);
+      Graphics.DrawMesh(s_boxWireframeMesh, center, rotation, s_boxWireframeMaterial, 0, null, 0, s_boxWireframeMaterialProperties, false, false, false);
     }
 
     // ------------------------------------------------------------------------
@@ -80,9 +83,10 @@ namespace CjLib
 
     private static Mesh s_rectWireframeMesh;
     private static Material s_rectWireframeMaterial;
+    private static MaterialPropertyBlock s_rectWireframeMaterialProperties;
 
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
-    public static void DrawRect(Vector3 center, Vector2 dimensions, Quaternion rotation, Color color)
+    public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color)
     {
       if (s_rectWireframeMesh == null)
       {
@@ -111,18 +115,20 @@ namespace CjLib
       if (s_rectWireframeMaterial == null)
         s_rectWireframeMaterial = new Material(Shader.Find("CjLib/RectWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y));
+      if (s_rectWireframeMaterialProperties == null)
+        s_rectWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(s_rectWireframeMesh, center, rotation, s_rectWireframeMaterial, 0, null, 0, properties);
+      s_rectWireframeMaterialProperties.SetColor("_Color", color);
+      s_rectWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y));
+
+      Graphics.DrawMesh(s_rectWireframeMesh, center, rotation, s_rectWireframeMaterial, 0, null, 0, s_rectWireframeMaterialProperties, false, false, false);
     }
 
-    public static void DrawRect2D(Vector3 center, Vector2 dimensions, float rotationDeg, Color color)
+    public static void DrawRect2D(Vector3 center, float rotationDeg, Vector2 dimensions, Color color)
     {
       Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
 
-      DrawRect(center, dimensions, rotation, color);
+      DrawRect(center, rotation, dimensions, color);
     }
 
     // ------------------------------------------------------------------------
@@ -134,6 +140,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_circleWireframeMeshPool;
     private static Material s_circleWireframeMaterial;
+    private static MaterialPropertyBlock s_circleWireframeMaterialProperties;
 
     // draw a circle on the XZ plane centered at origin in object space
     public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color)
@@ -171,11 +178,13 @@ namespace CjLib
       if (s_circleWireframeMaterial == null)
         s_circleWireframeMaterial = new Material(Shader.Find("CjLib/CircleWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetFloat("_Radius", radius);
+      if (s_circleWireframeMaterialProperties == null)
+        s_circleWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(mesh, center, rotation, s_circleWireframeMaterial, 0, null, 0, properties);
+      s_circleWireframeMaterialProperties.SetColor("_Color", color);
+      s_circleWireframeMaterialProperties.SetFloat("_Radius", radius);
+
+      Graphics.DrawMesh(mesh, center, rotation, s_circleWireframeMaterial, 0, null, 0, s_circleWireframeMaterialProperties, false, false, false);
     }
 
     public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color)
@@ -201,6 +210,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_cylinderWireframeMeshPool;
     private static Material s_cylinderWireframeMaterial;
+    private static MaterialPropertyBlock s_cylinderWireframeMaterialProperties;
 
     public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color)
     {
@@ -251,11 +261,13 @@ namespace CjLib
       if (s_cylinderWireframeMaterial == null)
         s_cylinderWireframeMaterial = new Material(Shader.Find("CjLib/CylinderWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(height, radius));
+      if (s_cylinderWireframeMaterialProperties == null)
+        s_cylinderWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(mesh, center, rotation, s_cylinderWireframeMaterial, 0, null, 0, properties);
+      s_cylinderWireframeMaterialProperties.SetColor("_Color", color);
+      s_cylinderWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, rotation, s_cylinderWireframeMaterial, 0, null, 0, s_cylinderWireframeMaterialProperties, false, false, false);
     }
 
     public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color)
@@ -283,6 +295,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_sphereWireframeMeshPool;
     private static Material s_sphereWireframeMaterial;
+    private static MaterialPropertyBlock s_sphereWireframeMaterialProperties;
 
     public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color)
     {
@@ -384,11 +397,13 @@ namespace CjLib
       if (s_sphereWireframeMaterial == null)
         s_sphereWireframeMaterial = new Material(Shader.Find("CjLib/SphereWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetFloat("_Radius", radius);
+      if (s_sphereWireframeMaterialProperties == null)
+        s_sphereWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(mesh, center, rotation, s_sphereWireframeMaterial, 0, null, 0, properties);
+      s_sphereWireframeMaterialProperties.SetColor("_Color", color);
+      s_sphereWireframeMaterialProperties.SetFloat("_Radius", radius);
+
+      Graphics.DrawMesh(mesh, center, rotation, s_sphereWireframeMaterial, 0, null, 0, s_sphereWireframeMaterialProperties, false, false, false);
     }
 
     // identity rotation
@@ -422,6 +437,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_capsuleWireframeMeshPool;
     private static Material s_capsuleWireframeMaterial;
+    private static MaterialPropertyBlock s_capsuleWireframeMaterialProperties;
 
     public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color)
     {
@@ -527,11 +543,13 @@ namespace CjLib
       if (s_capsuleWireframeMaterial == null)
         s_capsuleWireframeMaterial = new Material(Shader.Find("CjLib/CapsuleWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(height, radius));
+      if (s_capsuleWireframeMaterialProperties == null)
+        s_capsuleWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(mesh, center, rotation, s_capsuleWireframeMaterial, 0, null, 0, properties);
+      s_capsuleWireframeMaterialProperties.SetColor("_Color", color);
+      s_capsuleWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, rotation, s_capsuleWireframeMaterial, 0, null, 0, s_capsuleWireframeMaterialProperties, false, false, false);
     }
 
     public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color)
@@ -555,8 +573,9 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_capsule2dWireframeMeshPool;
     private static Material s_capsule2dWireframeMaterial;
+    private static MaterialPropertyBlock s_capsule2dWireframeMaterialProperties;
 
-    public static void DrawCapsule2D(Vector3 center, float rotation, float height, float radius, int capSegments, Color color)
+    public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color)
     {
       if (capSegments <= 0)
         return;
@@ -604,11 +623,13 @@ namespace CjLib
       if (s_capsule2dWireframeMaterial == null)
         s_capsule2dWireframeMaterial = new Material(Shader.Find("CjLib/Capsule2DWireframe"));
 
-      MaterialPropertyBlock properties = new MaterialPropertyBlock();
-      properties.SetColor("_Color", color);
-      properties.SetVector("_Dimensions", new Vector4(height, radius));
+      if (s_capsule2dWireframeMaterialProperties == null)
+        s_capsule2dWireframeMaterialProperties = new MaterialPropertyBlock();
 
-      Graphics.DrawMesh(mesh, center, Quaternion.AngleAxis(rotation, Vector3.forward), s_capsule2dWireframeMaterial, 0, null, 0, properties);
+      s_capsule2dWireframeMaterialProperties.SetColor("_Color", color);
+      s_capsule2dWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, Quaternion.AngleAxis(rotationDeg, Vector3.forward), s_capsule2dWireframeMaterial, 0, null, 0, s_capsule2dWireframeMaterialProperties, false, false, false);
     }
 
     public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, bool depthTest = false)
