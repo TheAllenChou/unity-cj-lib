@@ -145,11 +145,7 @@ namespace CjLib
         s_circleWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      bool keyFound = s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh);
-      if (keyFound && mesh == null)
-        s_circleWireframeMeshPool.Remove(numSegments);
-
-      if (!keyFound || mesh == null)
+      if (!s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh))
       {
         mesh = new Mesh();
 
@@ -215,11 +211,7 @@ namespace CjLib
         s_cylinderWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      bool keyFound = s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh);
-      if (keyFound && mesh == null)
-        s_cylinderWireframeMeshPool.Remove(numSegments);
-
-      if (!keyFound || mesh == null)
+      if (!s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh))
       {
         mesh = new Mesh();
 
@@ -302,11 +294,7 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      bool keyFound = s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh);
-      if (keyFound && mesh == null)
-        s_sphereWireframeMeshPool.Remove(meshKey);
-
-      if (!keyFound || mesh == null)
+      if (!s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh))
       {
         mesh = new Mesh();
 
@@ -445,11 +433,7 @@ namespace CjLib
 
       int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
       Mesh mesh;
-      bool keyFound = s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh);
-      if (keyFound && mesh == null)
-        s_capsuleWireframeMeshPool.Remove(meshKey);
-
-      if (!keyFound || mesh == null)
+      if (!s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh))
       {
         mesh = new Mesh();
 
@@ -574,7 +558,57 @@ namespace CjLib
 
     public static void DrawCapsule2D(Vector3 center, float rotation, float height, float radius, int capSegments, Color color)
     {
-      
+      if (capSegments <= 0)
+        return;
+
+      if (s_capsule2dWireframeMeshPool == null)
+        s_capsule2dWireframeMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_capsule2dWireframeMeshPool.TryGetValue(capSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[(capSegments + 1) * 2];
+        int[] aIndex = new int[(capSegments + 1) * 4];
+
+        int iVert = 0;
+        int iIndex = 0;
+        float angleIncrement = Mathf.PI / capSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < capSegments; ++i)
+        {
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+          angle += angleIncrement;
+        }
+        aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+        for (int i = 0; i < capSegments; ++i)
+        {
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+          angle += angleIncrement;
+        }
+        aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+
+        for (int i = 0; i < aVert.Length - 1; ++i)
+        {
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = (i + 1) % aVert.Length;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
+
+        s_capsule2dWireframeMeshPool.Add(capSegments, mesh);
+      }
+
+      if (s_capsule2dWireframeMaterial == null)
+        s_capsule2dWireframeMaterial = new Material(Shader.Find("CjLib/Capsule2DWireframe"));
+
+      MaterialPropertyBlock properties = new MaterialPropertyBlock();
+      properties.SetColor("_Color", color);
+      properties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, Quaternion.AngleAxis(rotation, Vector3.forward), s_capsule2dWireframeMaterial, 0, null, 0, properties);
     }
 
     public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, bool depthTest = false)

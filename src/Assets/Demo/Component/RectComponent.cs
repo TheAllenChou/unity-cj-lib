@@ -14,6 +14,7 @@ using UnityEngine;
 
 public class RectComponent : CjLibDemoComponent
 {
+
   [Range(0.1f, 10.0f)]
   public float dimensionX = 1.0f;
 

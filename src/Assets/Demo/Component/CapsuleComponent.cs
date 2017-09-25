@@ -14,11 +14,12 @@ using UnityEngine;
 
 public class CapsuleComponent : CjLibDemoComponent
 {
-  [Range(0.1f, 10.0f)]
-  public float radius = 1.0f;
 
   [Range(0.1f, 10.0f)]
   public float height = 2.0f;
+
+  [Range(0.1f, 10.0f)]
+  public float radius = 1.0f;
 
   [Range(1, 64)]
   public int latSegmentsPerCap = 4;
