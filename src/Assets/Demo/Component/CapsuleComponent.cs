@@ -28,10 +28,7 @@ public class CapsuleComponent : CjLibDemoComponent
 
   protected override void DebugDraw()
   {
-    Vector3 up = transform.rotation * Vector3.up;
-    Vector3 point0 = transform.position - 0.5f * height * up;
-    Vector3 point1 = transform.position + 0.5f * height * up;
-    DebugUtil.DrawCapsule(point0, point1, radius, latSegmentsPerCap, longSegmentsPerCap, Color.white);
+    DebugUtil.DrawCapsule(transform.position, transform.rotation, height, radius, latSegmentsPerCap, longSegmentsPerCap, Color.white);
   }
 
 }

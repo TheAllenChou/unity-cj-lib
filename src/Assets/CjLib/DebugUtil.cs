@@ -145,7 +145,11 @@ namespace CjLib
         s_circleWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      bool keyFound = s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh);
+      if (keyFound && mesh == null)
+        s_circleWireframeMeshPool.Remove(numSegments);
+
+      if (!keyFound || mesh == null)
       {
         mesh = new Mesh();
 
@@ -211,7 +215,11 @@ namespace CjLib
         s_cylinderWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      bool keyFound = s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh);
+      if (keyFound && mesh == null)
+        s_cylinderWireframeMeshPool.Remove(numSegments);
+
+      if (!keyFound || mesh == null)
       {
         mesh = new Mesh();
 
@@ -281,22 +289,6 @@ namespace CjLib
     // sphere
     // ------------------------------------------------------------------------
 
-    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color)
-    {
-      Vector3 axisX = rotation * Vector3.right;
-      Vector3 axisY = rotation * Vector3.up;
-      Vector3 axisZ = rotation * Vector3.forward;
-      DrawCircle(center, axisX, radius, numSegments, color);
-      DrawCircle(center, axisY, radius, numSegments, color);
-      DrawCircle(center, axisZ, radius, numSegments, color);
-    }
-
-    // identity rotation
-    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color)
-    {
-      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color);
-    }
-
     private static Dictionary<int, Mesh> s_sphereWireframeMeshPool;
     private static Material s_sphereWireframeMaterial;
 
@@ -310,7 +302,11 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      if (!s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh))
+      bool keyFound = s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh);
+      if (keyFound && mesh == null)
+        s_sphereWireframeMeshPool.Remove(meshKey);
+
+      if (!keyFound || mesh == null)
       {
         mesh = new Mesh();
 
@@ -350,8 +346,8 @@ namespace CjLib
           }
         }
 
+        int iVert = 0;
         int iIndex = 0;
-        Vector3[] aCurrLongSample = new Vector3[latSegments];
         for (int iLong = 0; iLong < longSegments; ++iLong)
         {
           float longSin = aLongSin[iLong];
@@ -359,7 +355,6 @@ namespace CjLib
 
           for (int iLat = 0; iLat < latSegments - 1; ++iLat)
           {
-            int iVert = iLong * (latSegments - 1) + iLat;
             float latSin = aLatSin[iLat];
             float latCos = aLatCos[iLat];
 
@@ -387,6 +382,8 @@ namespace CjLib
               aIndex[iIndex++] = iVert;
               aIndex[iIndex++] = iBottom;
             }
+
+            ++iVert;
           }
         }
 
@@ -412,6 +409,22 @@ namespace CjLib
       DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color);
     }
 
+    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color)
+    {
+      Vector3 axisX = rotation * Vector3.right;
+      Vector3 axisY = rotation * Vector3.up;
+      Vector3 axisZ = rotation * Vector3.forward;
+      DrawCircle(center, axisX, radius, numSegments, color);
+      DrawCircle(center, axisY, radius, numSegments, color);
+      DrawCircle(center, axisZ, radius, numSegments, color);
+    }
+
+    // identity rotation
+    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color)
+    {
+      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color);
+    }
+
     // ------------------------------------------------------------------------
     // end: sphere
 
@@ -419,97 +432,149 @@ namespace CjLib
     // capsule
     // ------------------------------------------------------------------------
 
+    private static Dictionary<int, Mesh> s_capsuleWireframeMeshPool;
+    private static Material s_capsuleWireframeMaterial;
+
+    public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color)
+    {
+      if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return;
+
+      if (s_capsuleWireframeMeshPool == null)
+        s_capsuleWireframeMeshPool = new Dictionary<int, Mesh>();
+
+      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      Mesh mesh;
+      bool keyFound = s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh);
+      if (keyFound && mesh == null)
+        s_capsuleWireframeMeshPool.Remove(meshKey);
+
+      if (!keyFound || mesh == null)
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[longSegmentsPerCap * latSegmentsPerCap * 2 + 2];
+        int[] aIndex = new int[longSegmentsPerCap * (latSegmentsPerCap * 4 + 1) * 2];
+
+        Vector3 top = new Vector3(0.0f, 1.5f, 0.0f);
+        Vector3 bottom = new Vector3(0.0f, -1.5f, 0.0f);
+        int iTop = aVert.Length - 2;
+        int iBottom = aVert.Length - 1;
+        aVert[iTop] = top;
+        aVert[iBottom] = bottom;
+
+        float[] aLatSin = new float[latSegmentsPerCap];
+        float[] aLatCos = new float[latSegmentsPerCap];
+        {
+          float latAngleIncrement = 0.5f * Mathf.PI / latSegmentsPerCap;
+          float latAngle = 0.0f;
+          for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
+          {
+            latAngle += latAngleIncrement;
+            aLatSin[iLat] = Mathf.Sin(latAngle);
+            aLatCos[iLat] = Mathf.Cos(latAngle);
+          }
+        }
+
+        float[] aLongSin = new float[longSegmentsPerCap];
+        float[] aLongCos = new float[longSegmentsPerCap];
+        {
+          float longAngleIncrement = 2.0f * Mathf.PI / longSegmentsPerCap;
+          float longAngle = 0.0f;
+          for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
+          {
+            longAngle += longAngleIncrement;
+            aLongSin[iLong] = Mathf.Sin(longAngle);
+            aLongCos[iLong] = Mathf.Cos(longAngle);
+          }
+        }
+
+        int iVert = 0;
+        int iIndex = 0;
+        for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
+        {
+          float longSin = aLongSin[iLong];
+          float longCos = aLongCos[iLong];
+
+          for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
+          {
+            float latSin = aLatSin[iLat];
+            float latCos = aLatCos[iLat];
+
+            aVert[iVert    ] = new Vector3(longCos * latSin,  latCos + 0.5f, longSin * latSin);
+            aVert[iVert + 1] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
+
+            if (iLat == 0)
+            {
+              aIndex[iIndex++] = iTop;
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = iBottom;
+              aIndex[iIndex++] = iVert + 1;
+            }
+            else
+            {
+              aIndex[iIndex++] = iVert - 2;
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = iVert - 1;
+              aIndex[iIndex++] = iVert + 1;
+            }
+
+            aIndex[iIndex++] = iVert;
+            aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+            aIndex[iIndex++] = iVert + 1;
+            aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+
+            if (iLat == latSegmentsPerCap - 1)
+            {
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = iVert + 1;
+            }
+
+            iVert += 2;
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        s_capsuleWireframeMeshPool.Add(meshKey, mesh);
+      }
+
+      if (s_capsuleWireframeMaterial == null)
+        s_capsuleWireframeMaterial = new Material(Shader.Find("CjLib/CapsuleWireframe"));
+
+      MaterialPropertyBlock properties = new MaterialPropertyBlock();
+      properties.SetColor("_Color", color);
+      properties.SetVector("_Dimensions", new Vector4(height, radius));
+
+      Graphics.DrawMesh(mesh, center, rotation, s_capsuleWireframeMaterial, 0, null, 0, properties);
+    }
+
     public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return;
 
       Vector3 axisY = point1 - point0;
-      float axisYSelfDot = Vector3.Dot(axisY, axisY);
-      if (axisYSelfDot < MathUtil.kEpsilon)
+      float height = axisY.magnitude;
+      if (height < MathUtil.kEpsilon)
         return;
 
-      axisY = Vector3.Normalize(axisY);
-      Vector3 axisYPerp = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
-      Vector3 axisX = Vector3.Normalize(Vector3.Cross(axisY, axisYPerp));
-      Vector3 axisZ = Vector3.Cross(axisY, axisX);
+      Vector3 center = 0.5f * (point0 + point1);
 
-      Vector3 end0 = point0 - radius * axisY;
-      Vector3 end1 = point1 + radius * axisY;
+      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
+      Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
-      latSegmentsPerCap = latSegmentsPerCap * 2 - 1;
-      float[] aLatSin = new float[latSegmentsPerCap];
-      float[] aLatCos = new float[latSegmentsPerCap];
-      {
-        float latAngleIncrement = Mathf.PI / (latSegmentsPerCap + 1);
-        float latAngle = 0.0f;
-        for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
-        {
-          latAngle += latAngleIncrement;
-          aLatSin[iLat] = Mathf.Sin(latAngle);
-          aLatCos[iLat] = Mathf.Cos(latAngle);
-        }
-      }
+      DrawCapsule(center, rotation, height, radius, latSegmentsPerCap, longSegmentsPerCap, color);
+    }
 
-      float[] aLongSin = new float[longSegmentsPerCap];
-      float[] aLongCos = new float[longSegmentsPerCap];
-      {
-        float longAngleIncrement = 2.0f * Mathf.PI / longSegmentsPerCap;
-        float longAngle = 0.0f;
-        for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
-        {
-          longAngle += longAngleIncrement;
-          aLongSin[iLong] = Mathf.Sin(longAngle);
-          aLongCos[iLong] = Mathf.Cos(longAngle);
-        }
-      }
+    private static Dictionary<int, Mesh> s_capsule2dWireframeMeshPool;
+    private static Material s_capsule2dWireframeMaterial;
 
-      Vector3[] aPrevLongOffset = new Vector3[latSegmentsPerCap];
-      for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
-      {
-        float latSin = aLatSin[iLat];
-        float latCos = aLatCos[iLat];
-        aPrevLongOffset[iLat] = radius * (axisX * latSin + axisY * latCos);
-      }
-
-      Vector3[] aCurrLongOffset = new Vector3[latSegmentsPerCap];
-      for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
-      {
-        float longSin = aLongSin[iLong];
-        float longCos = aLongCos[iLong];
-
-        for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
-        {
-          float latSin = aLatSin[iLat];
-          float latCos = aLatCos[iLat];
-          Vector3 vecXz = axisX * longCos + axisZ * longSin;
-          aCurrLongOffset[iLat] = radius * (vecXz * latSin + axisY * latCos);
-        }
-
-        Debug.DrawLine(end1, point1 + aCurrLongOffset[0], color, 0.0f);
-        for (int iLat = 0; iLat <= latSegmentsPerCap / 2; ++iLat)
-        {
-          if (iLat < latSegmentsPerCap / 2)
-          {
-            Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aCurrLongOffset[iLat + 1], color, 0.0f);
-          }
-          Debug.DrawLine(point1 + aCurrLongOffset[iLat], point1 + aPrevLongOffset[iLat], color, 0.0f);
-        }
-        Debug.DrawLine(point1 + aCurrLongOffset[latSegmentsPerCap / 2], point0 + aCurrLongOffset[latSegmentsPerCap / 2], color, 0.0f);
-        for (int iLat = latSegmentsPerCap / 2; iLat < latSegmentsPerCap; ++iLat)
-        {
-          if (iLat < latSegmentsPerCap - 1)
-          {
-            Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aCurrLongOffset[iLat + 1], color, 0.0f);
-          }
-          Debug.DrawLine(point0 + aCurrLongOffset[iLat], point0 + aPrevLongOffset[iLat], color, 0.0f);
-        }
-        Debug.DrawLine(point0 + aCurrLongOffset[latSegmentsPerCap - 1], end0);
-
-        Vector3[] aLongTempOffset = aPrevLongOffset;
-        aPrevLongOffset = aCurrLongOffset;
-        aCurrLongOffset = aLongTempOffset;
-      }
+    public static void DrawCapsule2D(Vector3 center, float rotation, float height, float radius, int capSegments, Color color)
+    {
+      
     }
 
     public static void DrawCapsule2D(Vector3 point0, Vector3 point1, float radius, int capSegments, Color color, bool depthTest = false)
