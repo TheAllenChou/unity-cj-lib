@@ -19,7 +19,7 @@ Shader "CjLib/SphereWireframe"
   }
   SubShader
   {
-    Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+    Tags { "Queue"="Transparent" "RenderType"="Transparent" "DisableBatching" = "true"}
     LOD 100
 
     Pass
