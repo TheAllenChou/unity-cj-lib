@@ -46,7 +46,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     DrawCapsuleLatSegments(new Vector3(3.0f, -9.0f, 0.0f));
     DrawCapsuleLongSegments(new Vector3(6.0f, -9.0f, 0.0f));
 
-    m_phase += 2.0f * Time.deltaTime;
+    m_phase += Time.deltaTime * 2.0f * Mathf.PI / 3.0f;
   }
 
   private void DrawBoxDimensions(Vector3 center)
