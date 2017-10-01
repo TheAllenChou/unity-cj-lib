@@ -63,7 +63,7 @@ namespace CjLib
       }
 
       if (s_boxWireframeMaterial == null)
-        s_boxWireframeMaterial = new Material(Shader.Find("CjLib/BoxWireframe"));
+        s_boxWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_boxWireframeMaterialProperties == null)
         s_boxWireframeMaterialProperties = new MaterialPropertyBlock();
@@ -113,13 +113,13 @@ namespace CjLib
       }
 
       if (s_rectWireframeMaterial == null)
-        s_rectWireframeMaterial = new Material(Shader.Find("CjLib/RectWireframe"));
+        s_rectWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_rectWireframeMaterialProperties == null)
         s_rectWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_rectWireframeMaterialProperties.SetColor("_Color", color);
-      s_rectWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y));
+      s_rectWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
 
       Graphics.DrawMesh(s_rectWireframeMesh, center, rotation, s_rectWireframeMaterial, 0, null, 0, s_rectWireframeMaterialProperties, false, false, false);
     }
@@ -176,13 +176,13 @@ namespace CjLib
       }
 
       if (s_circleWireframeMaterial == null)
-        s_circleWireframeMaterial = new Material(Shader.Find("CjLib/CircleWireframe"));
+        s_circleWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_circleWireframeMaterialProperties == null)
         s_circleWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_circleWireframeMaterialProperties.SetColor("_Color", color);
-      s_circleWireframeMaterialProperties.SetFloat("_Radius", radius);
+      s_circleWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, 0.0f));
 
       Graphics.DrawMesh(mesh, center, rotation, s_circleWireframeMaterial, 0, null, 0, s_circleWireframeMaterialProperties, false, false, false);
     }
@@ -259,13 +259,13 @@ namespace CjLib
       }
 
       if (s_cylinderWireframeMaterial == null)
-        s_cylinderWireframeMaterial = new Material(Shader.Find("CjLib/CylinderWireframe"));
+        s_cylinderWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_cylinderWireframeMaterialProperties == null)
         s_cylinderWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_cylinderWireframeMaterialProperties.SetColor("_Color", color);
-      s_cylinderWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+      s_cylinderWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
 
       Graphics.DrawMesh(mesh, center, rotation, s_cylinderWireframeMaterial, 0, null, 0, s_cylinderWireframeMaterialProperties, false, false, false);
     }
@@ -395,13 +395,13 @@ namespace CjLib
       }
 
       if (s_sphereWireframeMaterial == null)
-        s_sphereWireframeMaterial = new Material(Shader.Find("CjLib/SphereWireframe"));
+        s_sphereWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_sphereWireframeMaterialProperties == null)
         s_sphereWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_sphereWireframeMaterialProperties.SetColor("_Color", color);
-      s_sphereWireframeMaterialProperties.SetFloat("_Radius", radius);
+      s_sphereWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, 0.0f));
 
       Graphics.DrawMesh(mesh, center, rotation, s_sphereWireframeMaterial, 0, null, 0, s_sphereWireframeMaterialProperties, false, false, false);
     }
@@ -541,13 +541,13 @@ namespace CjLib
       }
 
       if (s_capsuleWireframeMaterial == null)
-        s_capsuleWireframeMaterial = new Material(Shader.Find("CjLib/CapsuleWireframe"));
+        s_capsuleWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_capsuleWireframeMaterialProperties == null)
         s_capsuleWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_capsuleWireframeMaterialProperties.SetColor("_Color", color);
-      s_capsuleWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+      s_capsuleWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
 
       Graphics.DrawMesh(mesh, center, rotation, s_capsuleWireframeMaterial, 0, null, 0, s_capsuleWireframeMaterialProperties, false, false, false);
     }
@@ -621,13 +621,13 @@ namespace CjLib
       }
 
       if (s_capsule2dWireframeMaterial == null)
-        s_capsule2dWireframeMaterial = new Material(Shader.Find("CjLib/Capsule2DWireframe"));
+        s_capsule2dWireframeMaterial = new Material(Shader.Find("CjLib/PrimitiveWireframeShader"));
 
       if (s_capsule2dWireframeMaterialProperties == null)
         s_capsule2dWireframeMaterialProperties = new MaterialPropertyBlock();
 
       s_capsule2dWireframeMaterialProperties.SetColor("_Color", color);
-      s_capsule2dWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(height, radius));
+      s_capsule2dWireframeMaterialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
 
       Graphics.DrawMesh(mesh, center, Quaternion.AngleAxis(rotationDeg, Vector3.forward), s_capsule2dWireframeMaterial, 0, null, 0, s_capsule2dWireframeMaterialProperties, false, false, false);
     }
