@@ -97,7 +97,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int longSegments = (int) Mathf.Floor(4.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, 8, longSegments, Color.white);
+    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, 8, longSegments, Color.white, false);
   }
 
   private void DrawCylinderDimensions(Vector3 center)
