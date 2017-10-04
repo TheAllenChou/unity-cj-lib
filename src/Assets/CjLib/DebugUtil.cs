@@ -47,13 +47,13 @@ namespace CjLib
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       
       materialProperties.SetColor("_Color", color);
-            materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
+      materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
 
-            Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
-        }
+      Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
+    }
 
-        // ------------------------------------------------------------------------
-        // end: box
+    // ------------------------------------------------------------------------
+    // end: box
 
         // line
         // ------------------------------------------------------------------------
@@ -85,41 +85,41 @@ namespace CjLib
         // end: line
 
         // rect
-        // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-        // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
-        public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true)
-        {
-            Mesh mesh = PrimitiveMeshFactory.Rect();
-            if (mesh == null)
-                return;
+    // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
+    public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true)
+    {
+      Mesh mesh = PrimitiveMeshFactory.Rect();
+      if (mesh == null)
+        return;
 
-            Material material = GetMaterial(depthTest);
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+      Material material = GetMaterial(depthTest);
+      MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
-            materialProperties.SetColor("_Color", color);
-            materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
+      materialProperties.SetColor("_Color", color);
+      materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
 
-            Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
-        }
+      Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
+    }
 
-        public static void DrawRect2D(Vector3 center, float rotationDeg, Vector2 dimensions, Color color, bool depthTest = true)
-        {
-            Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
+    public static void DrawRect2D(Vector3 center, float rotationDeg, Vector2 dimensions, Color color, bool depthTest = true)
+    {
+      Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
 
-            DrawRect(center, rotation, dimensions, color);
-        }
+      DrawRect(center, rotation, dimensions, color);
+    }
 
-        // ------------------------------------------------------------------------
-        // end: rect
-
-
-        // circle
-        // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    // end: rect
 
 
-        // draw a circle on the XZ plane centered at origin in object space
-        public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true)
+    // circle
+    // ------------------------------------------------------------------------
+
+
+    // draw a circle on the XZ plane centered at origin in object space
+    public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Circle(numSegments);
       if (mesh == null)
