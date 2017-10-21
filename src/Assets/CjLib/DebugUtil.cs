@@ -34,6 +34,61 @@ namespace CjLib
     }
 
 
+    // line
+    // ------------------------------------------------------------------------
+
+    public static void DrawLine(Vector3 v0, Vector3 v1, Color color, bool depthTest = true)
+    {
+      Mesh mesh = PrimitiveMeshFactory.Line(v0, v1);
+      if (mesh == null)
+        return;
+
+      Material material = GetMaterial(depthTest);
+      MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+
+      materialProperties.SetColor("_Color", color);
+      materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+
+      Quaternion rotation = new Quaternion(0, 0, 0, 1);
+      Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+    }
+
+    public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true)
+    {
+      Mesh mesh = PrimitiveMeshFactory.Lines(aVert);
+      if (mesh == null)
+        return;
+
+      Material material = GetMaterial(depthTest);
+      MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+
+      materialProperties.SetColor("_Color", color);
+      materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+
+      Quaternion rotation = new Quaternion(0, 0, 0, 1);
+      Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+    }
+
+    public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true)
+    {
+      Mesh mesh = PrimitiveMeshFactory.LineStrip(aVert);
+      if (mesh == null)
+        return;
+
+      Material material = GetMaterial(depthTest);
+      MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+
+      materialProperties.SetColor("_Color", color);
+      materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+
+      Quaternion rotation = new Quaternion(0, 0, 0, 1);
+      Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+    }
+
+    // ------------------------------------------------------------------------
+    // end: line
+
+
     // box
     // ------------------------------------------------------------------------
 
@@ -55,36 +110,8 @@ namespace CjLib
     // ------------------------------------------------------------------------
     // end: box
 
-        // line
-        // ------------------------------------------------------------------------
 
-        // draw a line from from to to in world space
-        public static void DrawLine(Vector3 from, Vector3 to, Color color, bool depthTest = true)
-        {
-            Mesh mesh = new Mesh();
-            Vector3[] aVert ={from,to};
-            int[] aIndex ={0, 1,};
-
-            mesh.vertices = aVert;
-            mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
-
-            Material material = GetMaterial(depthTest);
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
-
-            materialProperties.SetColor("_Color", color);
-            Vector3 center = (from + to) * 0.5f;
-            Vector3 aabbMin = Vector3.Min(from, to);
-            Vector3 aabbMax = Vector3.Max(from, to);
-            Vector3 halfExtents = (aabbMax - aabbMin);
-            materialProperties.SetVector("_Dimensions", new Vector4(halfExtents.x, halfExtents.y, halfExtents.z, 0.0f));
-
-            Quaternion rotation = new Quaternion(0, 0, 0, 1);
-            Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
-        }
-        // ------------------------------------------------------------------------
-        // end: line
-
-        // rect
+    // rect
     // ------------------------------------------------------------------------
 
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
