@@ -58,7 +58,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 1.2f * Mathf.PI)
     );
 
-    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, new Color(0.0f, 0.5f, 0.5f, 0.5f), true, false);
+    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, new Color(0.0f, 0.5f, 0.5f, 1.0f), true, false);
     DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, Color.white);
   }
 
@@ -71,7 +71,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     );
 
     DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, Color.white);
-    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, new Color(0.0f, 0.5f, 0.5f, 0.5f), true, false);
+    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, new Color(0.0f, 0.5f, 0.5f, 1.0f), true, false);
   }
 
   private void DrawCircleSegments(Vector3 center)

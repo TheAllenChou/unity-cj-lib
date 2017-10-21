@@ -26,6 +26,7 @@ struct v2f
 
 float4 _Color;
 float4 _Dimensions;
+float _ZBias;
 
 sampler2D _MainTex;
 float4 _MainTex_ST;
@@ -38,6 +39,7 @@ v2f vert (appdata v)
   v.vertex.xyz *= _Dimensions.xyz;
   v.vertex.y += ySign * 0.5f * _Dimensions.w;
   o.vertex = UnityObjectToClipPos(v.vertex);
+  o.vertex.z += _ZBias;
   return o;
 }
 

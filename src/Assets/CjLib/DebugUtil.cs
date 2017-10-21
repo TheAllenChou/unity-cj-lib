@@ -16,6 +16,7 @@ namespace CjLib
 {
   public class DebugUtil
   {
+    private static float s_wireframeZBias = 1.0e-4f;
 
     private static Material s_materialWithZTest;
     private static Material s_materialNoZTest;
@@ -48,6 +49,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
@@ -64,6 +66,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
@@ -80,6 +83,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
@@ -103,6 +107,7 @@ namespace CjLib
       
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -126,6 +131,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -144,7 +150,6 @@ namespace CjLib
     // circle
     // ------------------------------------------------------------------------
 
-
     // draw a circle on the XZ plane centered at origin in object space
     public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
@@ -157,6 +162,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -194,6 +200,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -232,6 +239,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, 0.0f));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -276,6 +284,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
@@ -310,6 +319,7 @@ namespace CjLib
 
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
+      materialProperties.SetFloat("_ZBias", wireframe ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, Quaternion.AngleAxis(rotationDeg, Vector3.forward), material, 0, null, 0, materialProperties, false, false, false);
     }
