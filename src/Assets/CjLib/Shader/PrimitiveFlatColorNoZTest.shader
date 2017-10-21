@@ -23,7 +23,7 @@ Shader "CjLib/PrimitiveFlatColorNoZTest"
 
   SubShader
   {
-    Tags { "Queue"="Transparent" "RenderType"="Transparent" "DisableBatching" = "true" }
+    Tags { "Queue"="Transparent" "RenderType"="Transparent" "DisableBatching"="true" }
     LOD 100
 
     Pass

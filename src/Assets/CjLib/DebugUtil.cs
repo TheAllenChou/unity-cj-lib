@@ -117,7 +117,7 @@ namespace CjLib
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
     public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true, bool wireframe = true)
     {
-      Mesh mesh = PrimitiveMeshFactory.Rect();
+      Mesh mesh = wireframe ? PrimitiveMeshFactory.RectWireframe() : PrimitiveMeshFactory.RectSolid();
       if (mesh == null)
         return;
 
@@ -134,7 +134,7 @@ namespace CjLib
     {
       Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
 
-      DrawRect(center, rotation, dimensions, color);
+      DrawRect(center, rotation, dimensions, color, depthTest, wireframe);
     }
 
     // ------------------------------------------------------------------------
@@ -172,7 +172,7 @@ namespace CjLib
 
     public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
-      DrawCircle(center, Vector3.forward, radius, numSegments, color);
+      DrawCircle(center, Vector3.forward, radius, numSegments, color, depthTest, wireframe);
     }
 
     // ------------------------------------------------------------------------
@@ -247,15 +247,15 @@ namespace CjLib
       Vector3 axisX = rotation * Vector3.right;
       Vector3 axisY = rotation * Vector3.up;
       Vector3 axisZ = rotation * Vector3.forward;
-      DrawCircle(center, axisX, radius, numSegments, color);
-      DrawCircle(center, axisY, radius, numSegments, color);
-      DrawCircle(center, axisZ, radius, numSegments, color);
+      DrawCircle(center, axisX, radius, numSegments, color, depthTest, wireframe);
+      DrawCircle(center, axisY, radius, numSegments, color, depthTest, wireframe);
+      DrawCircle(center, axisZ, radius, numSegments, color, depthTest, wireframe);
     }
 
     // identity rotation
     public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
-      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color);
+      DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color, depthTest, wireframe);
     }
 
     // ------------------------------------------------------------------------

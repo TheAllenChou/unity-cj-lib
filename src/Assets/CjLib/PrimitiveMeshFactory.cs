@@ -178,9 +178,10 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Mesh s_rectWireframeMesh;
+    private static Mesh s_rectSolidMesh;
 
     // rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
-    public static Mesh Rect()
+    public static Mesh RectWireframe()
     {
       if (s_rectWireframeMesh == null)
       {
@@ -188,18 +189,18 @@ namespace CjLib
 
         Vector3[] aVert =
         {
-          new Vector3(-0.5f, 0.0f, -0.5f),
-          new Vector3(-0.5f, 0.0f,  0.5f),
+          new Vector3(-0.5f, 0.0f, -0.5f), 
+          new Vector3(-0.5f, 0.0f,  0.5f), 
           new Vector3( 0.5f, 0.0f,  0.5f),
-          new Vector3( 0.5f, 0.0f, -0.5f),
+          new Vector3( 0.5f, 0.0f, -0.5f), 
         };
 
         int[] aIndex =
         {
-          0, 1,
-          1, 2,
-          2, 3,
-          3, 0,
+          0, 1, 
+          1, 2, 
+          2, 3, 
+          3, 0, 
         };
 
         s_rectWireframeMesh.vertices = aVert;
@@ -207,6 +208,34 @@ namespace CjLib
       }
 
       return s_rectWireframeMesh;
+    }
+
+    // rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
+    public static Mesh RectSolid()
+    {
+      if (s_rectSolidMesh == null)
+      {
+        s_rectSolidMesh = new Mesh();
+
+        Vector3[] aVert =
+        {
+          new Vector3(-0.5f, 0.0f, -0.5f), 
+          new Vector3(-0.5f, 0.0f,  0.5f), 
+          new Vector3( 0.5f, 0.0f,  0.5f), 
+          new Vector3( 0.5f, 0.0f, -0.5f), 
+        };
+
+        int[] aIndex =
+        {
+          0, 1, 2, 0, 2, 3, 
+          0, 2, 1, 0, 3, 2, 
+        };
+
+        s_rectSolidMesh.vertices = aVert;
+        s_rectSolidMesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+      }
+
+      return s_rectSolidMesh;
     }
 
     // ------------------------------------------------------------------------
