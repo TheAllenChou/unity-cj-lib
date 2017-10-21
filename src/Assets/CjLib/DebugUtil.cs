@@ -37,7 +37,7 @@ namespace CjLib
     // line
     // ------------------------------------------------------------------------
 
-    public static void DrawLine(Vector3 v0, Vector3 v1, Color color, bool depthTest = true)
+    public static void DrawLine(Vector3 v0, Vector3 v1, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Line(v0, v1);
       if (mesh == null)
@@ -53,7 +53,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true)
+    public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Lines(aVert);
       if (mesh == null)
@@ -69,7 +69,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true)
+    public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.LineStrip(aVert);
       if (mesh == null)
@@ -92,9 +92,9 @@ namespace CjLib
     // box
     // ------------------------------------------------------------------------
 
-    public static void DrawBox(Vector3 center, Quaternion rotation, Vector3 dimensions, Color color, bool depthTest = true)
+    public static void DrawBox(Vector3 center, Quaternion rotation, Vector3 dimensions, Color color, bool depthTest = true, bool wireframe = true)
     {
-      Mesh mesh = PrimitiveMeshFactory.Box();
+      Mesh mesh = wireframe ? PrimitiveMeshFactory.BoxWireframe() : PrimitiveMeshFactory.BoxSolid();
       if (mesh == null)
         return;
 
@@ -115,7 +115,7 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
-    public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true)
+    public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Rect();
       if (mesh == null)
@@ -130,7 +130,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawRect2D(Vector3 center, float rotationDeg, Vector2 dimensions, Color color, bool depthTest = true)
+    public static void DrawRect2D(Vector3 center, float rotationDeg, Vector2 dimensions, Color color, bool depthTest = true, bool wireframe = true)
     {
       Quaternion rotation = Quaternion.AngleAxis(rotationDeg, Vector3.forward) * Quaternion.AngleAxis(90.0f, Vector3.right);
 
@@ -146,7 +146,7 @@ namespace CjLib
 
 
     // draw a circle on the XZ plane centered at origin in object space
-    public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Circle(numSegments);
       if (mesh == null)
@@ -161,7 +161,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Vector3 normalCrosser = Vector3.Dot(normal, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(normalCrosser, normal));
@@ -170,7 +170,7 @@ namespace CjLib
       DrawCircle(center, rotation, radius, numSegments, color);
     }
 
-    public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawCircle2D(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       DrawCircle(center, Vector3.forward, radius, numSegments, color);
     }
@@ -183,7 +183,7 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
 
-    public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Cylinder(numSegments);
       if (mesh == null)
@@ -198,7 +198,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawCylinder(Vector3 point0, Vector3 point1, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Vector3 axisY = point1 - point0;
       float height = axisY.magnitude;
@@ -221,7 +221,7 @@ namespace CjLib
     // sphere
     // ------------------------------------------------------------------------
 
-    public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, bool depthTest = true)
+    public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Sphere(latSegments, longSegments);
       if (mesh == null)
@@ -237,12 +237,12 @@ namespace CjLib
     }
 
     // identity rotation
-    public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, bool depthTest = true)
+    public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color);
     }
 
-    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Vector3 axisX = rotation * Vector3.right;
       Vector3 axisY = rotation * Vector3.up;
@@ -253,7 +253,7 @@ namespace CjLib
     }
 
     // identity rotation
-    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true)
+    public static void DrawSphereTripleCircles(Vector3 center, float radius, int numSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       DrawSphereTripleCircles(center, Quaternion.identity, radius, numSegments, color);
     }
@@ -265,7 +265,7 @@ namespace CjLib
     // capsule
     // ------------------------------------------------------------------------
 
-    public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true)
+    public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Capsule(latSegmentsPerCap, longSegmentsPerCap);
       if (mesh == null)
@@ -280,7 +280,7 @@ namespace CjLib
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true)
+    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true, bool wireframe = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return;
@@ -299,7 +299,7 @@ namespace CjLib
       DrawCapsule(center, rotation, height, radius, latSegmentsPerCap, longSegmentsPerCap, color);
     }
 
-    public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color, bool depthTest = true)
+    public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color, bool depthTest = true, bool wireframe = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Capsule2D(capSegments);
       if (mesh == null)

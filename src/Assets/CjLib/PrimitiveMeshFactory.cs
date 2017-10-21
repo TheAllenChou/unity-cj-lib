@@ -91,8 +91,9 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Mesh s_boxWireframeMesh;
+    private static Mesh s_boxSolidMesh;
 
-    public static Mesh Box()
+    public static Mesh BoxWireframe()
     {
       if (s_boxWireframeMesh == null)
       {
@@ -100,31 +101,31 @@ namespace CjLib
 
         Vector3[] aVert =
         {
-          new Vector3(-0.5f, -0.5f, -0.5f),
-          new Vector3(-0.5f,  0.5f, -0.5f),
-          new Vector3( 0.5f,  0.5f, -0.5f),
-          new Vector3( 0.5f, -0.5f, -0.5f),
-          new Vector3(-0.5f, -0.5f,  0.5f),
-          new Vector3(-0.5f,  0.5f,  0.5f),
-          new Vector3( 0.5f,  0.5f,  0.5f),
-          new Vector3( 0.5f, -0.5f,  0.5f),
+          new Vector3(-0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f, -0.5f,  0.5f), 
+          new Vector3(-0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f, -0.5f,  0.5f), 
         };
 
         int[] aIndex =
         {
-          0, 1,
-          1, 2,
-          2, 3,
-          3, 0,
-          2, 6,
-          6, 7,
-          7, 3,
-          7, 4,
-          4, 5,
-          5, 6,
-          5, 1,
-          1, 0,
-          0, 4,
+          0, 1, 
+          1, 2, 
+          2, 3, 
+          3, 0, 
+          2, 6, 
+          6, 7, 
+          7, 3, 
+          7, 4, 
+          4, 5, 
+          5, 6, 
+          5, 1, 
+          1, 0, 
+          0, 4, 
         };
 
         s_boxWireframeMesh.vertices = aVert;
@@ -132,6 +133,41 @@ namespace CjLib
       }
 
       return s_boxWireframeMesh;
+    }
+
+    public static Mesh BoxSolid()
+    {
+      if (s_boxSolidMesh == null)
+      {
+        s_boxSolidMesh = new Mesh();
+
+        Vector3[] aVert =
+        {
+          new Vector3(-0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f, -0.5f,  0.5f), 
+          new Vector3(-0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f, -0.5f,  0.5f), 
+        };
+
+        int[] aIndex =
+        {
+          0, 1, 2, 0, 2, 3, 
+          3, 2, 6, 3, 6, 7, 
+          7, 6, 5, 7, 5, 4, 
+          4, 5, 1, 4, 1, 0, 
+          1, 5, 6, 1, 6, 2, 
+          0, 3, 7, 0, 7, 4, 
+        };
+
+        s_boxSolidMesh.vertices = aVert;
+        s_boxSolidMesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+      }
+
+      return s_boxSolidMesh;
     }
 
     // ------------------------------------------------------------------------
