@@ -280,7 +280,6 @@ namespace CjLib
     // cylinder
     // ------------------------------------------------------------------------
 
-
     public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
       Mesh mesh = null;
@@ -295,7 +294,7 @@ namespace CjLib
         case Style.FlatShaded:
         case Style.SmoothShaded:
           // TODO
-          mesh = PrimitiveMeshFactory.CylinderSolidColor(numSegments);
+          mesh = PrimitiveMeshFactory.CylinderFlatShaded(numSegments);
           break;
       }
       if (mesh == null)

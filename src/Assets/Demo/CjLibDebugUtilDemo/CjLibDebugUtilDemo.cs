@@ -115,7 +115,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.2f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.6f - 0.2f * Mathf.Cos(m_phase);
 
-    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_wireframeColor);
   }
 
