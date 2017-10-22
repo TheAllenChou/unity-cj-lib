@@ -136,7 +136,7 @@ namespace CjLib
       return s_boxWireframeMesh;
     }
 
-    public static Mesh BoxSolidNonShaded()
+    public static Mesh BoxSolidColor()
     {
       if (s_boxSolidNonShadedMesh == null)
       {
@@ -171,7 +171,7 @@ namespace CjLib
       return s_boxSolidNonShadedMesh;
     }
 
-    public static Mesh BoxSolidFlatShaded()
+    public static Mesh BoxFlatShaded()
     {
       if (s_boxSolidFlatShadedMesh == null)
       {

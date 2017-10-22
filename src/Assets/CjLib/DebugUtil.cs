@@ -165,11 +165,11 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.BoxWireframe();
           break;
         case Style.SolidColor:
-          mesh = PrimitiveMeshFactory.BoxSolidNonShaded();
+          mesh = PrimitiveMeshFactory.BoxSolidColor();
           break;
         case Style.SolidFlatShaded:
         case Style.SolidSmoothShaded:
-          mesh = PrimitiveMeshFactory.BoxSolidFlatShaded();
+          mesh = PrimitiveMeshFactory.BoxFlatShaded();
           break;
       }
       if (mesh == null)
