@@ -914,7 +914,7 @@ namespace CjLib
         mesh = new Mesh();
 
         Vector3[] aVert = new Vector3[longSegments * (latSegments - 1) + 2];
-        int[] aIndex = new int[(longSegments * (latSegments * 2 - 1)) * 3];
+        int[] aIndex = new int[((longSegments * (latSegments * 2 - 1)) - 8) * 3];
 
         Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
         Vector3 bottom = new Vector3(0.0f, -1.0f, 0.0f);
