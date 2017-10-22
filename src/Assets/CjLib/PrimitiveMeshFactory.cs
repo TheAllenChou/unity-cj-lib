@@ -506,8 +506,9 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Dictionary<int, Mesh> s_cylinderWireframeMeshPool;
+    private static Dictionary<int, Mesh> s_cylinderSolidColorMeshPool;
 
-    public static Mesh Cylinder(int numSegments)
+    public static Mesh CylinderWireframe(int numSegments)
     {
       if (numSegments <= 1)
         return null;
@@ -551,6 +552,65 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
 
         s_cylinderWireframeMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh CylinderSolidColor(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_cylinderSolidColorMeshPool == null)
+        s_cylinderSolidColorMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_cylinderSolidColorMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments * 2 + 2];
+        int[] aIndex = new int[numSegments * 12];
+
+        Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
+        Vector3 top = new Vector3(0.0f, 0.5f, 0.0f);
+
+        aVert[numSegments * 2] = bottom;
+        aVert[numSegments * 2 + 1] = top;
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          Vector3 offset = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          aVert[i] = bottom + offset;
+          aVert[numSegments + i] = top + offset;
+
+          aIndex[iIndex++] = numSegments * 2;
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = ((i + 1) % numSegments);
+
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = numSegments + ((i + 1) % numSegments);
+          aIndex[iIndex++] = ((i + 1) % numSegments);
+
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = numSegments + i;
+          aIndex[iIndex++] = numSegments + ((i + 1) % numSegments);
+
+          aIndex[iIndex++] = numSegments * 2 + 1;
+          aIndex[iIndex++] = numSegments + ((i + 1) % numSegments);
+          aIndex[iIndex++] = numSegments + i;
+
+          angle += angleIncrement;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_cylinderSolidColorMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;

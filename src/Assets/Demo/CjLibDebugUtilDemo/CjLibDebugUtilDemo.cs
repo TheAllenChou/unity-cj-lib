@@ -64,7 +64,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 1.2f * Mathf.PI)
     );
 
-    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
+    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, m_wireframeColor);
   }
 
@@ -76,7 +76,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 0.6f * Mathf.PI)
     );
 
-    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
+    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_wireframeColor);
   }
 
@@ -84,7 +84,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
+    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_wireframeColor);
   }
 
@@ -92,7 +92,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
+    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_wireframeColor);
   }
 
@@ -115,6 +115,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.2f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.6f - 0.2f * Mathf.Cos(m_phase);
 
+    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_solidColor, true, DebugUtil.Style.SolidColor);
     DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_wireframeColor);
   }
 

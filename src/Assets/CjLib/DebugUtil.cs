@@ -20,8 +20,8 @@ namespace CjLib
     {
       Wireframe, 
       SolidColor, 
-      SolidFlatShaded, 
-      SolidSmoothShaded, 
+      FlatShaded, 
+      SmoothShaded, 
     };
 
     private static float s_wireframeZBias = 1.0e-4f;
@@ -35,8 +35,8 @@ namespace CjLib
       bool normalOn = false;
       switch (style)
       {
-        case Style.SolidFlatShaded:
-        case Style.SolidSmoothShaded:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
           normalOn = true;
           break;
       }
@@ -161,8 +161,8 @@ namespace CjLib
         case Style.SolidColor:
           mesh = PrimitiveMeshFactory.BoxSolidColor();
           break;
-        case Style.SolidFlatShaded:
-        case Style.SolidSmoothShaded:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.BoxFlatShaded();
           break;
       }
@@ -197,8 +197,8 @@ namespace CjLib
         case Style.SolidColor:
           mesh = PrimitiveMeshFactory.RectSolidColor();
           break;
-        case Style.SolidFlatShaded:
-        case Style.SolidSmoothShaded:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.RectFlatShaded();
           break;
       }
@@ -241,8 +241,8 @@ namespace CjLib
         case Style.SolidColor:
           mesh = PrimitiveMeshFactory.CircleSolidColor(numSegments);
           break;
-        case Style.SolidFlatShaded:
-        case Style.SolidSmoothShaded:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.CircleFlatShaded(numSegments);
           break;
       }
@@ -283,13 +283,26 @@ namespace CjLib
 
     public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = PrimitiveMeshFactory.Cylinder(numSegments);
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.CylinderWireframe(numSegments);
+          break;
+        case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.CylinderSolidColor(numSegments);
+          break;
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
+          // TODO
+          mesh = PrimitiveMeshFactory.CylinderSolidColor(numSegments);
+          break;
+      }
       if (mesh == null)
         return;
 
       Material material = GetMaterial(style, depthTest);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
-
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
       materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
@@ -310,7 +323,7 @@ namespace CjLib
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
-      DrawCylinder(center, rotation, height, radius, numSegments, color);
+      DrawCylinder(center, rotation, height, radius, numSegments, color, depthTest, style);
     }
 
     // ------------------------------------------------------------------------
