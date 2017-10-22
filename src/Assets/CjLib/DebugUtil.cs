@@ -335,7 +335,18 @@ namespace CjLib
 
     public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = PrimitiveMeshFactory.Sphere(latSegments, longSegments);
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.SphereWireframe(latSegments, longSegments);
+          break;
+        case Style.SolidColor:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.SphereSolidColor(latSegments, longSegments);
+          break;
+      }
       if (mesh == null)
         return;
 

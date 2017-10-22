@@ -800,8 +800,9 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Dictionary<int, Mesh> s_sphereWireframeMeshPool;
+    private static Dictionary<int, Mesh> s_sphereSolidColorMeshPool;
 
-    public static Mesh Sphere(int latSegments, int longSegments)
+    public static Mesh SphereWireframe(int latSegments, int longSegments)
     {
       if (latSegments <= 0 || longSegments <= 1)
         return null;
@@ -876,11 +877,8 @@ namespace CjLib
               aIndex[iIndex++] = iVert;
             }
 
-            if (iLat < latSegments - 1)
-            {
-              aIndex[iIndex++] = iVert;
-              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
-            }
+            aIndex[iIndex++] = iVert;
+            aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
             
             if (iLat == latSegments - 2)
             {
@@ -896,6 +894,108 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
 
         s_sphereWireframeMeshPool.Add(meshKey, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh SphereSolidColor(int latSegments, int longSegments)
+    {
+      if (latSegments <= 0 || longSegments <= 1)
+        return null;
+
+      if (s_sphereSolidColorMeshPool == null)
+        s_sphereSolidColorMeshPool = new Dictionary<int, Mesh>();
+
+      int meshKey = (latSegments << 16 ^ longSegments);
+      Mesh mesh;
+      if (!s_sphereSolidColorMeshPool.TryGetValue(meshKey, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[longSegments * (latSegments - 1) + 2];
+        int[] aIndex = new int[(longSegments * (latSegments * 2 - 1)) * 3];
+
+        Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
+        Vector3 bottom = new Vector3(0.0f, -1.0f, 0.0f);
+        int iTop = aVert.Length - 2;
+        int iBottom = aVert.Length - 1;
+        aVert[iTop] = top;
+        aVert[iBottom] = bottom;
+
+        float[] aLatSin = new float[latSegments];
+        float[] aLatCos = new float[latSegments];
+        {
+          float latAngleIncrement = Mathf.PI / latSegments;
+          float latAngle = 0.0f;
+          for (int iLat = 0; iLat < latSegments; ++iLat)
+          {
+            latAngle += latAngleIncrement;
+            aLatSin[iLat] = Mathf.Sin(latAngle);
+            aLatCos[iLat] = Mathf.Cos(latAngle);
+          }
+        }
+
+        float[] aLongSin = new float[longSegments];
+        float[] aLongCos = new float[longSegments];
+        {
+          float longAngleIncrement = 2.0f * Mathf.PI / longSegments;
+          float longAngle = 0.0f;
+          for (int iLong = 0; iLong < longSegments; ++iLong)
+          {
+            longAngle += longAngleIncrement;
+            aLongSin[iLong] = Mathf.Sin(longAngle);
+            aLongCos[iLong] = Mathf.Cos(longAngle);
+          }
+        }
+
+        int iVert = 0;
+        int iIndex = 0;
+        for (int iLong = 0; iLong < longSegments; ++iLong)
+        {
+          float longSin = aLongSin[iLong];
+          float longCos = aLongCos[iLong];
+
+          for (int iLat = 0; iLat < latSegments - 1; ++iLat)
+          {
+            float latSin = aLatSin[iLat];
+            float latCos = aLatCos[iLat];
+
+            aVert[iVert] = new Vector3(longCos * latSin, latCos, longSin * latSin);
+
+            if (iLat == 0)
+            {
+              aIndex[iIndex++] = iTop;
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
+              aIndex[iIndex++] = iVert;
+            }
+
+            if (iLat < latSegments - 2)
+            {
+              aIndex[iIndex++] = iVert + 1;
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
+
+              aIndex[iIndex++] = iVert + 1;
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
+              aIndex[iIndex++] = (iVert + latSegments) % (longSegments * (latSegments - 1));
+            }
+
+            if (iLat == latSegments - 2)
+            {
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
+              aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = iBottom;
+            }
+
+            ++iVert;
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_sphereSolidColorMeshPool.Add(meshKey, mesh);
       }
 
       return mesh;

@@ -100,6 +100,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int latSegments = (int) Mathf.Floor(4.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
+    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, latSegments, 8, m_solidColor, true, DebugUtil.Style.SolidColor);
     DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, latSegments, 8, m_wireframeColor);
   }
 
