@@ -95,55 +95,49 @@ namespace CjLib
     // line
     // ------------------------------------------------------------------------
 
-    public static void DrawLine(Vector3 v0, Vector3 v1, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    public static void DrawLine(Vector3 v0, Vector3 v1, Color color, bool depthTest = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Line(v0, v1);
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
-      material.DisableKeyword("NORMAL_ON");
-
+      Material material = GetMaterial(Style.Wireframe, depthTest);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-      materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
+      materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true)
     {
       Mesh mesh = PrimitiveMeshFactory.Lines(aVert);
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
-      material.DisableKeyword("NORMAL_ON");
-
+      Material material = GetMaterial(Style.Wireframe, depthTest);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-      materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
+      materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true)
     {
       Mesh mesh = PrimitiveMeshFactory.LineStrip(aVert);
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
-      material.DisableKeyword("NORMAL_ON");
-
+      Material material = GetMaterial(Style.Wireframe, depthTest);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-      materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
+      materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
@@ -176,17 +170,6 @@ namespace CjLib
         return;
 
       Material material = GetMaterial(style, depthTest);
-      switch (style)
-      {
-        case Style.SolidFlatShaded:
-        case Style.SolidSmoothShaded:
-          material.EnableKeyword("NORMAL_ON");
-          break;
-        default:
-          material.DisableKeyword("NORMAL_ON");
-          break;
-      }
-
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
@@ -205,7 +188,20 @@ namespace CjLib
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
     public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = (style == Style.Wireframe) ? PrimitiveMeshFactory.RectWireframe() : PrimitiveMeshFactory.RectSolid();
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.RectWireframe();
+          break;
+        case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.RectSolidColor();
+          break;
+        case Style.SolidFlatShaded:
+        case Style.SolidSmoothShaded:
+          mesh = PrimitiveMeshFactory.RectFlatShaded();
+          break;
+      }
       if (mesh == null)
         return;
 
@@ -236,7 +232,20 @@ namespace CjLib
     // draw a circle on the XZ plane centered at origin in object space
     public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = (style == Style.Wireframe) ? PrimitiveMeshFactory.CircleWireframe(numSegments) : PrimitiveMeshFactory.CircleSolid(numSegments);
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.CircleWireframe(numSegments);
+          break;
+        case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.CircleSolidColor(numSegments);
+          break;
+        case Style.SolidFlatShaded:
+        case Style.SolidSmoothShaded:
+          mesh = PrimitiveMeshFactory.CircleFlatShaded(numSegments);
+          break;
+      }
       if (mesh == null)
         return;
 

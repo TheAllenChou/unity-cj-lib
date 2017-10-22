@@ -76,7 +76,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 0.6f * Mathf.PI)
     );
 
-    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
     DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_wireframeColor);
   }
 
@@ -84,7 +84,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
     DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_wireframeColor);
   }
 
@@ -92,7 +92,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.SolidFlatShaded);
     DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_wireframeColor);
   }
 
