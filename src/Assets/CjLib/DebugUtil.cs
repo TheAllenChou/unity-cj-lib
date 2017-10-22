@@ -345,8 +345,10 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.SphereSolidColor(latSegments, longSegments);
           break;
         case Style.FlatShaded:
-        case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.SphereFlatShaded(latSegments, longSegments);
+          break;
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.SphereSmoothShaded(latSegments, longSegments);
           break;
       }
       if (mesh == null)
