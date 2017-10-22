@@ -801,6 +801,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_sphereWireframeMeshPool;
     private static Dictionary<int, Mesh> s_sphereSolidColorMeshPool;
+    private static Dictionary<int, Mesh> s_sphereFlatShadedMeshPool;
 
     public static Mesh SphereWireframe(int latSegments, int longSegments)
     {
@@ -983,8 +984,8 @@ namespace CjLib
 
             if (iLat == latSegments - 2)
             {
-              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
               aIndex[iIndex++] = iVert;
+              aIndex[iIndex++] = (iVert + latSegments - 1) % (longSegments * (latSegments - 1));
               aIndex[iIndex++] = iBottom;
             }
 
@@ -996,6 +997,136 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
         s_sphereSolidColorMeshPool.Add(meshKey, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh SphereFlatShaded(int latSegments, int longSegments)
+    {
+      if (latSegments <= 1 || longSegments <= 1)
+        return null;
+
+      if (s_sphereFlatShadedMeshPool == null)
+        s_sphereFlatShadedMeshPool = new Dictionary<int, Mesh>();
+
+      int meshKey = (latSegments << 16 ^ longSegments);
+      Mesh mesh;
+      if (!s_sphereFlatShadedMeshPool.TryGetValue(meshKey, out mesh))
+      {
+        mesh = new Mesh();
+
+        int numVertsPerLong = (latSegments - 1) * 4 + 6;
+        int numTrisPerLong = (latSegments - 1) * 2 + 2;
+
+        Vector3[] aVert = new Vector3[longSegments * numVertsPerLong];
+        Vector3[] aNormal = new Vector3[longSegments * numVertsPerLong];
+        int[] aIndex = new int[longSegments * numTrisPerLong * 3];
+
+        Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
+        Vector3 bottom = new Vector3(0.0f, -1.0f, 0.0f);
+
+        float[] aLatSin = new float[latSegments];
+        float[] aLatCos = new float[latSegments];
+        {
+          float latAngleIncrement = Mathf.PI / latSegments;
+          float latAngle = 0.0f;
+          for (int iLat = 0; iLat < latSegments; ++iLat)
+          {
+            latAngle += latAngleIncrement;
+            aLatSin[iLat] = Mathf.Sin(latAngle);
+            aLatCos[iLat] = Mathf.Cos(latAngle);
+          }
+        }
+
+        float[] aLongSin = new float[longSegments];
+        float[] aLongCos = new float[longSegments];
+        {
+          float longAngleIncrement = 2.0f * Mathf.PI / longSegments;
+          float longAngle = 0.0f;
+          for (int iLong = 0; iLong < longSegments; ++iLong)
+          {
+            longAngle += longAngleIncrement;
+            aLongSin[iLong] = Mathf.Sin(longAngle);
+            aLongCos[iLong] = Mathf.Cos(longAngle);
+          }
+        }
+
+        int iVert = 0;
+        int iNormal = 0;
+        int iIndex = 0;
+        for (int iLong = 0; iLong < longSegments; ++iLong)
+        {
+          float longSin = aLongSin[iLong];
+          float longCos = aLongCos[iLong];
+          float longSinNext = aLongSin[(iLong + 1) % longSegments];
+          float longCosNext = aLongCos[(iLong + 1) % longSegments];
+
+          int iTop = iVert;
+
+          aVert[iVert++] = top;
+          aVert[iVert++] = new Vector3(longCos * aLatSin[0], aLatCos[0], longSin * aLatSin[0]);
+          aVert[iVert++] = new Vector3(longCosNext * aLatSin[0], aLatCos[0], longSinNext * aLatSin[0]);
+
+          int iBottom = iVert;
+
+          aVert[iVert++] = bottom;
+          aVert[iVert++] = new Vector3(longCos * aLatSin[latSegments - 2], aLatCos[latSegments - 2], longSin * aLatSin[latSegments - 2]);
+          aVert[iVert++] = new Vector3(longCosNext * aLatSin[latSegments - 2], aLatCos[latSegments - 2], longSinNext * aLatSin[latSegments - 2]);
+
+          Vector3 topNormal = Vector3.Cross(aVert[iTop + 2] - aVert[iTop], aVert[iTop + 1] - aVert[iTop]).normalized;
+          aNormal[iNormal++] = topNormal;
+          aNormal[iNormal++] = topNormal;
+          aNormal[iNormal++] = topNormal;
+
+          Vector3 bottomNormal = Vector3.Cross(aVert[iBottom + 1] - aVert[iBottom], aVert[iBottom + 2] - aVert[iBottom]).normalized;
+          aNormal[iNormal++] = bottomNormal;
+          aNormal[iNormal++] = bottomNormal;
+          aNormal[iNormal++] = bottomNormal;
+
+          aIndex[iIndex++] = iTop;
+          aIndex[iIndex++] = iTop + 2;
+          aIndex[iIndex++] = iTop + 1;
+
+          aIndex[iIndex++] = iBottom;
+          aIndex[iIndex++] = iBottom + 1;
+          aIndex[iIndex++] = iBottom + 2;
+
+          for (int iLat = 0; iLat < latSegments - 2; ++iLat)
+          {
+            float latSin = aLatSin[iLat];
+            float latCos = aLatCos[iLat];
+            float latSinNext = aLatSin[iLat + 1];
+            float latCosNext = aLatCos[iLat + 1];
+
+            int iQuadStart = iVert;
+
+            aVert[iVert++] = new Vector3(longCos * latSin, latCos, longSin * latSin);
+            aVert[iVert++] = new Vector3(longCosNext * latSin, latCos, longSinNext * latSin);
+            aVert[iVert++] = new Vector3(longCosNext * latSinNext, latCosNext, longSinNext * latSinNext);
+            aVert[iVert++] = new Vector3(longCos * latSinNext, latCosNext, longSin * latSinNext);
+
+            Vector3 quadNormal = Vector3.Cross(aVert[iQuadStart + 1] - aVert[iQuadStart], aVert[iQuadStart + 2] - aVert[iQuadStart]).normalized;
+            aNormal[iNormal++] = quadNormal;
+            aNormal[iNormal++] = quadNormal;
+            aNormal[iNormal++] = quadNormal;
+            aNormal[iNormal++] = quadNormal;
+
+            aIndex[iIndex++] = iQuadStart;
+            aIndex[iIndex++] = iQuadStart + 1;
+            aIndex[iIndex++] = iQuadStart + 2;
+
+            aIndex[iIndex++] = iQuadStart;
+            aIndex[iIndex++] = iQuadStart + 2;
+            aIndex[iIndex++] = iQuadStart + 3;
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_sphereFlatShadedMeshPool.Add(meshKey, mesh);
       }
 
       return mesh;
