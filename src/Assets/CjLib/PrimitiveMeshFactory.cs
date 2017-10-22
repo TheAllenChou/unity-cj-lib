@@ -508,6 +508,7 @@ namespace CjLib
     private static Dictionary<int, Mesh> s_cylinderWireframeMeshPool;
     private static Dictionary<int, Mesh> s_cylinderSolidColorMeshPool;
     private static Dictionary<int, Mesh> s_cylinderFlatShadedMeshPool;
+    private static Dictionary<int, Mesh> s_cylinderSmoothShadedMeshPool;
 
     public static Mesh CylinderWireframe(int numSegments)
     {
@@ -664,7 +665,6 @@ namespace CjLib
           aVert[iBottomCapStart + i] = bottom + offset;
           aVert[iTopCapStart + i] = top + offset;
 
-          // TODO: normal
           aNormal[iBottomCapStart + i] = new Vector3(0.0f, -1.0f, 0.0f);
           aNormal[iTopCapStart + i] = new Vector3(0.0f, 1.0f, 0.0f);
 
@@ -705,6 +705,88 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
         s_cylinderFlatShadedMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh CylinderSmoothShaded(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_cylinderSmoothShadedMeshPool == null)
+        s_cylinderSmoothShadedMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_cylinderSmoothShadedMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments * 4 + 2];
+        Vector3[] aNormal = new Vector3[numSegments * 4 + 2];
+        int[] aIndex = new int[numSegments * 12];
+
+        Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
+        Vector3 top = new Vector3(0.0f, 0.5f, 0.0f);
+
+        int iBottomCapStart = 0;
+        int iTopCapStart = numSegments;
+        int iSideStart = numSegments * 2;
+        int iBottom = numSegments * 4;
+        int iTop = numSegments * 4 + 1;
+
+        aVert[iBottom] = bottom;
+        aVert[iTop] = top;
+
+        aNormal[iBottom] = new Vector3(0.0f, -1.0f, 0.0f);
+        aNormal[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          // caps
+          Vector3 offset = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          aVert[iBottomCapStart + i] = bottom + offset;
+          aVert[iTopCapStart + i] = top + offset;
+
+          aNormal[iBottomCapStart + i] = new Vector3(0.0f, -1.0f, 0.0f);
+          aNormal[iTopCapStart + i] = new Vector3(0.0f, 1.0f, 0.0f);
+
+          aIndex[iIndex++] = iBottom;
+          aIndex[iIndex++] = iBottomCapStart + i;
+          aIndex[iIndex++] = iBottomCapStart + ((i + 1) % numSegments);
+
+          aIndex[iIndex++] = iTop;
+          aIndex[iIndex++] = iTopCapStart + ((i + 1) % numSegments);
+          aIndex[iIndex++] = iTopCapStart + i;
+
+          angle += angleIncrement;
+
+          // sides
+          Vector3 offsetNext = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          aVert[iSideStart + i * 2    ] = bottom + offset;
+          aVert[iSideStart + i * 2 + 1] = top + offset;
+
+          aNormal[iSideStart + i * 2    ] = offset;
+          aNormal[iSideStart + i * 2 + 1] = offset;
+
+          aIndex[iIndex++] = iSideStart + i * 2;
+          aIndex[iIndex++] = iSideStart + ((i * 2 + 3) % (numSegments * 2));
+          aIndex[iIndex++] = iSideStart + ((i * 2 + 2) % (numSegments * 2));
+
+          aIndex[iIndex++] = iSideStart + i * 2;
+          aIndex[iIndex++] = iSideStart + ((i * 2 + 1) % (numSegments * 2));
+          aIndex[iIndex++] = iSideStart + ((i * 2 + 3) % (numSegments * 2));
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_cylinderSmoothShadedMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;

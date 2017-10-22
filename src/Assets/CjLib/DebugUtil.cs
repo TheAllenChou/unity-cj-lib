@@ -292,9 +292,10 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.CylinderSolidColor(numSegments);
           break;
         case Style.FlatShaded:
-        case Style.SmoothShaded:
-          // TODO
           mesh = PrimitiveMeshFactory.CylinderFlatShaded(numSegments);
+          break;
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.CylinderSmoothShaded(numSegments);
           break;
       }
       if (mesh == null)

@@ -123,6 +123,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
+    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
     DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_wireframeColor);
   }
 
