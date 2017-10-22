@@ -91,7 +91,8 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Mesh s_boxWireframeMesh;
-    private static Mesh s_boxSolidMesh;
+    private static Mesh s_boxSolidNonShadedMesh;
+    private static Mesh s_boxSolidFlatShadedMesh;
 
     public static Mesh BoxWireframe()
     {
@@ -135,22 +136,22 @@ namespace CjLib
       return s_boxWireframeMesh;
     }
 
-    public static Mesh BoxSolid()
+    public static Mesh BoxSolidNonShaded()
     {
-      if (s_boxSolidMesh == null)
+      if (s_boxSolidNonShadedMesh == null)
       {
-        s_boxSolidMesh = new Mesh();
+        s_boxSolidNonShadedMesh = new Mesh();
 
         Vector3[] aVert =
         {
-          new Vector3(-0.5f, -0.5f, -0.5f), 
-          new Vector3(-0.5f,  0.5f, -0.5f), 
-          new Vector3( 0.5f,  0.5f, -0.5f), 
-          new Vector3( 0.5f, -0.5f, -0.5f), 
-          new Vector3(-0.5f, -0.5f,  0.5f), 
-          new Vector3(-0.5f,  0.5f,  0.5f), 
-          new Vector3( 0.5f,  0.5f,  0.5f), 
-          new Vector3( 0.5f, -0.5f,  0.5f), 
+          new Vector3(-0.5f, -0.5f, -0.5f), // 0
+          new Vector3(-0.5f,  0.5f, -0.5f), // 1
+          new Vector3( 0.5f,  0.5f, -0.5f), // 2
+          new Vector3( 0.5f, -0.5f, -0.5f), // 3
+          new Vector3(-0.5f, -0.5f,  0.5f), // 4
+          new Vector3(-0.5f,  0.5f,  0.5f), // 5
+          new Vector3( 0.5f,  0.5f,  0.5f), // 6
+          new Vector3( 0.5f, -0.5f,  0.5f), // 7
         };
 
         int[] aIndex =
@@ -163,11 +164,73 @@ namespace CjLib
           0, 3, 7, 0, 7, 4, 
         };
 
-        s_boxSolidMesh.vertices = aVert;
-        s_boxSolidMesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+        s_boxSolidNonShadedMesh.vertices = aVert;
+        s_boxSolidNonShadedMesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
       }
 
-      return s_boxSolidMesh;
+      return s_boxSolidNonShadedMesh;
+    }
+
+    public static Mesh BoxSolidFlatShaded()
+    {
+      if (s_boxSolidFlatShadedMesh == null)
+      {
+        s_boxSolidFlatShadedMesh = new Mesh();
+
+        Vector3[] aRawVert =
+        {
+          new Vector3(-0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f, -0.5f,  0.5f), 
+          new Vector3(-0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f, -0.5f,  0.5f), 
+        };
+
+        Vector3[] aVert =
+        {
+          aRawVert[0], aRawVert[1], aRawVert[2], aRawVert[0], aRawVert[2], aRawVert[3],
+          aRawVert[3], aRawVert[2], aRawVert[6], aRawVert[3], aRawVert[6], aRawVert[7],
+          aRawVert[7], aRawVert[6], aRawVert[5], aRawVert[7], aRawVert[5], aRawVert[4],
+          aRawVert[4], aRawVert[5], aRawVert[1], aRawVert[4], aRawVert[1], aRawVert[0],
+          aRawVert[1], aRawVert[5], aRawVert[6], aRawVert[1], aRawVert[6], aRawVert[2],
+          aRawVert[0], aRawVert[3], aRawVert[7], aRawVert[0], aRawVert[7], aRawVert[4],
+        };
+
+        Vector3[] aRawNormal =
+        {
+          new Vector3( 0.0f,  0.0f,  -1.0f), 
+          new Vector3( 1.0f,  0.0f,   0.0f), 
+          new Vector3( 0.0f,  0.0f,   1.0f), 
+          new Vector3(-1.0f,  0.0f,   0.0f), 
+          new Vector3( 0.0f,  1.0f,   0.0f), 
+          new Vector3( 0.0f, -1.0f,   0.0f), 
+        };
+
+        Vector3[] aNormal =
+        {
+          aRawNormal[0], aRawNormal[0], aRawNormal[0], aRawNormal[0], aRawNormal[0], aRawNormal[0],
+          aRawNormal[1], aRawNormal[1], aRawNormal[1], aRawNormal[1], aRawNormal[1], aRawNormal[1],
+          aRawNormal[2], aRawNormal[2], aRawNormal[2], aRawNormal[2], aRawNormal[2], aRawNormal[2],
+          aRawNormal[3], aRawNormal[3], aRawNormal[3], aRawNormal[3], aRawNormal[3], aRawNormal[3],
+          aRawNormal[4], aRawNormal[4], aRawNormal[4], aRawNormal[4], aRawNormal[4], aRawNormal[4],
+          aRawNormal[5], aRawNormal[5], aRawNormal[5], aRawNormal[5], aRawNormal[5], aRawNormal[5],
+        };
+        
+        int[] aIndex = new int[aVert.Length];
+        for (int i = 0; i < aIndex.Length; ++i)
+        {
+          aIndex[i] = i;
+        }
+
+        s_boxSolidFlatShadedMesh.vertices = aVert;
+        s_boxSolidFlatShadedMesh.normals = aNormal;
+        s_boxSolidFlatShadedMesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+      }
+
+      return s_boxSolidFlatShadedMesh;
     }
 
     // ------------------------------------------------------------------------
@@ -246,9 +309,10 @@ namespace CjLib
     // ------------------------------------------------------------------------
 
     private static Dictionary<int, Mesh> s_circleWireframeMeshPool;
+    private static Dictionary<int, Mesh> s_circleSolidMeshPool;
 
     // draw a circle on the XZ plane centered at origin in object space
-    public static Mesh Circle(int numSegments)
+    public static Mesh CircleWireframe(int numSegments)
     {
       if (numSegments <= 1)
         return null;
@@ -278,6 +342,50 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
 
         s_circleWireframeMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    // draw a circle on the XZ plane centered at origin in object space
+    public static Mesh CircleSolid(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_circleSolidMeshPool == null)
+        s_circleSolidMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_circleSolidMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments + 1];
+        int[] aIndex = new int[numSegments * 6];
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          aVert[i] = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          angle += angleIncrement;
+
+          aIndex[iIndex++] = numSegments;
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+          aIndex[iIndex++] = numSegments;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+          aIndex[iIndex++] = i;
+
+        }
+        aVert[numSegments] = Vector3.zero;
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_circleSolidMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;
