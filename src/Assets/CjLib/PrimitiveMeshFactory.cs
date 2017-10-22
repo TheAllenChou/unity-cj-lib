@@ -1016,8 +1016,8 @@ namespace CjLib
       {
         mesh = new Mesh();
 
-        int numVertsPerLong = (latSegments - 1) * 4 + 6;
-        int numTrisPerLong = (latSegments - 1) * 2 + 2;
+        int numVertsPerLong = (latSegments - 2) * 4 + 6;
+        int numTrisPerLong = (latSegments - 2) * 2 + 2;
 
         Vector3[] aVert = new Vector3[longSegments * numVertsPerLong];
         Vector3[] aNormal = new Vector3[longSegments * numVertsPerLong];
