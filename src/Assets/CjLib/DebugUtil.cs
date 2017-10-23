@@ -430,7 +430,18 @@ namespace CjLib
 
     public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = PrimitiveMeshFactory.Capsule2D(capSegments);
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.Capsule2DWireframe(capSegments);
+          break;
+        case Style.SolidColor:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.Capsule2DSolidColor(capSegments);
+          break;
+      }
       if (mesh == null)
         return;
 

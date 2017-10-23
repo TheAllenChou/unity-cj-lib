@@ -51,7 +51,8 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     DrawCapsuleDimensions(new Vector3(0.0f, -9.0f, 0.0f));
     DrawCapsuleLatSegments(new Vector3(3.0f, -9.0f, 0.0f));
     DrawCapsuleLongSegments(new Vector3(6.0f, -9.0f, 0.0f));
-
+    DrawCapsule2DSegments(new Vector3(9.0f, -9.0f, 0.0f));
+    
     m_phase += Time.deltaTime * 2.0f * Mathf.PI / 3.0f;
   }
 
@@ -149,6 +150,16 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     int longSegments = (int) Mathf.Floor(4.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, m_wireframeColor);
+  }
+
+  private void DrawCapsule2DSegments(Vector3 center)
+  {
+    float height = 1.0f + 0.2f * Mathf.Sin(m_phase);
+    float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
+    int capSegments = (int)Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
+
+    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_wireframeColor);
   }
 
 }

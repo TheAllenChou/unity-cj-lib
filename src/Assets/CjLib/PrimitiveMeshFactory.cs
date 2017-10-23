@@ -144,14 +144,14 @@ namespace CjLib
 
         Vector3[] aVert =
         {
-          new Vector3(-0.5f, -0.5f, -0.5f), // 0
-          new Vector3(-0.5f,  0.5f, -0.5f), // 1
-          new Vector3( 0.5f,  0.5f, -0.5f), // 2
-          new Vector3( 0.5f, -0.5f, -0.5f), // 3
-          new Vector3(-0.5f, -0.5f,  0.5f), // 4
-          new Vector3(-0.5f,  0.5f,  0.5f), // 5
-          new Vector3( 0.5f,  0.5f,  0.5f), // 6
-          new Vector3( 0.5f, -0.5f,  0.5f), // 7
+          new Vector3(-0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f,  0.5f, -0.5f), 
+          new Vector3( 0.5f, -0.5f, -0.5f), 
+          new Vector3(-0.5f, -0.5f,  0.5f), 
+          new Vector3(-0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f,  0.5f,  0.5f), 
+          new Vector3( 0.5f, -0.5f,  0.5f), 
         };
 
         int[] aIndex =
@@ -1368,8 +1368,9 @@ namespace CjLib
     }
 
     private static Dictionary<int, Mesh> s_capsule2dWireframeMeshPool;
+    private static Dictionary<int, Mesh> s_capsule2dSolidColorMeshPool;
 
-    public static Mesh Capsule2D(int capSegments)
+    public static Mesh Capsule2DWireframe(int capSegments)
     {
       if (capSegments <= 0)
         return null;
@@ -1412,6 +1413,59 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
 
         s_capsule2dWireframeMeshPool.Add(capSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh Capsule2DSolidColor(int capSegments)
+    {
+      if (capSegments <= 0)
+        return null;
+
+      if (s_capsule2dSolidColorMeshPool == null)
+        s_capsule2dSolidColorMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_capsule2dSolidColorMeshPool.TryGetValue(capSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[(capSegments + 1) * 2];
+        int[] aIndex = new int[(capSegments + 1) * 12];
+
+        int iVert = 0;
+        int iIndex = 0;
+        float angleIncrement = Mathf.PI / capSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < capSegments; ++i)
+        {
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+          angle += angleIncrement;
+        }
+        aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+        for (int i = 0; i < capSegments; ++i)
+        {
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+          angle += angleIncrement;
+        }
+        aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+
+        for (int i = 1; i < aVert.Length - 1; ++i)
+        {
+          aIndex[iIndex++] = 0;
+          aIndex[iIndex++] = (i + 1) % aVert.Length;
+          aIndex[iIndex++] = i;
+
+          aIndex[iIndex++] = 0;
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = (i + 1) % aVert.Length;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_capsule2dSolidColorMeshPool.Add(capSegments, mesh);
       }
 
       return mesh;
