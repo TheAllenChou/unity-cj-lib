@@ -411,7 +411,6 @@ namespace CjLib
         Vector3[] aVert = new Vector3[numSegments + 1];
         int[] aIndex = new int[numSegments * 6];
 
-        int iVert = 0;
         int iIndex = 0;
         float angleIncrement = 2.0f * Mathf.PI / numSegments;
         float angle = 0.0f;
@@ -766,7 +765,6 @@ namespace CjLib
           angle += angleIncrement;
 
           // sides
-          Vector3 offsetNext = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
           aVert[iSideStart + i * 2    ] = bottom + offset;
           aVert[iSideStart + i * 2 + 1] = top + offset;
 
@@ -1199,8 +1197,6 @@ namespace CjLib
         {
           float longSin = aLongSin[iLong];
           float longCos = aLongCos[iLong];
-          float longSinNext = aLongSin[(iLong + 1) % longSegments];
-          float longCosNext = aLongCos[(iLong + 1) % longSegments];
 
           for (int iLat = 0; iLat < latSegments - 1; ++iLat)
           {
@@ -1369,6 +1365,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_capsule2dWireframeMeshPool;
     private static Dictionary<int, Mesh> s_capsule2dSolidColorMeshPool;
+    private static Dictionary<int, Mesh> s_capsule2dFlatShadedMeshPool;
 
     public static Mesh Capsule2DWireframe(int capSegments)
     {
@@ -1451,7 +1448,7 @@ namespace CjLib
         }
         aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
 
-        for (int i = 1; i < aVert.Length - 1; ++i)
+        for (int i = 1; i < aVert.Length; ++i)
         {
           aIndex[iIndex++] = 0;
           aIndex[iIndex++] = (i + 1) % aVert.Length;
@@ -1466,6 +1463,72 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
         s_capsule2dSolidColorMeshPool.Add(capSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh Capsule2DFlatShaded(int capSegments)
+    {
+      if (capSegments <= 0)
+        return null;
+
+      if (s_capsule2dFlatShadedMeshPool == null)
+        s_capsule2dFlatShadedMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_capsule2dFlatShadedMeshPool.TryGetValue(capSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        int numVertsPerSide = (capSegments + 1) * 2;
+        Vector3[] aVert = new Vector3[numVertsPerSide * 2];
+        Vector3[] aNormal = new Vector3[numVertsPerSide * 2];
+        int[] aIndex = new int[numVertsPerSide * 6];
+
+        int iVert = 0;
+        int iNormal = 0;
+        int iIndex = 0;
+        float angleIncrement = Mathf.PI / capSegments;
+        float angle = 0.0f;
+        for (int iSide = 0; iSide < 2; ++iSide)
+        {
+          for (int i = 0; i < capSegments; ++i)
+          {
+            aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+            angle += angleIncrement;
+          }
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) + 0.5f, 0.0f);
+          for (int i = 0; i < capSegments; ++i)
+          {
+            aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+            angle += angleIncrement;
+          }
+          aVert[iVert++] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) - 0.5f, 0.0f);
+
+          Vector3 sideNormal = new Vector3(0.0f, 0.0f, (iSide == 0) ? -1.0f : 1.0f);
+          for (int i = 0; i < numVertsPerSide; ++i)
+          {
+            aNormal[iNormal++] = sideNormal;
+          }
+        }
+
+        for (int i = 1; i < numVertsPerSide; ++i)
+        {
+          aIndex[iIndex++] = 0;
+          aIndex[iIndex++] = (i + 1) % numVertsPerSide;
+          aIndex[iIndex++] = i;
+
+          aIndex[iIndex++] = numVertsPerSide;
+          aIndex[iIndex++] = numVertsPerSide + i;
+          aIndex[iIndex++] = numVertsPerSide + ((i + 1) % numVertsPerSide);
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_capsule2dFlatShadedMeshPool.Add(capSegments, mesh);
       }
 
       return mesh;

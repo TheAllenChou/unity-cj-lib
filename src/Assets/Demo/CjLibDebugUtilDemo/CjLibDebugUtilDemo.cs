@@ -158,7 +158,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
     int capSegments = (int)Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_solidColor, true, DebugUtil.Style.SolidColor);
+    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
     DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_wireframeColor);
   }
 

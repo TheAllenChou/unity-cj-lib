@@ -107,7 +107,6 @@ namespace CjLib
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
-      Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
@@ -123,7 +122,6 @@ namespace CjLib
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
-      Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
@@ -139,7 +137,6 @@ namespace CjLib
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
-      Quaternion rotation = new Quaternion(0, 0, 0, 1);
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
@@ -437,9 +434,11 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.Capsule2DWireframe(capSegments);
           break;
         case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.Capsule2DSolidColor(capSegments);
+          break;
         case Style.FlatShaded:
         case Style.SmoothShaded:
-          mesh = PrimitiveMeshFactory.Capsule2DSolidColor(capSegments);
+          mesh = PrimitiveMeshFactory.Capsule2DFlatShaded(capSegments);
           break;
       }
       if (mesh == null)
