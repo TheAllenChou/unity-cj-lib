@@ -364,7 +364,7 @@ namespace CjLib
     // identity rotation
     public static void DrawSphere(Vector3 center, float radius, int latSegments, int longSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color);
+      DrawSphere(center, Quaternion.identity, radius, latSegments, longSegments, color, depthTest, style);
     }
 
     public static void DrawSphereTripleCircles(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
@@ -392,7 +392,18 @@ namespace CjLib
 
     public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Mesh mesh = PrimitiveMeshFactory.Capsule(latSegmentsPerCap, longSegmentsPerCap);
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.CapsuleWireframe(latSegmentsPerCap, longSegmentsPerCap);
+          break;
+        case Style.SolidColor:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap);
+          break;
+      }
       if (mesh == null)
         return;
 
@@ -422,7 +433,7 @@ namespace CjLib
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
-      DrawCapsule(center, rotation, height, radius, latSegmentsPerCap, longSegmentsPerCap, color);
+      DrawCapsule(center, rotation, height, radius, latSegmentsPerCap, longSegmentsPerCap, color, depthTest, style);
     }
 
     public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
