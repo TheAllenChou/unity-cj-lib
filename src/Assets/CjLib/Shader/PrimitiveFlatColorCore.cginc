@@ -32,7 +32,7 @@ struct v2f
   float4 vertex : SV_POSITION;
 
 #ifdef NORMAL_ON
-  float3 normalDotView : NORMAL;
+  float3 normal : NORMAL;
 #endif
 };
 
@@ -51,17 +51,16 @@ v2f vert (appdata v)
 {
   v2f o;
 
-#ifdef NORMAL_ON
-  o.normalDotView = dot(v.normal, normalize(ObjSpaceViewDir(v.vertex)));
-  o.normalDotView = 0.8f * o.normalDotView + 0.2f; // darkest at 0.2f
-#endif
-
   const float ySign = sign(v.vertex.y) * sign(_Dimensions.w);
   v.vertex.y -= ySign * 0.5f;
   v.vertex.xyz *= _Dimensions.xyz;
   v.vertex.y += ySign * 0.5f * _Dimensions.w;
   o.vertex = UnityObjectToClipPos(v.vertex);
   o.vertex.z += _ZBias;
+
+#ifdef NORMAL_ON
+  o.normal = mul(UNITY_MATRIX_MV, float4(v.normal, 0.0f)).xyz;
+#endif
 
   return o;
 }
@@ -71,7 +70,8 @@ fixed4 frag (v2f i) : SV_Target
   fixed4 color = _Color;
 
 #ifdef NORMAL_ON
-  color.rgb *= i.normalDotView;
+  i.normal = normalize(i.normal);
+  color.rgb *= 0.8f * i.normal.z + 0.2f; // darkest at 0.2f
 #endif
 
   return color;
