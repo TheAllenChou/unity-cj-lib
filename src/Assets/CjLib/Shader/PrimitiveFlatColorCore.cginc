@@ -71,7 +71,7 @@ fixed4 frag (v2f i) : SV_Target
 
 #ifdef NORMAL_ON
   i.normal = normalize(i.normal);
-  color.rgb *= 0.8f * i.normal.z + 0.2f; // darkest at 0.2f
+  color.rgb *= 0.7f * i.normal.z + 0.3f; // darkest at 0.3f
 #endif
 
   return color;
