@@ -135,6 +135,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.0f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
 
+    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, m_solidColor, true, DebugUtil.Style.SolidColor);
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, m_wireframeColor);
   }
 
@@ -150,6 +151,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int longSegments = (int) Mathf.Floor(4.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
+    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, m_wireframeColor);
   }
 

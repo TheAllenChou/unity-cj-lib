@@ -14,7 +14,8 @@ using UnityEngine;
 
 namespace CjLib
 {
-  // use meshes returned by this factory right away because they are shared from cached mesh pools
+  // DO NOT modify nor keep references to the meshes returned by this factory
+  // because they are from shared pools of cached meshes
   public class PrimitiveMeshFactory
   {
 
@@ -453,7 +454,7 @@ namespace CjLib
         mesh = new Mesh();
 
         Vector3[] aVert = new Vector3[(numSegments + 1) * 2];
-        Vector3[] aNormal = new Vector3[(numSegments + 1) * 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[numSegments * 6];
 
         int iIndex = 0;
@@ -636,7 +637,7 @@ namespace CjLib
         mesh = new Mesh();
 
         Vector3[] aVert = new Vector3[numSegments * 6 + 2];
-        Vector3[] aNormal = new Vector3[numSegments * 6 + 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[numSegments * 12];
 
         Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
@@ -723,7 +724,7 @@ namespace CjLib
         mesh = new Mesh();
 
         Vector3[] aVert = new Vector3[numSegments * 4 + 2];
-        Vector3[] aNormal = new Vector3[numSegments * 4 + 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[numSegments * 12];
 
         Vector3 bottom = new Vector3(0.0f, -0.5f, 0.0f);
@@ -1019,7 +1020,7 @@ namespace CjLib
         int numTrisPerLong = (latSegments - 2) * 2 + 2;
 
         Vector3[] aVert = new Vector3[longSegments * numVertsPerLong];
-        Vector3[] aNormal = new Vector3[longSegments * numVertsPerLong];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[longSegments * numTrisPerLong * 3];
 
         Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
@@ -1149,7 +1150,7 @@ namespace CjLib
         int numTrisPerLong = (latSegments - 2) * 2 + 2;
 
         Vector3[] aVert = new Vector3[longSegments * numVertsPerLong + 2];
-        Vector3[] aNormal = new Vector3[longSegments * numVertsPerLong + 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[longSegments * numTrisPerLong * 3];
 
         Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
@@ -1259,6 +1260,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_capsuleWireframeMeshPool;
     private static Dictionary<int, Mesh> s_capsuleSolidColorMeshPool;
+    private static Dictionary<int, Mesh> s_capsuleSmoothShadedMeshPool;
 
     public static Mesh CapsuleWireframe(int latSegmentsPerCap, int longSegmentsPerCap)
     {
@@ -1482,6 +1484,134 @@ namespace CjLib
       return mesh;
     }
 
+    public static Mesh CapsuleSmoothShaded(int latSegmentsPerCap, int longSegmentsPerCap)
+    {
+      if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return null;
+
+      if (s_capsuleSmoothShadedMeshPool == null)
+        s_capsuleSmoothShadedMeshPool = new Dictionary<int, Mesh>();
+
+      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      Mesh mesh;
+      if (!s_capsuleSmoothShadedMeshPool.TryGetValue(meshKey, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[longSegmentsPerCap * latSegmentsPerCap * 2 + 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
+        int[] aIndex = new int[longSegmentsPerCap * (latSegmentsPerCap * 4) * 3];
+
+        Vector3 top = new Vector3(0.0f, 1.5f, 0.0f);
+        Vector3 bottom = new Vector3(0.0f, -1.5f, 0.0f);
+        int iTop = aVert.Length - 2;
+        int iBottom = aVert.Length - 1;
+        aVert[iTop] = top;
+        aVert[iBottom] = bottom;
+
+        aNormal[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+        aNormal[iBottom] = new Vector3(0.0f, -1.0f, 0.0f);
+
+        float[] aLatSin = new float[latSegmentsPerCap];
+        float[] aLatCos = new float[latSegmentsPerCap];
+        {
+          float latAngleIncrement = 0.5f * Mathf.PI / latSegmentsPerCap;
+          float latAngle = 0.0f;
+          for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
+          {
+            latAngle += latAngleIncrement;
+            aLatSin[iLat] = Mathf.Sin(latAngle);
+            aLatCos[iLat] = Mathf.Cos(latAngle);
+          }
+        }
+
+        float[] aLongSin = new float[longSegmentsPerCap];
+        float[] aLongCos = new float[longSegmentsPerCap];
+        {
+          float longAngleIncrement = 2.0f * Mathf.PI / longSegmentsPerCap;
+          float longAngle = 0.0f;
+          for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
+          {
+            longAngle += longAngleIncrement;
+            aLongSin[iLong] = Mathf.Sin(longAngle);
+            aLongCos[iLong] = Mathf.Cos(longAngle);
+          }
+        }
+
+        int iVert = 0;
+        int iNormal = 0;
+        int iIndex = 0;
+        for (int iLong = 0; iLong < longSegmentsPerCap; ++iLong)
+        {
+          float longSin = aLongSin[iLong];
+          float longCos = aLongCos[iLong];
+
+          for (int iLat = 0; iLat < latSegmentsPerCap; ++iLat)
+          {
+            float latSin = aLatSin[iLat];
+            float latCos = aLatCos[iLat];
+
+            aVert[iVert    ] = new Vector3(longCos * latSin,  latCos + 0.5f, longSin * latSin);
+            aVert[iVert + 1] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
+
+            aNormal[iNormal    ] = new Vector3(longCos * latSin,  latCos, longSin * latSin);
+            aNormal[iNormal + 1] = new Vector3(longCos * latSin, -latCos, longSin * latSin);
+
+            if (iLat == 0)
+            {
+              aIndex[iIndex++] = iTop;
+              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              aIndex[iIndex++] = iVert;
+
+              aIndex[iIndex++] = iBottom;
+              aIndex[iIndex++] = iVert + 1;
+              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+            }
+            else
+            {
+              aIndex[iIndex++] = iVert - 2;
+              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              aIndex[iIndex++] = iVert;
+
+              aIndex[iIndex++] = iVert - 2;
+              aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+
+              aIndex[iIndex++] = iVert - 1;
+              aIndex[iIndex++] = iVert + 1;
+              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+
+              aIndex[iIndex++] = iVert - 1;
+              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+
+              if (iLat == latSegmentsPerCap - 1)
+              {
+                aIndex[iIndex++] = iVert;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert + 1;
+
+                aIndex[iIndex++] = iVert;
+                aIndex[iIndex++] = (iVert+ latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
+            }
+
+            iVert += 2;
+            iNormal += 2;
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_capsuleSmoothShadedMeshPool.Add(meshKey, mesh);
+      }
+
+      return mesh;
+    }
+
     private static Dictionary<int, Mesh> s_capsule2dWireframeMeshPool;
     private static Dictionary<int, Mesh> s_capsule2dSolidColorMeshPool;
     private static Dictionary<int, Mesh> s_capsule2dFlatShadedMeshPool;
@@ -1602,7 +1732,7 @@ namespace CjLib
 
         int numVertsPerSide = (capSegments + 1) * 2;
         Vector3[] aVert = new Vector3[numVertsPerSide * 2];
-        Vector3[] aNormal = new Vector3[numVertsPerSide * 2];
+        Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[numVertsPerSide * 6];
 
         int iVert = 0;

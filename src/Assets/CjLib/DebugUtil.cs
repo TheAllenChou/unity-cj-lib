@@ -399,9 +399,11 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.CapsuleWireframe(latSegmentsPerCap, longSegmentsPerCap);
           break;
         case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap);
+          break;
         case Style.FlatShaded:
         case Style.SmoothShaded:
-          mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap);
+          mesh = PrimitiveMeshFactory.CapsuleSmoothShaded(latSegmentsPerCap, longSegmentsPerCap);
           break;
       }
       if (mesh == null)
