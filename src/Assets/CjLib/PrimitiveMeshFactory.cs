@@ -1499,7 +1499,7 @@ namespace CjLib
       {
         mesh = new Mesh();
 
-        Vector3[] aVert = new Vector3[longSegmentsPerCap * latSegmentsPerCap * (6 + 8)];
+        Vector3[] aVert = new Vector3[longSegmentsPerCap * (latSegmentsPerCap - 1) * 8 + longSegmentsPerCap * 10];
         Vector3[] aNormal = new Vector3[aVert.Length];
         int[] aIndex = new int[longSegmentsPerCap * (latSegmentsPerCap * 4) * 3];
 
