@@ -485,9 +485,11 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.ConeWireframe(numSegments);
           break;
         case Style.SolidColor:
+          mesh = PrimitiveMeshFactory.ConeSolidColor(numSegments);
+          break;
         case Style.FlatShaded:
         case Style.SmoothShaded:
-          mesh = PrimitiveMeshFactory.ConeSolidColor(numSegments);
+          mesh = PrimitiveMeshFactory.ConeFlatShaded(numSegments);
           break;
       }
       if (mesh == null)

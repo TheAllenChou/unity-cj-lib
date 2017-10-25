@@ -1978,6 +1978,7 @@ namespace CjLib
 
     private static Dictionary<int, Mesh> s_coneWireframeMeshPool;
     private static Dictionary<int, Mesh> s_coneSolidColorMeshPool;
+    private static Dictionary<int, Mesh> s_coneFlatShadedMeshPool;
 
     public static Mesh ConeWireframe(int numSegments)
     {
@@ -2059,7 +2060,7 @@ namespace CjLib
           {
             aIndex[iIndex++] = 0;
             aIndex[iIndex++] = i - 1;
-            aIndex[iIndex++] = i ;
+            aIndex[iIndex++] = i;
           }
 
           angle += angleIncrement;
@@ -2069,6 +2070,80 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
         s_coneSolidColorMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh ConeFlatShaded(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_coneFlatShadedMeshPool == null)
+        s_coneFlatShadedMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_coneFlatShadedMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments * 3 + numSegments];
+        Vector3[] aNormal = new Vector3[aVert.Length];
+        int[] aIndex = new int[numSegments * 3 + (numSegments - 2) * 3];
+
+        Vector3 top = new Vector3(0.0f, 1.0f, 0.0f);
+
+        Vector3[] aBaseVert = new Vector3[numSegments];
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          aBaseVert[i] = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+          angle += angleIncrement;
+        }
+
+        int iVert = 0;
+        int iIndex = 0;
+        int iNormal = 0;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          int iSideTriStart = iVert;
+
+          aVert[iVert++] = top;
+          aVert[iVert++] = aBaseVert[i];
+          aVert[iVert++] = aBaseVert[(i + 1) % numSegments];
+
+          Vector3 sideTriNormal = Vector3.Cross(aVert[iSideTriStart + 2] - aVert[iSideTriStart], aVert[iSideTriStart + 1] - aVert[iSideTriStart]).normalized;
+          aNormal[iNormal++] = sideTriNormal;
+          aNormal[iNormal++] = sideTriNormal;
+          aNormal[iNormal++] = sideTriNormal;
+
+          aIndex[iIndex++] = iSideTriStart;
+          aIndex[iIndex++] = iSideTriStart + 2;
+          aIndex[iIndex++] = iSideTriStart + 1;
+        }
+
+        int iBaseStart = iVert;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          aVert[iVert++] = aBaseVert[i];
+
+          aNormal[iNormal++] = new Vector3(0.0f, -1.0f, 0.0f);
+
+          if (i >= 2)
+          {
+            aIndex[iIndex++] = iBaseStart;
+            aIndex[iIndex++] = iBaseStart + i - 1;
+            aIndex[iIndex++] = iBaseStart + i;
+          }
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_coneFlatShadedMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;
