@@ -13,8 +13,8 @@
 */
 /******************************************************************************/
 
-#ifndef PRIMITIVE_FLAT_COLOR_CORE
-#define PRIMITIVE_FLAT_COLOR_CORE
+#ifndef PRIMITIVE_CORE
+#define PRIMITIVE_CORE
 
 #include "UnityCG.cginc"
 

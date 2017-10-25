@@ -9,7 +9,7 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/PrimitiveFlatColorNoZTest"
+Shader "CjLib/PrimitiveNoZTest"
 {
   SubShader
   {
@@ -25,7 +25,7 @@ Shader "CjLib/PrimitiveFlatColorNoZTest"
       #pragma shader_feature NORMAL_ON
       #pragma vertex vert
       #pragma fragment frag
-      #include "PrimitiveFlatColorCore.cginc"
+      #include "PrimitiveCore.cginc"
       ENDCG
     }
   }

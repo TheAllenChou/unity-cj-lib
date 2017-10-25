@@ -47,7 +47,7 @@ namespace CjLib
         {
           if (s_materialNormalOnZTestOn == null)
           {
-            s_materialNormalOnZTestOn = new Material(Shader.Find("CjLib/PrimitiveFlatColor"));
+            s_materialNormalOnZTestOn = new Material(Shader.Find("CjLib/Primitive"));
             s_materialNormalOnZTestOn.EnableKeyword("NORMAL_ON");
           }
           return s_materialNormalOnZTestOn;
@@ -56,7 +56,7 @@ namespace CjLib
         {
           if (s_materialNormalOffZTestOn == null)
           {
-            s_materialNormalOffZTestOn = new Material(Shader.Find("CjLib/PrimitiveFlatColor"));
+            s_materialNormalOffZTestOn = new Material(Shader.Find("CjLib/Primitive"));
             s_materialNormalOffZTestOn.DisableKeyword("NORMAL_ON");
           }
           return s_materialNormalOffZTestOn;
@@ -68,7 +68,7 @@ namespace CjLib
         {
           if (s_materiaNormalOnZTestOff == null)
           {
-            s_materiaNormalOnZTestOff = new Material(Shader.Find("CjLib/PrimitiveFlatColor"));
+            s_materiaNormalOnZTestOff = new Material(Shader.Find("CjLib/PrimitiveNoZTest"));
             s_materiaNormalOnZTestOff.EnableKeyword("NORMAL_ON");
           }
           return s_materiaNormalOnZTestOff;
@@ -77,7 +77,7 @@ namespace CjLib
         {
           if (s_materiaNormalOffZTestOff == null)
           {
-            s_materiaNormalOffZTestOff = new Material(Shader.Find("CjLib/PrimitiveFlatColor"));
+            s_materiaNormalOffZTestOff = new Material(Shader.Find("CjLib/PrimitiveNoZTest"));
             s_materiaNormalOffZTestOff.DisableKeyword("NORMAL_ON");
           }
           return s_materiaNormalOffZTestOff;

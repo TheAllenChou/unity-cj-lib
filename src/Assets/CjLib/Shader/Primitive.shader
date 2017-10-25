@@ -9,7 +9,7 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/PrimitiveFlatColor"
+Shader "CjLib/Primitive"
 {
   SubShader
   {
@@ -24,7 +24,7 @@ Shader "CjLib/PrimitiveFlatColor"
       #pragma shader_feature NORMAL_ON
       #pragma vertex vert
       #pragma fragment frag
-      #include "PrimitiveFlatColorCore.cginc"
+      #include "PrimitiveCore.cginc"
       ENDCG
     }
   }
