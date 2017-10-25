@@ -572,7 +572,7 @@ namespace CjLib
       DrawCone(coneBaseCenter, rotation, coneHeight, coneRadius, numSegments, color, depthTest, style);
 
 
-      if (stemThickness == 0.0f)
+      if (stemThickness <= 0.0f)
       {
         DrawLine(from, to, color, depthTest);
       }
