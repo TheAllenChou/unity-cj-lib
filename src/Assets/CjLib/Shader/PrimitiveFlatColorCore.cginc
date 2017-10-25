@@ -59,7 +59,14 @@ v2f vert (appdata v)
   o.vertex.z += _ZBias;
 
 #ifdef NORMAL_ON
-  o.normal = mul(UNITY_MATRIX_MV, float4(v.normal, 0.0f)).xyz;
+  float4x4 scaleInverseTranspose = float4x4
+  (
+    1.0f / _Dimensions.x, 0.0f, 0.0f, 0.0f, 
+    0.0f, 1.0f / _Dimensions.y, 0.0f, 0.0f, 
+    0.0f, 0.0f, 1.0f / _Dimensions.z, 0.0f, 
+    0.0f, 0.0f, 0.0f, 1.0f
+  );
+  o.normal = mul(mul(UNITY_MATRIX_IT_MV, scaleInverseTranspose), float4(v.normal, 0.0f)).xyz;
 #endif
 
   return o;
