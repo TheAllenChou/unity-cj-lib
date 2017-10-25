@@ -326,6 +326,8 @@ namespace CjLib
       if (height < MathUtil.kEpsilon)
         return;
 
+      axisY.Normalize();
+
       Vector3 center = 0.5f * (point0 + point1);
 
       Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
@@ -446,6 +448,8 @@ namespace CjLib
       if (height < MathUtil.kEpsilon)
         return;
 
+      axisY.Normalize();
+
       Vector3 center = 0.5f * (point0 + point1);
 
       Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
@@ -534,6 +538,8 @@ namespace CjLib
       float height = axisY.magnitude;
       if (height < MathUtil.kEpsilon)
         return;
+
+      axisY.Normalize();
 
       Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
