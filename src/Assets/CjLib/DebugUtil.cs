@@ -482,10 +482,12 @@ namespace CjLib
       switch (style)
       {
         case Style.Wireframe:
+          mesh = PrimitiveMeshFactory.ConeWireframe(numSegments);
+          break;
         case Style.SolidColor:
         case Style.FlatShaded:
         case Style.SmoothShaded:
-          mesh = PrimitiveMeshFactory.ConeWireframe(numSegments);
+          mesh = PrimitiveMeshFactory.ConeSolidColor(numSegments);
           break;
       }
       if (mesh == null)

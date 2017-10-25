@@ -1973,11 +1973,11 @@ namespace CjLib
     // end: capsule
 
 
-
     // cone
     // ------------------------------------------------------------------------
 
     private static Dictionary<int, Mesh> s_coneWireframeMeshPool;
+    private static Dictionary<int, Mesh> s_coneSolidColorMeshPool;
 
     public static Mesh ConeWireframe(int numSegments)
     {
@@ -2019,6 +2019,55 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
 
         s_coneWireframeMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh ConeSolidColor(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_coneSolidColorMeshPool == null)
+        s_coneSolidColorMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_coneSolidColorMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments + 2];
+        int[] aIndex = new int[numSegments * 6];
+
+        int iTop = numSegments;
+        int iBaseCenter = numSegments + 1;
+
+        aVert[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+        aVert[iBaseCenter] = new Vector3(0.0f, 0.0f, 0.0f);
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          aVert[i] = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+
+          aIndex[iIndex++] = iTop;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+          aIndex[iIndex++] = i;
+
+          aIndex[iIndex++] = iBaseCenter;
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+
+          angle += angleIncrement;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_coneSolidColorMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;
