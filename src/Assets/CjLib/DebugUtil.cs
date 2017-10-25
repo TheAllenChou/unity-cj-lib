@@ -149,6 +149,9 @@ namespace CjLib
 
     public static void DrawBox(Vector3 center, Quaternion rotation, Vector3 dimensions, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (dimensions.x < MathUtil.kEpsilon || dimensions.y < MathUtil.kEpsilon || dimensions.z < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -185,6 +188,9 @@ namespace CjLib
     // draw a rectangle on the XZ plane centered at origin in object space, dimensions = (X dimension, Z dimension)
     public static void DrawRect(Vector3 center, Quaternion rotation, Vector2 dimensions, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (dimensions.x < MathUtil.kEpsilon || dimensions.y < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -206,7 +212,7 @@ namespace CjLib
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
-      materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 0.0f, dimensions.y, 0.0f));
+      materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, 1.0f, dimensions.y, 0.0f));
       materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
 
       Graphics.DrawMesh(mesh, center, rotation, material, 0, null, 0, materialProperties, false, false, false);
@@ -229,6 +235,9 @@ namespace CjLib
     // draw a circle on the XZ plane centered at origin in object space
     public static void DrawCircle(Vector3 center, Quaternion rotation, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -279,6 +288,9 @@ namespace CjLib
 
     public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -332,6 +344,9 @@ namespace CjLib
 
     public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -392,6 +407,9 @@ namespace CjLib
 
     public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -423,9 +441,6 @@ namespace CjLib
 
     public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
-        return;
-
       Vector3 axisY = point1 - point0;
       float height = axisY.magnitude;
       if (height < MathUtil.kEpsilon)
@@ -442,6 +457,9 @@ namespace CjLib
 
     public static void DrawCapsule2D(Vector3 center, float rotationDeg, float height, float radius, int capSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -478,6 +496,9 @@ namespace CjLib
 
     public static void DrawCone(Vector3 baseCenter, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
+      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+        return;
+
       Mesh mesh = null;
       switch (style)
       {
@@ -488,8 +509,10 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.ConeSolidColor(numSegments);
           break;
         case Style.FlatShaded:
-        case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.ConeFlatShaded(numSegments);
+          break;
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.ConeSmoothShaded(numSegments);
           break;
       }
       if (mesh == null)
@@ -507,9 +530,6 @@ namespace CjLib
 
     public static void DrawCone(Vector3 baseCenter, Vector3 top, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      if (numSegments <= 1)
-        return;
-
       Vector3 axisY = top - baseCenter;
       float height = axisY.magnitude;
       if (height < MathUtil.kEpsilon)

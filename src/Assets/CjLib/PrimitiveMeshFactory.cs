@@ -1979,6 +1979,7 @@ namespace CjLib
     private static Dictionary<int, Mesh> s_coneWireframeMeshPool;
     private static Dictionary<int, Mesh> s_coneSolidColorMeshPool;
     private static Dictionary<int, Mesh> s_coneFlatShadedMeshPool;
+    private static Dictionary<int, Mesh> s_coneSmoothhadedMeshPool;
 
     public static Mesh ConeWireframe(int numSegments)
     {
@@ -2144,6 +2145,68 @@ namespace CjLib
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
         s_coneFlatShadedMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    public static Mesh ConeSmoothShaded(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_coneSmoothhadedMeshPool == null)
+        s_coneSmoothhadedMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_coneSmoothhadedMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments * 2 + 1];
+        Vector3[] aNormal = new Vector3[aVert.Length];
+        int[] aIndex = new int[numSegments * 3 + (numSegments - 2) * 3];
+
+        int iTop = aVert.Length - 1;
+
+        aVert[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+
+        float sqrt2Inv = Mathf.Sqrt(0.5f);
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          float cos = Mathf.Cos(angle);
+          float sin = Mathf.Sin(angle);
+
+          Vector3 baseVert = cos * Vector3.right + sin * Vector3.forward;
+          aVert[i] = baseVert;
+          aVert[numSegments + i] = baseVert;
+
+          aNormal[i] = new Vector3(cos * sqrt2Inv, sqrt2Inv, sin * sqrt2Inv);
+          aNormal[numSegments + i] = new Vector3(0.0f, -1.0f, 0.0f);
+
+          aIndex[iIndex++] = iTop;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+          aIndex[iIndex++] = i;
+
+          if (i >= 2)
+          {
+            aIndex[iIndex++] = numSegments;
+            aIndex[iIndex++] = numSegments + i - 1;
+            aIndex[iIndex++] = numSegments + i;
+          }
+
+          angle += angleIncrement;
+        }
+
+        mesh.vertices = aVert;
+        mesh.normals = aNormal;
+        mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        s_coneSmoothhadedMeshPool.Add(numSegments, mesh);
       }
 
       return mesh;
