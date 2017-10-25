@@ -2037,14 +2037,12 @@ namespace CjLib
       {
         mesh = new Mesh();
 
-        Vector3[] aVert = new Vector3[numSegments + 2];
-        int[] aIndex = new int[numSegments * 6];
+        Vector3[] aVert = new Vector3[numSegments + 1];
+        int[] aIndex = new int[numSegments * 3 + (numSegments - 2) * 3];
 
         int iTop = numSegments;
-        int iBaseCenter = numSegments + 1;
 
         aVert[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
-        aVert[iBaseCenter] = new Vector3(0.0f, 0.0f, 0.0f);
 
         int iIndex = 0;
         float angleIncrement = 2.0f * Mathf.PI / numSegments;
@@ -2057,9 +2055,12 @@ namespace CjLib
           aIndex[iIndex++] = (i + 1) % numSegments;
           aIndex[iIndex++] = i;
 
-          aIndex[iIndex++] = iBaseCenter;
-          aIndex[iIndex++] = i;
-          aIndex[iIndex++] = (i + 1) % numSegments;
+          if (i >= 2)
+          {
+            aIndex[iIndex++] = 0;
+            aIndex[iIndex++] = i - 1;
+            aIndex[iIndex++] = i ;
+          }
 
           angle += angleIncrement;
         }
