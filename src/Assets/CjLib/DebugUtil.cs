@@ -328,7 +328,7 @@ namespace CjLib
 
       Vector3 center = 0.5f * (point0 + point1);
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
@@ -448,7 +448,7 @@ namespace CjLib
 
       Vector3 center = 0.5f * (point0 + point1);
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
@@ -544,5 +544,46 @@ namespace CjLib
 
     // ------------------------------------------------------------------------
     // end: cone
+
+
+    // arrow
+    // ------------------------------------------------------------------------
+
+    public static void DrawArrow(Vector3 from, Vector3 to, float coneRadius, float coneHeight, int numSegments, float stemThickness, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    {
+      Vector3 axisY = to - from;
+      float axisLength = axisY.magnitude;
+      if (axisLength < MathUtil.kEpsilon)
+        return;
+
+      axisY.Normalize();
+
+      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
+      Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
+
+      Vector3 coneBaseCenter = to - coneHeight * axisY; // top of cone ends at "to"
+      DrawCone(coneBaseCenter, rotation, coneHeight, coneRadius, numSegments, color, depthTest, style);
+
+
+      if (stemThickness == 0.0f)
+      {
+        DrawLine(from, to, color, depthTest);
+      }
+      else if (coneHeight < axisLength)
+      {
+        to -= coneHeight * axisY;
+
+        DrawCylinder(from, to, 0.5f * stemThickness, numSegments, color, depthTest, style);
+      }
+    }
+
+    public static void DrawArrow(Vector3 from, Vector3 to, float size, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    {
+      DrawArrow(from, to, 0.5f * size, size, 8, 0.0f, color, depthTest, style);
+    }
+
+    // ------------------------------------------------------------------------
+    // end: arrow
   }
 }
