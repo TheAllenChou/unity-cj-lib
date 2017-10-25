@@ -402,6 +402,8 @@ namespace CjLib
           mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap);
           break;
         case Style.FlatShaded:
+          mesh = PrimitiveMeshFactory.CapsuleFlatShaded(latSegmentsPerCap, longSegmentsPerCap);
+          break;
         case Style.SmoothShaded:
           mesh = PrimitiveMeshFactory.CapsuleSmoothShaded(latSegmentsPerCap, longSegmentsPerCap);
           break;
