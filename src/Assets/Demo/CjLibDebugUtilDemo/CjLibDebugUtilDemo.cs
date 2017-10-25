@@ -48,6 +48,9 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     DrawCylinderDimensions(new Vector3(0.0f, -6.0f, 0.0f));
     DrawCylinderSegments(new Vector3(3.0f, -6.0f, 0.0f));
 
+    DrawConeDimensions(new Vector3(6.0f, -6.0f, 0.0f));
+    DrawConeSegments(new Vector3(9.0f, -6.0f, 0.0f));
+
     DrawCapsuleDimensions(new Vector3(0.0f, -9.0f, 0.0f));
     DrawCapsuleLatSegments(new Vector3(3.0f, -9.0f, 0.0f));
     DrawCapsuleLongSegments(new Vector3(6.0f, -9.0f, 0.0f));
@@ -128,6 +131,19 @@ public class CjLibDebugUtilDemo : MonoBehaviour
 
     DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
     DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_wireframeColor);
+  }
+
+  private void DrawConeDimensions(Vector3 baseCenter)
+  {
+    float height = 1.2f + 0.2f * Mathf.Sin(m_phase);
+    float radius = 0.6f - 0.2f * Mathf.Cos(m_phase);
+
+    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, height, radius, 12, m_wireframeColor);
+  }
+
+  private void DrawConeSegments(Vector3 baseCenter)
+  {
+    
   }
 
   private void DrawCapsuleDimensions(Vector3 center)

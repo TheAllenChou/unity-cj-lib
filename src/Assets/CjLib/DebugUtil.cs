@@ -471,5 +471,54 @@ namespace CjLib
 
     // ------------------------------------------------------------------------
     // end: capsule
+
+
+    // cone
+    // ------------------------------------------------------------------------
+
+    public static void DrawCone(Vector3 baseCenter, Quaternion rotation, float height, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    {
+      Mesh mesh = null;
+      switch (style)
+      {
+        case Style.Wireframe:
+        case Style.SolidColor:
+        case Style.FlatShaded:
+        case Style.SmoothShaded:
+          mesh = PrimitiveMeshFactory.ConeWireframe(numSegments);
+          break;
+      }
+      if (mesh == null)
+        return;
+
+      Material material = GetMaterial(style, depthTest);
+      MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+
+      materialProperties.SetColor("_Color", color);
+      materialProperties.SetVector("_Dimensions", new Vector4(radius, height, radius, 0.0f));
+      materialProperties.SetFloat("_ZBias", (style == Style.Wireframe) ? s_wireframeZBias : 0.0f);
+
+      Graphics.DrawMesh(mesh, baseCenter, rotation, material, 0, null, 0, materialProperties, false, false, false);
+    }
+
+    public static void DrawCone(Vector3 baseCenter, Vector3 top, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
+    {
+      if (numSegments <= 1)
+        return;
+
+      Vector3 axisY = top - baseCenter;
+      float height = axisY.magnitude;
+      if (height < MathUtil.kEpsilon)
+        return;
+
+      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
+      Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
+
+      DrawCone(baseCenter, rotation, height, radius, numSegments, color, depthTest, style);
+    }
+
+    // ------------------------------------------------------------------------
+    // end: cone
   }
 }

@@ -1971,5 +1971,60 @@ namespace CjLib
 
     // ------------------------------------------------------------------------
     // end: capsule
+
+
+
+    // cone
+    // ------------------------------------------------------------------------
+
+    private static Dictionary<int, Mesh> s_coneWireframeMeshPool;
+
+    public static Mesh ConeWireframe(int numSegments)
+    {
+      if (numSegments <= 1)
+        return null;
+
+      if (s_coneWireframeMeshPool == null)
+        s_coneWireframeMeshPool = new Dictionary<int, Mesh>();
+
+      Mesh mesh;
+      if (!s_coneWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      {
+        mesh = new Mesh();
+
+        Vector3[] aVert = new Vector3[numSegments + 1];
+        int[] aIndex = new int[numSegments * 4];
+
+        int iTop = numSegments;
+
+        aVert[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+
+        int iIndex = 0;
+        float angleIncrement = 2.0f * Mathf.PI / numSegments;
+        float angle = 0.0f;
+        for (int i = 0; i < numSegments; ++i)
+        {
+          aVert[i] = Mathf.Cos(angle) * Vector3.right + Mathf.Sin(angle) * Vector3.forward;
+
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = (i + 1) % numSegments;
+
+          aIndex[iIndex++] = i;
+          aIndex[iIndex++] = iTop;
+
+          angle += angleIncrement;
+        }
+
+        mesh.vertices = aVert;
+        mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        s_coneWireframeMeshPool.Add(numSegments, mesh);
+      }
+
+      return mesh;
+    }
+
+    // ------------------------------------------------------------------------
+    // end: cone
   }
 }
