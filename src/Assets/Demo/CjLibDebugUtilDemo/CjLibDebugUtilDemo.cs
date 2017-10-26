@@ -195,7 +195,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
 
     baseCenter -= 0.5f * (m_baseRotQuat * Vector3.up);
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
 
     DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, height, radius, 12, color, true, m_style);
   }
@@ -206,7 +206,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
 
     baseCenter -= 0.5f * (m_baseRotQuat * Vector3.up);
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
 
     DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, color, true, m_style);
   }
@@ -216,7 +216,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.0f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
 
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, color, true, m_style);
   }
@@ -225,7 +225,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int latSegments = (int) Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
 
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, latSegments, 6, color, true, m_style);
   }
@@ -234,7 +234,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int longSegments = (int) Mathf.Floor(4.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
 
     DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, color, true, m_style);
   }
@@ -245,7 +245,7 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
     int capSegments = (int)Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
 
     DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, color, true, m_style);
   }
