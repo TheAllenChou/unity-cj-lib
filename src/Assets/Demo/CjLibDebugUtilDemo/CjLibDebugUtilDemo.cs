@@ -146,8 +146,8 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 12, m_solidColor, true, DebugUtil.Style.SmoothShaded);
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 12, m_wireframeColor);
+    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
+    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, m_wireframeColor);
   }
 
   private void DrawCapsuleDimensions(Vector3 center)

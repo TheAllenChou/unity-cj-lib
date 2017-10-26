@@ -26,63 +26,53 @@ namespace CjLib
 
     private static float s_wireframeZBias = 1.0e-4f;
 
-    private static Material s_materialNormalOnZTestOn;
-    private static Material s_materialNormalOffZTestOn;
-    private static Material s_materiaNormalOnZTestOff;
-    private static Material s_materiaNormalOffZTestOff;
-    private static Material GetMaterial(Style style, bool depthTest)
+    private const int kNormalFlag        = 1 << 0;
+    private const int kCapShiftScaleFlag = 1 << 1;
+
+    private static Dictionary<int, Material> s_materialPool;
+
+    private static Material GetMaterial(Style style, bool depthTest, bool capShiftScale)
     {
-      bool normalOn = false;
+      int key = 0;
+
       switch (style)
       {
         case Style.FlatShaded:
         case Style.SmoothShaded:
-          normalOn = true;
+          key |= kNormalFlag;
           break;
       }
 
-      if (depthTest)
+      if (capShiftScale)
+        key |= kCapShiftScaleFlag;
+
+      if (s_materialPool == null)
+        s_materialPool = new Dictionary<int, Material>();
+
+      Material material;
+      if (!s_materialPool.TryGetValue(key, out material))
       {
-        if (normalOn)
-        {
-          if (s_materialNormalOnZTestOn == null)
-          {
-            s_materialNormalOnZTestOn = new Material(Shader.Find("CjLib/Primitive"));
-            s_materialNormalOnZTestOn.EnableKeyword("NORMAL_ON");
-          }
-          return s_materialNormalOnZTestOn;
-        }
-        else
-        {
-          if (s_materialNormalOffZTestOn == null)
-          {
-            s_materialNormalOffZTestOn = new Material(Shader.Find("CjLib/Primitive"));
-            s_materialNormalOffZTestOn.DisableKeyword("NORMAL_ON");
-          }
-          return s_materialNormalOffZTestOn;
-        }
+        string shaderName =
+          depthTest
+          ? "CjLib/Primitive"
+          : "CjLib/PrimitiveNoZTest";
+
+        Shader shader = Shader.Find(shaderName);
+        if (shader == null)
+          return null;
+
+        material = new Material(shader);
+
+        if ((key & kNormalFlag) != 0)
+          material.EnableKeyword("NORMAL_ON");
+
+        if ((key & kCapShiftScaleFlag) != 0)
+          material.EnableKeyword("CAP_SHIFT_SCALE");
+
+        s_materialPool.Add(key, material);
       }
-      else
-      {
-        if (normalOn)
-        {
-          if (s_materiaNormalOnZTestOff == null)
-          {
-            s_materiaNormalOnZTestOff = new Material(Shader.Find("CjLib/PrimitiveNoZTest"));
-            s_materiaNormalOnZTestOff.EnableKeyword("NORMAL_ON");
-          }
-          return s_materiaNormalOnZTestOff;
-        }
-        else
-        {
-          if (s_materiaNormalOffZTestOff == null)
-          {
-            s_materiaNormalOffZTestOff = new Material(Shader.Find("CjLib/PrimitiveNoZTest"));
-            s_materiaNormalOffZTestOff.DisableKeyword("NORMAL_ON");
-          }
-          return s_materiaNormalOffZTestOff;
-        }
-      }
+
+      return material;
     }
 
     private static MaterialPropertyBlock s_materialProperties;
@@ -101,7 +91,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(Style.Wireframe, depthTest);
+      Material material = GetMaterial(Style.Wireframe, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
@@ -116,7 +106,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(Style.Wireframe, depthTest);
+      Material material = GetMaterial(Style.Wireframe, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
@@ -131,7 +121,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(Style.Wireframe, depthTest);
+      Material material = GetMaterial(Style.Wireframe, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
@@ -169,7 +159,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(dimensions.x, dimensions.y, dimensions.z, 0.0f));
@@ -208,7 +198,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
@@ -255,7 +245,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
@@ -310,7 +300,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, true);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
       materialProperties.SetColor("_Color", color);
       materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
@@ -368,7 +358,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
@@ -431,7 +421,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, true);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
@@ -481,7 +471,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, true);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);
@@ -522,7 +512,7 @@ namespace CjLib
       if (mesh == null)
         return;
 
-      Material material = GetMaterial(style, depthTest);
+      Material material = GetMaterial(style, depthTest, false);
       MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
 
       materialProperties.SetColor("_Color", color);

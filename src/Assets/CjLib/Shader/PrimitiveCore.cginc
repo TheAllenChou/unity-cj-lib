@@ -39,7 +39,7 @@ struct v2f
 float4 _Color;
 
 // (x, y, z) == (dimensionX, dimensionY, dimensionZ)
-// w == shiftY (0.0 -> no shif;, >0.0 -> shift 0.5 towards origin, scale by dimensions, and then shoft back 0.5 * offsetY)
+// w == capShiftScale (shift 0.5 towards X-Z plane, scale by dimensions, and then shoft back 0.5 * capShiftScale)
 float4 _Dimensions;
 
 float _ZBias;
@@ -51,10 +51,17 @@ v2f vert (appdata v)
 {
   v2f o;
 
-  const float ySign = sign(v.vertex.y) * sign(_Dimensions.w);
+#ifdef CAP_SHIFT_SCALE
+  const float ySign = sign(v.vertex.y);
   v.vertex.y -= ySign * 0.5f;
+#endif
+
   v.vertex.xyz *= _Dimensions.xyz;
+
+#ifdef CAP_SHIFT_SCALE
   v.vertex.y += ySign * 0.5f * _Dimensions.w;
+#endif
+
   o.vertex = UnityObjectToClipPos(v.vertex);
   o.vertex.z += _ZBias;
 

@@ -23,6 +23,7 @@ Shader "CjLib/PrimitiveNoZTest"
 
       CGPROGRAM
       #pragma shader_feature NORMAL_ON
+      #pragma shader_feature CAP_SHIFT_SCALE
       #pragma vertex vert
       #pragma fragment frag
       #include "PrimitiveCore.cginc"
