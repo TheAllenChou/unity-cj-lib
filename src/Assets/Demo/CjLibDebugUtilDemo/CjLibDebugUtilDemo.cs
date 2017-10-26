@@ -21,7 +21,16 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   private Quaternion m_baseRotQuat;
 
   private Color m_wireframeColor;
-  private Color m_solidColor;
+
+  private DebugUtil.Style[] m_aStyle =
+   {
+     DebugUtil.Style.Wireframe, 
+     DebugUtil.Style.SolidColor, 
+     DebugUtil.Style.FlatShaded, 
+     DebugUtil.Style.SmoothShaded, 
+   };
+  private DebugUtil.Style m_style;
+  private int m_iStyle;
 
   public void Start()
   {
@@ -29,16 +38,29 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     m_basePos = new Vector3(-4.5f, 6.0f, 0.0f);
 
     m_wireframeColor = Color.white;
-    m_solidColor = new Color(0.0f, 0.5f, 0.5f);
+
+    m_iStyle = 0;
   }
 
   public void Update()
   {
+    m_phase += Time.deltaTime * 2.0f * Mathf.PI / 3.0f;
+
+    while (m_phase >= MathUtil.kTwoPi)
+    {
+      m_iStyle = (m_iStyle + 1) % m_aStyle.Length;
+      m_style = m_aStyle[m_iStyle];
+      m_phase -= MathUtil.kTwoPi;
+    }
+
     m_baseRotDeg = -20.0f * Mathf.Cos(m_phase);
     m_baseRotQuat = Quaternion.Euler(20.0f * Mathf.Sin(m_phase), 0.0f, -20.0f * Mathf.Cos(m_phase));
 
     DrawBoxDimensions(new Vector3(0.0f, 0.0f, 0.0f));
     DrawRectDimensions(new Vector3(3.0f, 0.0f, 0.0f));
+
+    DrawArrowDimensions(new Vector3(6.0f, 0.0f, 0.0f));
+    DrawArrowSegments(new Vector3(9.0f, 0.0f, 0.0f));
 
     DrawCircleSegments(new Vector3(0.0f, -3.0f, 0.0f));
     DrawSphereTripleCirclesSegments(new Vector3(3.0f, -3.0f, 0.0f));
@@ -55,8 +77,6 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     DrawCapsuleLatSegments(new Vector3(3.0f, -9.0f, 0.0f));
     DrawCapsuleLongSegments(new Vector3(6.0f, -9.0f, 0.0f));
     DrawCapsule2DSegments(new Vector3(9.0f, -9.0f, 0.0f));
-    
-    m_phase += Time.deltaTime * 2.0f * Mathf.PI / 3.0f;
   }
 
   private void DrawBoxDimensions(Vector3 center)
@@ -68,8 +88,9 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 1.2f * Mathf.PI)
     );
 
-    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.7f, 0.2f, 0.2f));
+
+    DebugUtil.DrawBox(center + m_basePos, m_baseRotQuat, dimensions, color, true, m_style);
   }
 
   private void DrawRectDimensions(Vector3 center)
@@ -80,40 +101,72 @@ public class CjLibDebugUtilDemo : MonoBehaviour
       1.0f + 0.2f * Mathf.Sin(m_phase + 0.6f * Mathf.PI)
     );
 
-    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.7f, 0.2f, 0.2f));
+
+    DebugUtil.DrawRect2D(center + m_basePos, m_baseRotDeg, dimensions, color, true, m_style);
+  }
+
+  private void DrawArrowDimensions(Vector3 center)
+  {
+    float height = 1.1f + 0.3f * Mathf.Sin(m_phase);
+    float radius = 0.3f - 0.1f * Mathf.Cos(m_phase);
+
+    Vector3 v0 = center + m_basePos - 0.5f * height * (m_baseRotQuat * Vector3.up);
+    Vector3 v1 = center + m_basePos + 0.5f * height * (m_baseRotQuat * Vector3.up);
+
+    int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
+
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.9f, 0.9f, 0.1f));
+
+    DebugUtil.DrawArrow(v0, v1, radius, 2.0f * radius, numSegments, radius * 0.4f, color, true, m_style);
+  }
+
+  private void DrawArrowSegments(Vector3 center)
+  {
+    Vector3 v0 = center + m_basePos - 0.7f * (m_baseRotQuat * Vector3.up);
+    Vector3 v1 = center + m_basePos + 0.7f * (m_baseRotQuat * Vector3.up);
+
+    int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
+
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.9f, 0.9f, 0.1f));
+
+    DebugUtil.DrawArrow(v0, v1, 0.4f, 0.8f, numSegments, 0.0f, color, true, m_style);
   }
 
   private void DrawCircleSegments(Vector3 center)
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.8f, 0.5f, 0.0f));
+
+    DebugUtil.DrawCircle2D(center + m_basePos, 1.0f, numSegments, color, true, m_style);
   }
 
   private void DrawSphereTripleCirclesSegments(Vector3 center)
   {
     int numSegments = (int) Mathf.Floor(8.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.8f, 0.5f, 0.0f));
+
+    DebugUtil.DrawSphereTripleCircles(center + m_basePos, m_baseRotQuat, 1.0f, numSegments, color, true, m_style);
   }
 
   private void DrawSphereLatSegments(Vector3 center)
   {
     int latSegments = (int) Mathf.Floor(4.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, latSegments, 8, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, latSegments, 8, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.8f, 0.5f, 0.0f));
+
+    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, latSegments, 8, color, true, m_style);
   }
 
   private void DrawSphereLongSegments(Vector3 center)
   {
     int longSegments = (int) Mathf.Floor(4.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, 8, longSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
-    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, 8, longSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.8f, 0.5f, 0.0f));
+
+    DebugUtil.DrawSphere(center + m_basePos, m_baseRotQuat, 1.0f, 8, longSegments, color, true, m_style);
   }
 
   private void DrawCylinderDimensions(Vector3 center)
@@ -121,16 +174,18 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.2f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.6f - 0.2f * Mathf.Cos(m_phase);
 
-    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.2f, 0.6f, 0.0f));
+
+    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, height, radius, 12, color, true, m_style);
   }
 
   private void DrawCylinderSegments(Vector3 center)
   {
     int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
-    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.2f, 0.6f, 0.0f));
+
+    DebugUtil.DrawCylinder(center + m_basePos, m_baseRotQuat, 1.2f, 0.6f, numSegments, color, true, m_style);
   }
 
   private void DrawConeDimensions(Vector3 baseCenter)
@@ -138,16 +193,22 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.2f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.6f - 0.2f * Mathf.Cos(m_phase);
 
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, height, radius, 12, m_solidColor, true, DebugUtil.Style.SolidColor);
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, height, radius, 12, m_wireframeColor);
+    baseCenter -= 0.5f * (m_baseRotQuat * Vector3.up);
+
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
+
+    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, height, radius, 12, color, true, m_style);
   }
 
   private void DrawConeSegments(Vector3 baseCenter)
   {
     int numSegments = (int)Mathf.Floor(6.0f + 8.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
-    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, m_wireframeColor);
+    baseCenter -= 0.5f * (m_baseRotQuat * Vector3.up);
+
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.5f, 0.1f, 0.7f));
+
+    DebugUtil.DrawCone(baseCenter + m_basePos, m_baseRotQuat, 1.0f, 0.5f, numSegments, color, true, m_style);
   }
 
   private void DrawCapsuleDimensions(Vector3 center)
@@ -155,24 +216,27 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float height = 1.0f + 0.2f * Mathf.Sin(m_phase);
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
 
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, m_solidColor, true, DebugUtil.Style.SolidColor);
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+
+    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, height, radius, 4, 6, color, true, m_style);
   }
 
   private void DrawCapsuleLatSegments(Vector3 center)
   {
     int latSegments = (int) Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, latSegments, 6, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, latSegments, 6, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+
+    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, latSegments, 6, color, true, m_style);
   }
 
   private void DrawCapsuleLongSegments(Vector3 center)
   {
     int longSegments = (int) Mathf.Floor(4.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, m_solidColor, true, DebugUtil.Style.SmoothShaded);
-    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+
+    DebugUtil.DrawCapsule(center + m_basePos, m_baseRotQuat, 1.0f, 0.5f, 4, longSegments, color, true, m_style);
   }
 
   private void DrawCapsule2DSegments(Vector3 center)
@@ -181,8 +245,9 @@ public class CjLibDebugUtilDemo : MonoBehaviour
     float radius = 0.5f - 0.2f * Mathf.Cos(m_phase);
     int capSegments = (int)Mathf.Floor(2.0f + 4.0f * (1.0f + Mathf.Sin(m_phase)));
 
-    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_solidColor, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, m_wireframeColor);
+    Color color = (m_style == DebugUtil.Style.Wireframe ? m_wireframeColor : new Color(0.0f, 0.4f, 0.8f));
+
+    DebugUtil.DrawCapsule2D(center + m_basePos, m_baseRotDeg, height, radius, capSegments, color, true, m_style);
   }
 
 }
