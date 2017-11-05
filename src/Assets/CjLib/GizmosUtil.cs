@@ -187,7 +187,7 @@ namespace CjLib
     // capsule
     // ------------------------------------------------------------------------
 
-    public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, Style style = Style.Wireframe)
+    public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, Style style = Style.SmoothShaded)
     {
       if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
         return;
@@ -234,7 +234,7 @@ namespace CjLib
       }
     }
 
-    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, Style style = Style.Wireframe)
+    public static void DrawCapsule(Vector3 point0, Vector3 point1, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, Style style = Style.SmoothShaded)
     {
       Vector3 axisY = point1 - point0;
       float height = axisY.magnitude;
@@ -259,7 +259,7 @@ namespace CjLib
     // cone
     // ------------------------------------------------------------------------
 
-    public static void DrawCone(Vector3 baseCenter, Quaternion rotation, float height, float radius, int numSegments, Color color, Style style = Style.Wireframe)
+    public static void DrawCone(Vector3 baseCenter, Quaternion rotation, float height, float radius, int numSegments, Color color, Style style = Style.FlatShaded)
     {
       if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
         return;
@@ -291,7 +291,7 @@ namespace CjLib
       }
     }
 
-    public static void DrawCone(Vector3 baseCenter, Vector3 top, float radius, int numSegments, Color color, Style style = Style.Wireframe)
+    public static void DrawCone(Vector3 baseCenter, Vector3 top, float radius, int numSegments, Color color, Style style = Style.FlatShaded)
     {
       Vector3 axisY = top - baseCenter;
       float height = axisY.magnitude;
@@ -314,7 +314,7 @@ namespace CjLib
     // arrow
     // ------------------------------------------------------------------------
 
-    public static void DrawArrow(Vector3 from, Vector3 to, float coneRadius, float coneHeight, int numSegments, float stemThickness, Color color, Style style = Style.Wireframe)
+    public static void DrawArrow(Vector3 from, Vector3 to, float coneRadius, float coneHeight, int numSegments, float stemThickness, Color color, Style style = Style.FlatShaded)
     {
       Vector3 axisY = to - from;
       float axisLength = axisY.magnitude;
@@ -345,7 +345,7 @@ namespace CjLib
       }
     }
 
-    public static void DrawArrow(Vector3 from, Vector3 to, float size, Color color, Style style = Style.Wireframe)
+    public static void DrawArrow(Vector3 from, Vector3 to, float size, Color color, Style style = Style.FlatShaded)
     {
       DrawArrow(from, to, 0.5f * size, size, 8, 0.0f, color, style);
     }
