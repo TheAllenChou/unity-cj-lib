@@ -406,16 +406,16 @@ namespace CjLib
       switch (style)
       {
         case Style.Wireframe:
-          mesh = PrimitiveMeshFactory.CapsuleWireframe(latSegmentsPerCap, longSegmentsPerCap);
+          mesh = PrimitiveMeshFactory.CapsuleWireframe(latSegmentsPerCap, longSegmentsPerCap, true, true, false);
           break;
         case Style.SolidColor:
-          mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap);
+          mesh = PrimitiveMeshFactory.CapsuleSolidColor(latSegmentsPerCap, longSegmentsPerCap, true, true, false);
           break;
         case Style.FlatShaded:
-          mesh = PrimitiveMeshFactory.CapsuleFlatShaded(latSegmentsPerCap, longSegmentsPerCap);
+          mesh = PrimitiveMeshFactory.CapsuleFlatShaded(latSegmentsPerCap, longSegmentsPerCap, true, true, false);
           break;
         case Style.SmoothShaded:
-          mesh = PrimitiveMeshFactory.CapsuleSmoothShaded(latSegmentsPerCap, longSegmentsPerCap);
+          mesh = PrimitiveMeshFactory.CapsuleSmoothShaded(latSegmentsPerCap, longSegmentsPerCap, true, true, false);
           break;
       }
       if (mesh == null)
@@ -561,9 +561,11 @@ namespace CjLib
       Vector3 coneBaseCenter = to - coneHeight * axisY; // top of cone ends at "to"
       DrawCone(coneBaseCenter, rotation, coneHeight, coneRadius, numSegments, color, depthTest, style);
 
-
       if (stemThickness <= 0.0f)
       {
+        if (style == Style.Wireframe)
+          to -= coneHeight * axisY;
+
         DrawLine(from, to, color, depthTest);
       }
       else if (coneHeight < axisLength)

@@ -20,7 +20,7 @@ namespace CjLib
   public class PrimitiveMeshFactory
   {
 
-    // lines
+    // line
     // ------------------------------------------------------------------------
 
     private static Mesh s_linesMesh;
@@ -86,7 +86,7 @@ namespace CjLib
     }
 
     // ------------------------------------------------------------------------
-    // end: lines
+    // end: line
 
 
     // box
@@ -132,6 +132,7 @@ namespace CjLib
         };
 
         s_boxWireframeMesh.vertices = aVert;
+        s_boxWireframeMesh.normals = aVert; // for GizmosUtil
         s_boxWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
       }
 
@@ -270,6 +271,7 @@ namespace CjLib
         };
 
         s_rectWireframeMesh.vertices = aVert;
+        s_rectWireframeMesh.normals = aVert; // for GizmosUtil
         s_rectWireframeMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
       }
 
@@ -370,7 +372,7 @@ namespace CjLib
         s_circleWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_circleWireframeMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -388,7 +390,11 @@ namespace CjLib
         aIndex[numSegments] = 0;
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
+
+        if (s_circleWireframeMeshPool.ContainsKey(numSegments))
+          s_circleWireframeMeshPool.Remove(numSegments);
 
         s_circleWireframeMeshPool.Add(numSegments, mesh);
       }
@@ -406,7 +412,7 @@ namespace CjLib
         s_circleSolidColorMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_circleSolidColorMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_circleSolidColorMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -434,6 +440,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_circleSolidColorMeshPool.ContainsKey(numSegments))
+          s_circleSolidColorMeshPool.Remove(numSegments);
+
         s_circleSolidColorMeshPool.Add(numSegments, mesh);
       }
 
@@ -450,7 +459,7 @@ namespace CjLib
         s_circleFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_circleFlatShadedMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_circleFlatShadedMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -493,6 +502,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_circleFlatShadedMeshPool.ContainsKey(numSegments))
+          s_circleFlatShadedMeshPool.Remove(numSegments);
+
         s_circleFlatShadedMeshPool.Add(numSegments, mesh);
       }
 
@@ -520,7 +532,7 @@ namespace CjLib
         s_cylinderWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_cylinderWireframeMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -552,7 +564,11 @@ namespace CjLib
         }
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        if (s_cylinderWireframeMeshPool.ContainsKey(numSegments))
+          s_cylinderWireframeMeshPool.Remove(numSegments);
 
         s_cylinderWireframeMeshPool.Add(numSegments, mesh);
       }
@@ -569,7 +585,7 @@ namespace CjLib
         s_cylinderSolidColorMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_cylinderSolidColorMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_cylinderSolidColorMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -618,6 +634,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_cylinderSolidColorMeshPool.ContainsKey(numSegments))
+          s_cylinderSolidColorMeshPool.Remove(numSegments);
+
         s_cylinderSolidColorMeshPool.Add(numSegments, mesh);
       }
 
@@ -633,7 +652,7 @@ namespace CjLib
         s_cylinderFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_cylinderFlatShadedMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_cylinderFlatShadedMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -705,6 +724,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_cylinderFlatShadedMeshPool.ContainsKey(numSegments))
+          s_cylinderFlatShadedMeshPool.Remove(numSegments);
+
         s_cylinderFlatShadedMeshPool.Add(numSegments, mesh);
       }
 
@@ -720,7 +742,7 @@ namespace CjLib
         s_cylinderSmoothShadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_cylinderSmoothShadedMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_cylinderSmoothShadedMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -786,6 +808,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_cylinderSmoothShadedMeshPool.ContainsKey(numSegments))
+          s_cylinderSmoothShadedMeshPool.Remove(numSegments);
+
         s_cylinderSmoothShadedMeshPool.Add(numSegments, mesh);
       }
 
@@ -814,7 +839,7 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      if (!s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_sphereWireframeMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -893,7 +918,11 @@ namespace CjLib
         }
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        if (s_sphereWireframeMeshPool.ContainsKey(meshKey))
+          s_sphereWireframeMeshPool.Remove(meshKey);
 
         s_sphereWireframeMeshPool.Add(meshKey, mesh);
       }
@@ -911,7 +940,7 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      if (!s_sphereSolidColorMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_sphereSolidColorMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -997,6 +1026,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_sphereSolidColorMeshPool.ContainsKey(meshKey))
+          s_sphereSolidColorMeshPool.Remove(meshKey);
+
         s_sphereSolidColorMeshPool.Add(meshKey, mesh);
       }
 
@@ -1013,7 +1045,7 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      if (!s_sphereFlatShadedMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_sphereFlatShadedMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1127,6 +1159,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_sphereFlatShadedMeshPool.ContainsKey(meshKey))
+          s_sphereFlatShadedMeshPool.Remove(meshKey);
+
         s_sphereFlatShadedMeshPool.Add(meshKey, mesh);
       }
 
@@ -1143,7 +1178,7 @@ namespace CjLib
 
       int meshKey = (latSegments << 16 ^ longSegments);
       Mesh mesh;
-      if (!s_sphereSmoothShadedMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_sphereSmoothShadedMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1246,6 +1281,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_sphereSmoothShadedMeshPool.ContainsKey(meshKey))
+          s_sphereSmoothShadedMeshPool.Remove(meshKey);
+
         s_sphereSmoothShadedMeshPool.Add(meshKey, mesh);
       }
 
@@ -1264,7 +1302,7 @@ namespace CjLib
     private static Dictionary<int, Mesh> s_capsuleFlatShadedMeshPool;
     private static Dictionary<int, Mesh> s_capsuleSmoothShadedMeshPool;
 
-    public static Mesh CapsuleWireframe(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
+    public static Mesh CapsuleWireframe(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool topCapOnly = false, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return null;
@@ -1275,9 +1313,9 @@ namespace CjLib
       if (s_capsuleWireframeMeshPool == null)
         s_capsuleWireframeMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
+      int meshKey = (latSegmentsPerCap << 12 ^ longSegmentsPerCap ^ (caps ? 1 << 28 : 0) ^ (topCapOnly ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
-      if (!s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1338,15 +1376,23 @@ namespace CjLib
               {
                 aIndex[iIndex++] = iTop;
                 aIndex[iIndex++] = iVert;
-                aIndex[iIndex++] = iBottom;
-                aIndex[iIndex++] = iVert + 1;
+
+                if (!topCapOnly)
+                {
+                  aIndex[iIndex++] = iBottom;
+                  aIndex[iIndex++] = iVert + 1;
+                }
               }
               else
               {
                 aIndex[iIndex++] = iVert - 2;
                 aIndex[iIndex++] = iVert;
-                aIndex[iIndex++] = iVert - 1;
-                aIndex[iIndex++] = iVert + 1;
+
+                if (!topCapOnly)
+                {
+                  aIndex[iIndex++] = iVert - 1;
+                  aIndex[iIndex++] = iVert + 1;
+                }
               }
             }
 
@@ -1354,8 +1400,12 @@ namespace CjLib
             {
               aIndex[iIndex++] = iVert; 
               aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = iVert + 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+
+              if (!topCapOnly)
+              {
+                aIndex[iIndex++] = iVert + 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
             }
 
             if (sides && iLat == latSegmentsPerCap - 1)
@@ -1371,7 +1421,11 @@ namespace CjLib
         Array.Resize(ref aIndex, iIndex);
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        if (s_capsuleWireframeMeshPool.ContainsKey(meshKey))
+          s_capsuleWireframeMeshPool.Remove(meshKey);
 
         s_capsuleWireframeMeshPool.Add(meshKey, mesh);
       }
@@ -1379,7 +1433,7 @@ namespace CjLib
       return mesh;
     }
 
-    public static Mesh CapsuleSolidColor(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
+    public static Mesh CapsuleSolidColor(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool topCapOnly = false, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return null;
@@ -1390,9 +1444,9 @@ namespace CjLib
       if (s_capsuleSolidColorMeshPool == null)
         s_capsuleSolidColorMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
+      int meshKey = (latSegmentsPerCap << 12 ^ longSegmentsPerCap ^ (caps ? 1 << 28 : 0) ^ (topCapOnly ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
-      if (!s_capsuleSolidColorMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_capsuleSolidColorMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1455,9 +1509,12 @@ namespace CjLib
                 aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
                 aIndex[iIndex++] = iVert;
 
-                aIndex[iIndex++] = iBottom;
-                aIndex[iIndex++] = iVert + 1;
-                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                if (!topCapOnly)
+                {
+                  aIndex[iIndex++] = iBottom;
+                  aIndex[iIndex++] = iVert + 1;
+                  aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                }
               }
             }
             else
@@ -1472,13 +1529,16 @@ namespace CjLib
                 aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
                 aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-                aIndex[iIndex++] = iVert - 1;
-                aIndex[iIndex++] = iVert + 1;
-                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                if (!topCapOnly)
+                {
+                  aIndex[iIndex++] = iVert - 1;
+                  aIndex[iIndex++] = iVert + 1;
+                  aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-                aIndex[iIndex++] = iVert - 1;
-                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-                aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                  aIndex[iIndex++] = iVert - 1;
+                  aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                  aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                }
               }
 
               if (sides && iLat == latSegmentsPerCap - 1)
@@ -1502,13 +1562,16 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_capsuleSolidColorMeshPool.ContainsKey(meshKey))
+          s_capsuleSolidColorMeshPool.Remove(meshKey);
+
         s_capsuleSolidColorMeshPool.Add(meshKey, mesh);
       }
 
       return mesh;
     }
 
-    public static Mesh CapsuleFlatShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
+    public static Mesh CapsuleFlatShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool topCapOnly = false, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return null;
@@ -1519,9 +1582,9 @@ namespace CjLib
       if (s_capsuleFlatShadedMeshPool == null)
         s_capsuleFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
+      int meshKey = (latSegmentsPerCap << 12 ^ longSegmentsPerCap ^ (caps ? 1 << 28 : 0) ^ (topCapOnly ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
-      if (!s_capsuleFlatShadedMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_capsuleFlatShadedMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1599,68 +1662,77 @@ namespace CjLib
                 aIndex[iIndex++] = iTopTriStart + 2;
                 aIndex[iIndex++] = iTopTriStart + 1;
 
-                int iBottomTriStart = iVert;
+                if (!topCapOnly)
+                {
+                  int iBottomTriStart = iVert;
 
-                aVert[iVert++] = bottom;
-                aVert[iVert++] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
-                aVert[iVert++] = new Vector3(longCosNext * latSin, -latCos - 0.5f, longSinNext * latSin);
+                  aVert[iVert++] = bottom;
+                  aVert[iVert++] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
+                  aVert[iVert++] = new Vector3(longCosNext * latSin, -latCos - 0.5f, longSinNext * latSin);
 
-                Vector3 bottomTriNormal = Vector3.Cross(aVert[iBottomTriStart + 1] - aVert[iBottomTriStart], aVert[iBottomTriStart + 2] - aVert[iBottomTriStart]).normalized;
-                aNormal[iNormal++] = bottomTriNormal;
-                aNormal[iNormal++] = bottomTriNormal;
-                aNormal[iNormal++] = bottomTriNormal;
+                  Vector3 bottomTriNormal = Vector3.Cross(aVert[iBottomTriStart + 1] - aVert[iBottomTriStart], aVert[iBottomTriStart + 2] - aVert[iBottomTriStart]).normalized;
+                  aNormal[iNormal++] = bottomTriNormal;
+                  aNormal[iNormal++] = bottomTriNormal;
+                  aNormal[iNormal++] = bottomTriNormal;
 
-                aIndex[iIndex++] = iBottomTriStart;
-                aIndex[iIndex++] = iBottomTriStart + 1;
-                aIndex[iIndex++] = iBottomTriStart + 2;
+                  aIndex[iIndex++] = iBottomTriStart;
+                  aIndex[iIndex++] = iBottomTriStart + 1;
+                  aIndex[iIndex++] = iBottomTriStart + 2;
+                }
               }
 
               float latSinNext = aLatSin[iLat + 1];
               float latCosNext = aLatCos[iLat + 1];
 
-              int iTopQuadStart = iVert;
+              if (caps)
+              {
+                int iTopQuadStart = iVert;
 
-              aVert[iVert++] = new Vector3(longCos * latSin, latCos + 0.5f, longSin * latSin);
-              aVert[iVert++] = new Vector3(longCos * latSinNext, latCosNext + 0.5f, longSin * latSinNext);
-              aVert[iVert++] = new Vector3(longCosNext * latSinNext, latCosNext + 0.5f, longSinNext * latSinNext);
-              aVert[iVert++] = new Vector3(longCosNext * latSin, latCos + 0.5f, longSinNext * latSin);
+                aVert[iVert++] = new Vector3(longCos * latSin, latCos + 0.5f, longSin * latSin);
+                aVert[iVert++] = new Vector3(longCos * latSinNext, latCosNext + 0.5f, longSin * latSinNext);
+                aVert[iVert++] = new Vector3(longCosNext * latSinNext, latCosNext + 0.5f, longSinNext * latSinNext);
+                aVert[iVert++] = new Vector3(longCosNext * latSin, latCos + 0.5f, longSinNext * latSin);
 
-              Vector3 topQuadNormal = Vector3.Cross(aVert[iTopQuadStart + 3] - aVert[iTopQuadStart], aVert[iTopQuadStart + 1] - aVert[iTopQuadStart]);
-              aNormal[iNormal++] = topQuadNormal;
-              aNormal[iNormal++] = topQuadNormal;
-              aNormal[iNormal++] = topQuadNormal;
-              aNormal[iNormal++] = topQuadNormal;
+                Vector3 topQuadNormal = Vector3.Cross(aVert[iTopQuadStart + 3] - aVert[iTopQuadStart], aVert[iTopQuadStart + 1] - aVert[iTopQuadStart]);
+                aNormal[iNormal++] = topQuadNormal;
+                aNormal[iNormal++] = topQuadNormal;
+                aNormal[iNormal++] = topQuadNormal;
+                aNormal[iNormal++] = topQuadNormal;
 
-              aIndex[iIndex++] = iTopQuadStart;
-              aIndex[iIndex++] = iTopQuadStart + 2;
-              aIndex[iIndex++] = iTopQuadStart + 1;
+                aIndex[iIndex++] = iTopQuadStart;
+                aIndex[iIndex++] = iTopQuadStart + 2;
+                aIndex[iIndex++] = iTopQuadStart + 1;
 
-              aIndex[iIndex++] = iTopQuadStart;
-              aIndex[iIndex++] = iTopQuadStart + 3;
-              aIndex[iIndex++] = iTopQuadStart + 2;
+                aIndex[iIndex++] = iTopQuadStart;
+                aIndex[iIndex++] = iTopQuadStart + 3;
+                aIndex[iIndex++] = iTopQuadStart + 2;
 
-              int iBottomQuadStart = iVert;
+                if (!topCapOnly)
+                {
+                  int iBottomQuadStart = iVert;
 
-              aVert[iVert++] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
-              aVert[iVert++] = new Vector3(longCos * latSinNext, -latCosNext - 0.5f, longSin * latSinNext);
-              aVert[iVert++] = new Vector3(longCosNext * latSinNext, -latCosNext - 0.5f, longSinNext * latSinNext);
-              aVert[iVert++] = new Vector3(longCosNext * latSin, -latCos - 0.5f, longSinNext * latSin);
+                  aVert[iVert++] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
+                  aVert[iVert++] = new Vector3(longCos * latSinNext, -latCosNext - 0.5f, longSin * latSinNext);
+                  aVert[iVert++] = new Vector3(longCosNext * latSinNext, -latCosNext - 0.5f, longSinNext * latSinNext);
+                  aVert[iVert++] = new Vector3(longCosNext * latSin, -latCos - 0.5f, longSinNext * latSin);
 
-              Vector3 bottomQuadNormal = Vector3.Cross(aVert[iBottomQuadStart + 1] - aVert[iBottomQuadStart], aVert[iBottomQuadStart + 3] - aVert[iBottomQuadStart]);
-              aNormal[iNormal++] = bottomQuadNormal;
-              aNormal[iNormal++] = bottomQuadNormal;
-              aNormal[iNormal++] = bottomQuadNormal;
-              aNormal[iNormal++] = bottomQuadNormal;
+                  Vector3 bottomQuadNormal = Vector3.Cross(aVert[iBottomQuadStart + 1] - aVert[iBottomQuadStart], aVert[iBottomQuadStart + 3] - aVert[iBottomQuadStart]);
+                  aNormal[iNormal++] = bottomQuadNormal;
+                  aNormal[iNormal++] = bottomQuadNormal;
+                  aNormal[iNormal++] = bottomQuadNormal;
+                  aNormal[iNormal++] = bottomQuadNormal;
 
-              aIndex[iIndex++] = iBottomQuadStart;
-              aIndex[iIndex++] = iBottomQuadStart + 1;
-              aIndex[iIndex++] = iBottomQuadStart + 2;
+                  aIndex[iIndex++] = iBottomQuadStart;
+                  aIndex[iIndex++] = iBottomQuadStart + 1;
+                  aIndex[iIndex++] = iBottomQuadStart + 2;
 
-              aIndex[iIndex++] = iBottomQuadStart;
-              aIndex[iIndex++] = iBottomQuadStart + 2;
-              aIndex[iIndex++] = iBottomQuadStart + 3;
+                  aIndex[iIndex++] = iBottomQuadStart;
+                  aIndex[iIndex++] = iBottomQuadStart + 2;
+                  aIndex[iIndex++] = iBottomQuadStart + 3;
+                }
+              }
             }
-            else if (!sides || iLat == latSegmentsPerCap - 1)
+            else if (sides && iLat == latSegmentsPerCap - 1)
             {
               int iSideQuadStart = iVert;
 
@@ -1692,13 +1764,16 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_capsuleFlatShadedMeshPool.ContainsKey(meshKey))
+          s_capsuleFlatShadedMeshPool.Remove(meshKey);
+
         s_capsuleFlatShadedMeshPool.Add(meshKey, mesh);
       }
 
       return mesh;
     }
 
-    public static Mesh CapsuleSmoothShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
+    public static Mesh CapsuleSmoothShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool topCapOnly = false, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
         return null;
@@ -1709,9 +1784,9 @@ namespace CjLib
       if (s_capsuleSmoothShadedMeshPool == null)
         s_capsuleSmoothShadedMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
+      int meshKey = (latSegmentsPerCap << 12 ^ longSegmentsPerCap ^ (caps ? 1 << 28 : 0) ^ (topCapOnly ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
-      if (!s_capsuleSmoothShadedMeshPool.TryGetValue(meshKey, out mesh))
+      if (!s_capsuleSmoothShadedMeshPool.TryGetValue(meshKey, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1780,13 +1855,16 @@ namespace CjLib
               aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
               aIndex[iIndex++] = iVert;
 
-              aIndex[iIndex++] = iBottom;
-              aIndex[iIndex++] = iVert + 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              if (!topCapOnly)
+              {
+                aIndex[iIndex++] = iBottom;
+                aIndex[iIndex++] = iVert + 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
             }
             else
             {
-              if (caps && iLat == latSegmentsPerCap - 1)
+              if (caps)
               {
                 aIndex[iIndex++] = iVert - 2;
                 aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
@@ -1796,13 +1874,16 @@ namespace CjLib
                 aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
                 aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-                aIndex[iIndex++] = iVert - 1;
-                aIndex[iIndex++] = iVert + 1;
-                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                if (!topCapOnly)
+                {
+                  aIndex[iIndex++] = iVert - 1;
+                  aIndex[iIndex++] = iVert + 1;
+                  aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-                aIndex[iIndex++] = iVert - 1;
-                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-                aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                  aIndex[iIndex++] = iVert - 1;
+                  aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                  aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                }
               }
 
               if (sides && iLat == latSegmentsPerCap - 1)
@@ -1828,6 +1909,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_capsuleSmoothShadedMeshPool.ContainsKey(meshKey))
+          s_capsuleSmoothShadedMeshPool.Remove(meshKey);
+
         s_capsuleSmoothShadedMeshPool.Add(meshKey, mesh);
       }
 
@@ -1847,7 +1931,7 @@ namespace CjLib
         s_capsule2dWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_capsule2dWireframeMeshPool.TryGetValue(capSegments, out mesh))
+      if (!s_capsule2dWireframeMeshPool.TryGetValue(capSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1878,7 +1962,11 @@ namespace CjLib
         }
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
+
+        if (s_capsule2dWireframeMeshPool.ContainsKey(capSegments))
+          s_capsule2dWireframeMeshPool.Remove(capSegments);
 
         s_capsule2dWireframeMeshPool.Add(capSegments, mesh);
       }
@@ -1895,7 +1983,7 @@ namespace CjLib
         s_capsule2dSolidColorMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_capsule2dSolidColorMeshPool.TryGetValue(capSegments, out mesh))
+      if (!s_capsule2dSolidColorMeshPool.TryGetValue(capSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1933,6 +2021,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_capsule2dSolidColorMeshPool.ContainsKey(capSegments))
+          s_capsule2dSolidColorMeshPool.Remove(capSegments);
+
         s_capsule2dSolidColorMeshPool.Add(capSegments, mesh);
       }
 
@@ -1948,7 +2039,7 @@ namespace CjLib
         s_capsule2dFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_capsule2dFlatShadedMeshPool.TryGetValue(capSegments, out mesh))
+      if (!s_capsule2dFlatShadedMeshPool.TryGetValue(capSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -1999,6 +2090,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_capsule2dFlatShadedMeshPool.ContainsKey(capSegments))
+          s_capsule2dFlatShadedMeshPool.Remove(capSegments);
+
         s_capsule2dFlatShadedMeshPool.Add(capSegments, mesh);
       }
 
@@ -2026,7 +2120,7 @@ namespace CjLib
         s_coneWireframeMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_coneWireframeMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_coneWireframeMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -2054,7 +2148,11 @@ namespace CjLib
         }
 
         mesh.vertices = aVert;
+        mesh.normals = aVert; // for GizmosUtil
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+
+        if (s_coneWireframeMeshPool.ContainsKey(numSegments))
+          s_coneWireframeMeshPool.Remove(numSegments);
 
         s_coneWireframeMeshPool.Add(numSegments, mesh);
       }
@@ -2071,7 +2169,7 @@ namespace CjLib
         s_coneSolidColorMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_coneSolidColorMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_coneSolidColorMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -2106,6 +2204,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_coneSolidColorMeshPool.ContainsKey(numSegments))
+          s_coneSolidColorMeshPool.Remove(numSegments);
+
         s_coneSolidColorMeshPool.Add(numSegments, mesh);
       }
 
@@ -2121,7 +2222,7 @@ namespace CjLib
         s_coneFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_coneFlatShadedMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_coneFlatShadedMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -2180,6 +2281,9 @@ namespace CjLib
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
+        if (s_coneFlatShadedMeshPool.ContainsKey(numSegments))
+          s_coneFlatShadedMeshPool.Remove(numSegments);
+
         s_coneFlatShadedMeshPool.Add(numSegments, mesh);
       }
 
@@ -2195,7 +2299,7 @@ namespace CjLib
         s_coneSmoothhadedMeshPool = new Dictionary<int, Mesh>();
 
       Mesh mesh;
-      if (!s_coneSmoothhadedMeshPool.TryGetValue(numSegments, out mesh))
+      if (!s_coneSmoothhadedMeshPool.TryGetValue(numSegments, out mesh) || mesh == null)
       {
         mesh = new Mesh();
 
@@ -2241,6 +2345,9 @@ namespace CjLib
         mesh.vertices = aVert;
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
+
+        if (s_coneSmoothhadedMeshPool.ContainsKey(numSegments))
+          s_coneSmoothhadedMeshPool.Remove(numSegments);
 
         s_coneSmoothhadedMeshPool.Add(numSegments, mesh);
       }
