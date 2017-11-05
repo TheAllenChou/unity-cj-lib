@@ -9,6 +9,7 @@
 */
 /******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -1263,15 +1264,18 @@ namespace CjLib
     private static Dictionary<int, Mesh> s_capsuleFlatShadedMeshPool;
     private static Dictionary<int, Mesh> s_capsuleSmoothShadedMeshPool;
 
-    public static Mesh CapsuleWireframe(int latSegmentsPerCap, int longSegmentsPerCap)
+    public static Mesh CapsuleWireframe(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return null;
+
+      if (!caps && !sides)
         return null;
 
       if (s_capsuleWireframeMeshPool == null)
         s_capsuleWireframeMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
       if (!s_capsuleWireframeMeshPool.TryGetValue(meshKey, out mesh))
       {
@@ -1328,27 +1332,33 @@ namespace CjLib
             aVert[iVert    ] = new Vector3(longCos * latSin,  latCos + 0.5f, longSin * latSin);
             aVert[iVert + 1] = new Vector3(longCos * latSin, -latCos - 0.5f, longSin * latSin);
 
-            if (iLat == 0)
+            if (caps)
             {
-              aIndex[iIndex++] = iTop;
-              aIndex[iIndex++] = iVert;
-              aIndex[iIndex++] = iBottom;
-              aIndex[iIndex++] = iVert + 1;
-            }
-            else
-            {
-              aIndex[iIndex++] = iVert - 2;
-              aIndex[iIndex++] = iVert;
-              aIndex[iIndex++] = iVert - 1;
-              aIndex[iIndex++] = iVert + 1;
+              if (iLat == 0)
+              {
+                aIndex[iIndex++] = iTop;
+                aIndex[iIndex++] = iVert;
+                aIndex[iIndex++] = iBottom;
+                aIndex[iIndex++] = iVert + 1;
+              }
+              else
+              {
+                aIndex[iIndex++] = iVert - 2;
+                aIndex[iIndex++] = iVert;
+                aIndex[iIndex++] = iVert - 1;
+                aIndex[iIndex++] = iVert + 1;
+              }
             }
 
-            aIndex[iIndex++] = iVert;
-            aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-            aIndex[iIndex++] = iVert + 1;
-            aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+            if (caps || iLat == latSegmentsPerCap - 1)
+            {
+              aIndex[iIndex++] = iVert; 
+              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              aIndex[iIndex++] = iVert + 1;
+              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+            }
 
-            if (iLat == latSegmentsPerCap - 1)
+            if (sides && iLat == latSegmentsPerCap - 1)
             {
               aIndex[iIndex++] = iVert;
               aIndex[iIndex++] = iVert + 1;
@@ -1357,6 +1367,8 @@ namespace CjLib
             iVert += 2;
           }
         }
+
+        Array.Resize(ref aIndex, iIndex);
 
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
@@ -1367,15 +1379,18 @@ namespace CjLib
       return mesh;
     }
 
-    public static Mesh CapsuleSolidColor(int latSegmentsPerCap, int longSegmentsPerCap)
+    public static Mesh CapsuleSolidColor(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return null;
+
+      if (!caps && !sides)
         return null;
 
       if (s_capsuleSolidColorMeshPool == null)
         s_capsuleSolidColorMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
       if (!s_capsuleSolidColorMeshPool.TryGetValue(meshKey, out mesh))
       {
@@ -1434,33 +1449,39 @@ namespace CjLib
 
             if (iLat == 0)
             {
-              aIndex[iIndex++] = iTop;
-              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = iVert;
+              if (caps)
+              {
+                aIndex[iIndex++] = iTop;
+                aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert;
 
-              aIndex[iIndex++] = iBottom;
-              aIndex[iIndex++] = iVert + 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iBottom;
+                aIndex[iIndex++] = iVert + 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
             }
             else
             {
-              aIndex[iIndex++] = iVert - 2;
-              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = iVert;
+              if (caps)
+              {
+                aIndex[iIndex++] = iVert - 2;
+                aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert;
 
-              aIndex[iIndex++] = iVert - 2;
-              aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 2;
+                aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-              aIndex[iIndex++] = iVert - 1;
-              aIndex[iIndex++] = iVert + 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 1;
+                aIndex[iIndex++] = iVert + 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-              aIndex[iIndex++] = iVert - 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
 
-              if (iLat == latSegmentsPerCap - 1)
+              if (sides && iLat == latSegmentsPerCap - 1)
               {
                 aIndex[iIndex++] = iVert;
                 aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
@@ -1476,6 +1497,8 @@ namespace CjLib
           }
         }
 
+        Array.Resize(ref aIndex, iIndex);
+
         mesh.vertices = aVert;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
 
@@ -1485,15 +1508,18 @@ namespace CjLib
       return mesh;
     }
 
-    public static Mesh CapsuleFlatShaded(int latSegmentsPerCap, int longSegmentsPerCap)
+    public static Mesh CapsuleFlatShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return null;
+
+      if (!caps && !sides)
         return null;
 
       if (s_capsuleFlatShadedMeshPool == null)
         s_capsuleFlatShadedMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
       if (!s_capsuleFlatShadedMeshPool.TryGetValue(meshKey, out mesh))
       {
@@ -1554,7 +1580,7 @@ namespace CjLib
             float latSin = aLatSin[iLat];
             float latCos = aLatCos[iLat];
 
-            if (iLat < latSegmentsPerCap - 1)
+            if (caps && iLat < latSegmentsPerCap - 1)
             {
               if (iLat == 0)
               {
@@ -1634,7 +1660,7 @@ namespace CjLib
               aIndex[iIndex++] = iBottomQuadStart + 2;
               aIndex[iIndex++] = iBottomQuadStart + 3;
             }
-            else
+            else if (!sides || iLat == latSegmentsPerCap - 1)
             {
               int iSideQuadStart = iVert;
 
@@ -1660,6 +1686,8 @@ namespace CjLib
           }
         }
 
+        Array.Resize(ref aIndex, iIndex);
+
         mesh.vertices = aVert;
         mesh.normals = aNormal;
         mesh.SetIndices(aIndex, MeshTopology.Triangles, 0);
@@ -1670,15 +1698,18 @@ namespace CjLib
       return mesh;
     }
 
-    public static Mesh CapsuleSmoothShaded(int latSegmentsPerCap, int longSegmentsPerCap)
+    public static Mesh CapsuleSmoothShaded(int latSegmentsPerCap, int longSegmentsPerCap, bool caps = true, bool sides = true)
     {
       if (latSegmentsPerCap <= 0 || longSegmentsPerCap <= 1)
+        return null;
+
+      if (!caps && !sides)
         return null;
 
       if (s_capsuleSmoothShadedMeshPool == null)
         s_capsuleSmoothShadedMeshPool = new Dictionary<int, Mesh>();
 
-      int meshKey = (latSegmentsPerCap << 16 ^ longSegmentsPerCap);
+      int meshKey = (latSegmentsPerCap << 13 ^ longSegmentsPerCap ^ (caps ? 1 << 29 : 0) ^ (sides ? 1 << 30 : 0));
       Mesh mesh;
       if (!s_capsuleSmoothShadedMeshPool.TryGetValue(meshKey, out mesh))
       {
@@ -1743,7 +1774,7 @@ namespace CjLib
             aNormal[iNormal    ] = new Vector3(longCos * latSin,  latCos, longSin * latSin);
             aNormal[iNormal + 1] = new Vector3(longCos * latSin, -latCos, longSin * latSin);
 
-            if (iLat == 0)
+            if (caps && iLat == 0)
             {
               aIndex[iIndex++] = iTop;
               aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
@@ -1755,23 +1786,26 @@ namespace CjLib
             }
             else
             {
-              aIndex[iIndex++] = iVert - 2;
-              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = iVert;
+              if (caps && iLat == latSegmentsPerCap - 1)
+              {
+                aIndex[iIndex++] = iVert - 2;
+                aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert;
 
-              aIndex[iIndex++] = iVert - 2;
-              aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 2;
+                aIndex[iIndex++] = (iVert - 2 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = (iVert + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-              aIndex[iIndex++] = iVert - 1;
-              aIndex[iIndex++] = iVert + 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 1;
+                aIndex[iIndex++] = iVert + 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
 
-              aIndex[iIndex++] = iVert - 1;
-              aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
-              aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = iVert - 1;
+                aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+                aIndex[iIndex++] = (iVert - 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
+              }
 
-              if (iLat == latSegmentsPerCap - 1)
+              if (sides && iLat == latSegmentsPerCap - 1)
               {
                 aIndex[iIndex++] = iVert;
                 aIndex[iIndex++] = (iVert + 1 + latSegmentsPerCap * 2) % (longSegmentsPerCap * latSegmentsPerCap * 2);
@@ -1787,6 +1821,8 @@ namespace CjLib
             iNormal += 2;
           }
         }
+
+        Array.Resize(ref aIndex, iIndex);
 
         mesh.vertices = aVert;
         mesh.normals = aNormal;
