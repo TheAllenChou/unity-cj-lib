@@ -2310,6 +2310,7 @@ namespace CjLib
         int iTop = aVert.Length - 1;
 
         aVert[iTop] = new Vector3(0.0f, 1.0f, 0.0f);
+        aNormal[iTop] = new Vector3(0.0f, 0.0f, 0.0f);
 
         float sqrt2Inv = Mathf.Sqrt(0.5f);
 
