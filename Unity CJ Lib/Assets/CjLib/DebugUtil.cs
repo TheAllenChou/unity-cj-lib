@@ -28,6 +28,7 @@ namespace CjLib
 
     private const int kNormalFlag        = 1 << 0;
     private const int kCapShiftScaleFlag = 1 << 1;
+    private const int kDepthTestFlag     = 1 << 2;
 
     private static Dictionary<int, Material> s_materialPool;
 
@@ -45,6 +46,9 @@ namespace CjLib
 
       if (capShiftScale)
         key |= kCapShiftScaleFlag;
+
+      if (depthTest)
+        key |= kDepthTestFlag;
 
       if (s_materialPool == null)
         s_materialPool = new Dictionary<int, Material>();

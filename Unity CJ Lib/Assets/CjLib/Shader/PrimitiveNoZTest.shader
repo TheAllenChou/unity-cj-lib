@@ -13,7 +13,7 @@ Shader "CjLib/PrimitiveNoZTest"
 {
   SubShader
   {
-    Tags { "Queue"="Transparent" "RenderType"="Transparent" "DisableBatching"="true" }
+    Tags { "Queue"="Overlay" "RenderType"="Transparent" "DisableBatching"="true" }
     LOD 100
 
     Pass
