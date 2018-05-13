@@ -52,5 +52,26 @@ namespace CjLib
       b = Vector3.Cross(a, v);
     }
 
+    // Both vectors must be unit vectors.
+    public static Vector3 Slerp(Vector3 a, Vector3 b, float t)
+    {
+      float dot = Vector3.Dot(a, b);
+
+      if (dot > 0.99999f)
+      {
+        // singularity: two vectors point in the same direction
+        return Vector3.Lerp(a, b, t);
+      }
+      else if (dot < -0.99999f)
+      {
+        // singularity: two vectors point in the opposite direction
+        Vector3 axis = FindOrthogonal(a);
+        return Quaternion.AngleAxis(180.0f * t, axis) * a;
+      }
+
+      float rad = MathUtil.AcosSafe(dot);
+      return (Mathf.Sin((1.0f - t) * rad) * a + Mathf.Sin(t * rad) * b) / Mathf.Sin(rad);
+    }
+
   }
 }
