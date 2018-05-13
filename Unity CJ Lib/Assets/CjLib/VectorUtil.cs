@@ -16,14 +16,40 @@ namespace CjLib
   public class VectorUtil
   {
    
-    public static Vector3 Rotate2D(Vector3 vector, float rotationDeg)
+    public static Vector3 Rotate2D(Vector3 v, float deg)
     {
-      Vector3 results = vector;
-      float cos = Mathf.Cos(MathUtil.kDeg2Rad * rotationDeg);
-      float sin = Mathf.Sin(MathUtil.kDeg2Rad * rotationDeg);
-      results.x = cos * vector.x - sin * vector.y;
-      results.y = sin * vector.x + cos * vector.y;
+      Vector3 results = v;
+      float cos = Mathf.Cos(MathUtil.kDeg2Rad * deg);
+      float sin = Mathf.Sin(MathUtil.kDeg2Rad * deg);
+      results.x = cos * v.x - sin * v.y;
+      results.y = sin * v.x + cos * v.y;
       return results;
+    }
+    
+    public static Vector3 NormalizeSafe(Vector3 v, Vector3 fallback)
+    {
+      return
+        v.sqrMagnitude < MathUtil.kEpsilon
+        ? v.normalized
+        : fallback;
+    }
+
+    // Returns a vector orthogonal to given vector.
+    // If the given vector is a unit vector, the returned vector will also be a unit vector.
+    public static Vector3 FindOrthogonal(Vector3 v)
+    {
+      if (v.x >= MathUtil.kSqrt3Inv)
+        return new Vector3(v.y, -v.x, 0.0f);
+      else
+        return new Vector3(0.0f, v.z, -v.y);
+    }
+
+    // Yields two extra vectors that form an orthogonal basis with the given vector.
+    // If the given vector is a unit vector, the returned vectors will also be unit vectors.
+    public static void FormOrthogonalBasis(Vector3 v, out Vector3 a, out Vector3 b)
+    {
+      a = FindOrthogonal(v);
+      b = Vector3.Cross(a, v);
     }
 
   }
