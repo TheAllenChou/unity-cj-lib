@@ -23,22 +23,17 @@ namespace CjLib
     // line
     // ------------------------------------------------------------------------
 
-    private static Mesh s_linesMesh;
-
     public static Mesh Line(Vector3 v0, Vector3 v1)
     {
-      if (s_linesMesh == null)
-      {
-        s_linesMesh = new Mesh();
-      }
+      Mesh mesh = new Mesh();
 
       Vector3[] aVert = { v0, v1 };
       int[] aIndex = { 0, 1 };
 
-      s_linesMesh.vertices = aVert;
-      s_linesMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+      mesh.vertices = aVert;
+      mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
 
-      return s_linesMesh;
+      return mesh;
     }
 
     public static Mesh Lines(Vector3[] aVert)
@@ -46,10 +41,7 @@ namespace CjLib
       if (aVert.Length <= 1)
         return null;
 
-      if (s_linesMesh == null)
-      {
-        s_linesMesh = new Mesh();
-      }
+      Mesh mesh = new Mesh();
 
       int[] aIndex = new int[aVert.Length];
       for (int i = 0; i < aVert.Length; ++i)
@@ -57,10 +49,10 @@ namespace CjLib
         aIndex[i] = i;
       }
 
-      s_linesMesh.vertices = aVert;
-      s_linesMesh.SetIndices(aIndex, MeshTopology.Lines, 0);
+      mesh.vertices = aVert;
+      mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
 
-      return s_linesMesh;
+      return mesh;
     }
 
     public static Mesh LineStrip(Vector3[] aVert)
@@ -68,10 +60,7 @@ namespace CjLib
       if (aVert.Length <= 1)
         return null;
 
-      if (s_linesMesh == null)
-      {
-        s_linesMesh = new Mesh();
-      }
+      Mesh mesh = new Mesh();
 
       int[] aIndex = new int[aVert.Length];
       for (int i = 0; i < aVert.Length; ++i)
@@ -79,10 +68,10 @@ namespace CjLib
         aIndex[i] = i;
       }
 
-      s_linesMesh.vertices = aVert;
-      s_linesMesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
+      mesh.vertices = aVert;
+      mesh.SetIndices(aIndex, MeshTopology.LineStrip, 0);
 
-      return s_linesMesh;
+      return mesh;
     }
 
     // ------------------------------------------------------------------------
