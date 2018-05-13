@@ -35,7 +35,7 @@ namespace CjLib
     public static Quaternion NormalizeSafe(Quaternion q, Quaternion fallback)
     {
       float mag = Magnitude(q);
-      if (mag > MathUtil.kEpsilon)
+      if (mag > MathUtil.Epsilon)
       {
         float magInv = 1.0f / mag;
         return new Quaternion(q.x * magInv, q.y * magInv, q.z * magInv, q.w * magInv);
@@ -51,12 +51,12 @@ namespace CjLib
       Vector3 r = new Vector3(q.x, q.y, q.z); // (rotaiton axis) * cos(angle / 2)
 
       // singularity: rotation by 180 degree
-      if (r.sqrMagnitude < MathUtil.kEpsilon)
+      if (r.sqrMagnitude < MathUtil.Epsilon)
       {
         Vector3 rotatedTwistAxis = q * twistAxis;
         Vector3 swingAxis = Vector3.Cross(twistAxis, rotatedTwistAxis);
 
-        if (swingAxis.sqrMagnitude > MathUtil.kEpsilon)
+        if (swingAxis.sqrMagnitude > MathUtil.Epsilon)
         {
           float swingAngle = Vector3.Angle(twistAxis, rotatedTwistAxis);
           swing = Quaternion.AngleAxis(swingAngle, swingAxis);

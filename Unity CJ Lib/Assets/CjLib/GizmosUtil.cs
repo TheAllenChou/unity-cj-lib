@@ -61,7 +61,7 @@ namespace CjLib
 
     public static void DrawBox(Vector3 center, Quaternion rotation, Vector3 dimensions, Color color, Style style = Style.FlatShaded)
     {
-      if (dimensions.x < MathUtil.kEpsilon || dimensions.y < MathUtil.kEpsilon || dimensions.z < MathUtil.kEpsilon)
+      if (dimensions.x < MathUtil.Epsilon || dimensions.y < MathUtil.Epsilon || dimensions.z < MathUtil.Epsilon)
         return;
 
       Mesh mesh = null;
@@ -98,7 +98,7 @@ namespace CjLib
 
     public static void DrawCylinder(Vector3 center, Quaternion rotation, float height, float radius, int numSegments, Color color, Style style = Style.SmoothShaded)
     {
-      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon || radius < MathUtil.Epsilon)
         return;
 
       Mesh mesh = null;
@@ -132,7 +132,7 @@ namespace CjLib
     {
       Vector3 axisY = point1 - point0;
       float height = axisY.magnitude;
-      if (height < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon)
         return;
 
       axisY.Normalize();
@@ -155,7 +155,7 @@ namespace CjLib
 
     public static void DrawSphere(Vector3 center, Quaternion rotation, float radius, int latSegments, int longSegments, Color color, Style style = Style.SmoothShaded)
     {
-      if (radius < MathUtil.kEpsilon)
+      if (radius < MathUtil.Epsilon)
         return;
 
       Mesh mesh = null;
@@ -200,7 +200,7 @@ namespace CjLib
 
     public static void DrawCapsule(Vector3 center, Quaternion rotation, float height, float radius, int latSegmentsPerCap, int longSegmentsPerCap, Color color, Style style = Style.SmoothShaded)
     {
-      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon || radius < MathUtil.Epsilon)
         return;
 
       Mesh meshCaps = null;
@@ -249,7 +249,7 @@ namespace CjLib
     {
       Vector3 axisY = point1 - point0;
       float height = axisY.magnitude;
-      if (height < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon)
         return;
 
       axisY.Normalize();
@@ -272,7 +272,7 @@ namespace CjLib
 
     public static void DrawCone(Vector3 baseCenter, Quaternion rotation, float height, float radius, int numSegments, Color color, Style style = Style.FlatShaded)
     {
-      if (height < MathUtil.kEpsilon || radius < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon || radius < MathUtil.Epsilon)
         return;
 
       Mesh mesh = null;
@@ -306,7 +306,7 @@ namespace CjLib
     {
       Vector3 axisY = top - baseCenter;
       float height = axisY.magnitude;
-      if (height < MathUtil.kEpsilon)
+      if (height < MathUtil.Epsilon)
         return;
 
       axisY.Normalize();
@@ -329,7 +329,7 @@ namespace CjLib
     {
       Vector3 axisY = to - from;
       float axisLength = axisY.magnitude;
-      if (axisLength < MathUtil.kEpsilon)
+      if (axisLength < MathUtil.Epsilon)
         return;
 
       axisY.Normalize();

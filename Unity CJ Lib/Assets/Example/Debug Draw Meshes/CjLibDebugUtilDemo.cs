@@ -46,11 +46,11 @@ public class CjLibDebugUtilDemo : MonoBehaviour
   {
     m_phase += Time.deltaTime * 2.0f * Mathf.PI / 3.0f;
 
-    while (m_phase >= MathUtil.kTwoPi)
+    while (m_phase >= MathUtil.TwiPi)
     {
       m_iStyle = (m_iStyle + 1) % m_aStyle.Length;
       m_style = m_aStyle[m_iStyle];
-      m_phase -= MathUtil.kTwoPi;
+      m_phase -= MathUtil.TwiPi;
     }
 
     m_baseRotDeg = -20.0f * Mathf.Cos(m_phase);

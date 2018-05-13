@@ -19,8 +19,8 @@ namespace CjLib
     public static Vector3 Rotate2D(Vector3 v, float deg)
     {
       Vector3 results = v;
-      float cos = Mathf.Cos(MathUtil.kDeg2Rad * deg);
-      float sin = Mathf.Sin(MathUtil.kDeg2Rad * deg);
+      float cos = Mathf.Cos(MathUtil.Deg2Rad * deg);
+      float sin = Mathf.Sin(MathUtil.Deg2Rad * deg);
       results.x = cos * v.x - sin * v.y;
       results.y = sin * v.x + cos * v.y;
       return results;
@@ -29,7 +29,7 @@ namespace CjLib
     public static Vector3 NormalizeSafe(Vector3 v, Vector3 fallback)
     {
       return
-        v.sqrMagnitude < MathUtil.kEpsilon
+        v.sqrMagnitude < MathUtil.Epsilon
         ? v.normalized
         : fallback;
     }
@@ -38,7 +38,7 @@ namespace CjLib
     // If the given vector is a unit vector, the returned vector will also be a unit vector.
     public static Vector3 FindOrthogonal(Vector3 v)
     {
-      if (v.x >= MathUtil.kSqrt3Inv)
+      if (v.x >= MathUtil.Sqrt3Inv)
         return new Vector3(v.y, -v.x, 0.0f);
       else
         return new Vector3(0.0f, v.z, -v.y);
