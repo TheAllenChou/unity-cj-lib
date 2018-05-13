@@ -31,5 +31,15 @@ namespace CjLib
     public static readonly float kRad2Deg = 180.0f / Mathf.PI;
     public static readonly float kDeg2Rad = Mathf.PI / 180.0f;
 
+    public static float AsinSafe(float x)
+    {
+      return Mathf.Asin(Mathf.Clamp(x, -1.0f, 1.0f));
+    }
+
+    public static float AcosSafe(float x)
+    {
+      return Mathf.Acos(Mathf.Clamp(x, -1.0f, 1.0f));
+    }
+
   }
 }
