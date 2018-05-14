@@ -46,7 +46,7 @@ namespace CjLib
       }
     }
 
-    public static void DecomopseSwingTwist(Quaternion q, Vector3 twistAxis, out Quaternion swing, out Quaternion twist)
+    public static void DecomposeSwingTwist(Quaternion q, Vector3 twistAxis, out Quaternion swing, out Quaternion twist)
     {
       Vector3 r = new Vector3(q.x, q.y, q.z); // (rotaiton axis) * cos(angle / 2)
 
@@ -92,7 +92,7 @@ namespace CjLib
       Quaternion q = b * Quaternion.Inverse(a);
       Quaternion swingFull;
       Quaternion twistFull;
-      QuaternionUtil.DecomopseSwingTwist(q, twistAxis, out swingFull, out twistFull);
+      QuaternionUtil.DecomposeSwingTwist(q, twistAxis, out swingFull, out twistFull);
 
       swing = Quaternion.Slerp(Quaternion.identity, swingFull, t);
       twist = Quaternion.Slerp(Quaternion.identity, twistFull, t);
