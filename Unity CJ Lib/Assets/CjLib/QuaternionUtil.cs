@@ -90,7 +90,8 @@ namespace CjLib
     public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float t, out Quaternion swing, out Quaternion twist)
     {
       Quaternion q = b * Quaternion.Inverse(a);
-      Quaternion swingFull, twistFull;
+      Quaternion swingFull;
+      Quaternion twistFull;
       QuaternionUtil.DecomopseSwingTwist(q, twistAxis, out swingFull, out twistFull);
 
       swing = Quaternion.Slerp(Quaternion.identity, swingFull, t);
