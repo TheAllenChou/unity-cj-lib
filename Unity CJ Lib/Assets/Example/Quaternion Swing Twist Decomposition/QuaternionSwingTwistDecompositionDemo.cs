@@ -9,8 +9,11 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
   
   private enum State
   {
+    InitEnd, 
     Comparison, 
-    TwistSwing, 
+    TwistSwing,
+    //TwistSwingTrajectory,
+    Count
   };
 
   private Vector3 m_pos0;
@@ -29,12 +32,18 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
   State m_state;
   float m_phase;
 
+  Queue<Vector3> m_trajectory0;
+  Queue<Vector3> m_trajectory1;
+
+  const float kRodThickness = 0.15f;
+  const float kRodLegnth = 1.2f;
+
   public void Start()
   {
     m_rotDiffAxis = new Vector3(0.1f, 1.0f, -0.7f).normalized;
     m_rotDiffAngle = 150.0f;
 
-    m_rotInit = Quaternion.FromToRotation(Vector3.up, new Vector3(2.0f, 1.0f, -1.5f)) * Quaternion.AngleAxis(45.0f, Vector3.up);
+    m_rotInit = Quaternion.FromToRotation(Vector3.up, new Vector3(2.0f, 0.6f, -1.5f)) * Quaternion.AngleAxis(45.0f, Vector3.up);
     m_rotDiff = Quaternion.AngleAxis(m_rotDiffAngle, m_rotDiffAxis);
     m_rotEnd = m_rotDiff * m_rotInit;
 
@@ -46,27 +55,64 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
 
     m_phase = 0.0f;
 
-    m_state = State.Comparison;
+    m_state = State.InitEnd;
+
+    m_trajectory0 = new Queue<Vector3>();
+    m_trajectory1 = new Queue<Vector3>();
   }
 
   public void Update()
   {
-    m_phase = 0.5f * Mathf.Sin(Time.frameCount * MathUtil.TwiPi / 120.0f) + 0.5f;
+    m_phase = 0.5f * Mathf.Sin(Time.timeSinceLevelLoad * MathUtil.Pi) + 0.5f;
 
     Vector3 twistAxis = m_rotInit * Vector3.up;
-
     Quaternion swing;
     Quaternion twist;
-    Quaternion rotSterp = QuaternionUtil.Sterp(m_rotInit, m_rotEnd, twistAxis, m_phase, out swing, out twist);
+    QuaternionUtil.Sterp(m_rotInit, m_rotEnd, twistAxis, m_phase, out swing, out twist);
 
     switch (m_state)
     {
+      case State.InitEnd:
+      {
+        m_rot0 = m_rotInit;
+        m_rot1 = m_rotEnd;
+        break;
+      }
       case State.Comparison:
       {
-          m_rot0 = Quaternion.Slerp(m_rotInit, m_rotEnd, m_phase);
-          m_rot1 = swing * twist * m_rotInit;
-          break;
+        m_rot0 = Quaternion.Slerp(m_rotInit, m_rotEnd, m_phase);
+        m_rot1 = swing * twist * m_rotInit;
+        break;
       }
+      /*
+      case State.TwistSwingTrajectory:
+      {
+        m_rot0 = Quaternion.Slerp(m_rotInit, m_rotEnd, m_phase);
+        m_rot1 = swing * twist * m_rotInit;
+
+        const int kQueueCapacity = 20;
+        if (m_trajectory0.Count >= kQueueCapacity)
+          m_trajectory0.Dequeue();
+        m_trajectory0.Enqueue(m_pos0 + m_rot0 * ((kRodLegnth - 0.5f * kRodThickness) * Vector3.up));
+        if (m_trajectory1.Count >= kQueueCapacity)
+          m_trajectory1.Dequeue();
+        m_trajectory1.Enqueue(m_pos1 + m_rot1 * ((kRodLegnth - 0.5f * kRodThickness) * Vector3.up));
+
+        Queue<Vector3> [] aTrajectory = { m_trajectory0, m_trajectory1 };
+        foreach (Queue<Vector3> trajectory in aTrajectory)
+        {
+          Vector3 p0 = trajectory.Peek();
+          foreach (Vector3 p1 in trajectory)
+          {
+            DebugUtil.DrawSphere(p0, 0.01f, 16, 32, Color.white, false, DebugUtil.Style.FlatShaded);
+            DebugUtil.DrawCylinder(p0, p1, 0.005f, 16, Color.white, false, DebugUtil.Style.FlatShaded);
+            p0 = p1;
+          }
+        }
+
+        break;
+      }
+      */
       case State.TwistSwing:
       {
         m_rot0 = swing * m_rotInit;
@@ -80,25 +126,24 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
 
     if (Input.GetKeyDown(KeyCode.Space))
     {
-      m_state = (m_state == State.Comparison) ? State.TwistSwing : State.Comparison;
+      ++m_state;
+      if (m_state >= State.Count)
+        m_state = 0;
     }
   }
 
   private void DrawRod(Vector3 pos, Quaternion rot)
   {
-    float thickness = 0.15f;
-    float length = 1.2f;
-
     Vector3 axisX = rot * Vector3.right;
     Vector3 axisY = rot * Vector3.up;
     Vector3 axisZ = rot * Vector3.forward;
 
-    Vector3 offsetX = 0.5f * thickness * axisX;
-    Vector3 offsetY = 0.5f * (length - thickness) * axisY;
-    Vector3 offsetZ = 0.5f * thickness * axisZ;
+    Vector3 offsetX = 0.5f * kRodThickness * axisX;
+    Vector3 offsetY = 0.5f * (kRodLegnth - kRodThickness) * axisY;
+    Vector3 offsetZ = 0.5f * kRodThickness * axisZ;
 
-    Vector2 dimsSide = new Vector2(thickness, length);
-    Vector2 dimsCap = new Vector2(thickness, thickness);
+    Vector2 dimsSide = new Vector2(kRodThickness, kRodLegnth);
+    Vector2 dimsCap = new Vector2(kRodThickness, kRodThickness);
 
     Quaternion q = Quaternion.AngleAxis(90.0f, Vector3.right);
     Quaternion r = Quaternion.AngleAxis(90.0f, Vector3.up);
@@ -110,8 +155,8 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
     DebugUtil.DrawRect(pos - offsetX + offsetY, rot * r * r * r * q, dimsSide, Color.green, true, DebugUtil.Style.FlatShaded);
 
     // caps
-    DebugUtil.DrawRect(pos - (0.5f * thickness) * axisY, rot, dimsCap, Color.yellow, true, DebugUtil.Style.FlatShaded);
-    DebugUtil.DrawRect(pos + (length  - 0.5f * thickness) * axisY, rot, dimsCap, Color.yellow, true, DebugUtil.Style.FlatShaded);
+    DebugUtil.DrawRect(pos - (0.5f * kRodThickness) * axisY, rot, dimsCap, Color.yellow, true, DebugUtil.Style.FlatShaded);
+    DebugUtil.DrawRect(pos + (kRodLegnth  - 0.5f * kRodThickness) * axisY, rot, dimsCap, Color.yellow, true, DebugUtil.Style.FlatShaded);
 
     // rotationAxis
     DebugUtil.DrawArrow(pos, pos + 1.2f * m_rotDiffAxis, 0.1f, 0.3f, 32, 0.03f, Color.cyan, true, DebugUtil.Style.SmoothShaded);
