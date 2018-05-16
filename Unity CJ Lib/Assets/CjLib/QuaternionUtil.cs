@@ -87,15 +87,25 @@ namespace CjLib
       Quaternion twist;
       return Sterp(a, b, twistAxis, t, out swing, out twist);
     }
+    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float tSwing, float tTwist)
+    {
+      Quaternion swing;
+      Quaternion twist;
+      return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist);
+    }
     public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float t, out Quaternion swing, out Quaternion twist)
+    {
+      return Sterp(a, b, twistAxis, t, t, out swing, out twist);
+    }
+    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float tSwing, float tTwist, out Quaternion swing, out Quaternion twist)
     {
       Quaternion q = b * Quaternion.Inverse(a);
       Quaternion swingFull;
       Quaternion twistFull;
       QuaternionUtil.DecomposeSwingTwist(q, twistAxis, out swingFull, out twistFull);
 
-      swing = Quaternion.Slerp(Quaternion.identity, swingFull, t);
-      twist = Quaternion.Slerp(Quaternion.identity, twistFull, t);
+      swing = Quaternion.Slerp(Quaternion.identity, swingFull, tSwing);
+      twist = Quaternion.Slerp(Quaternion.identity, twistFull, tTwist);
 
       return twist * swing;
     }
