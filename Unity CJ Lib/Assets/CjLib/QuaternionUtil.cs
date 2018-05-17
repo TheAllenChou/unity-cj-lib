@@ -15,7 +15,10 @@ namespace CjLib
 {
   public class QuaternionUtil
   {
-   
+  
+    // basic stuff
+    // ------------------------------------------------------------------------
+
     public static float Magnitude(Quaternion q)
     {
       return Mathf.Sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
@@ -32,21 +35,32 @@ namespace CjLib
       return new Quaternion(q.x * magInv, q.y * magInv, q.z * magInv, q.w * magInv);
     }
 
-    public static Quaternion NormalizeSafe(Quaternion q, Quaternion fallback)
+    // ------------------------------------------------------------------------
+    // end: basic stuff
+
+
+    // normalized lerp (nlerp)
+    // ------------------------------------------------------------------------
+
+    public static Quaternion Nlerp(Quaternion a, Quaternion b, float t)
     {
-      float mag = Magnitude(q);
-      if (mag > MathUtil.Epsilon)
-      {
-        float magInv = 1.0f / mag;
-        return new Quaternion(q.x * magInv, q.y * magInv, q.z * magInv, q.w * magInv);
-      }
-      else
-      {
-        return fallback;
-      }
+      return Normalize(Quaternion.Lerp(a, b, t));
     }
 
-    public static void DecomposeSwingTwist(Quaternion q, Vector3 twistAxis, out Quaternion swing, out Quaternion twist)
+    // ------------------------------------------------------------------------
+    // end: normalized lerp (nlerp)
+
+
+    // swing-twist decomposition & interpolation
+    // ------------------------------------------------------------------------
+
+    public static void DecomposeSwingTwist
+    (
+      Quaternion q, 
+      Vector3 twistAxis, 
+      out Quaternion swing, 
+      out Quaternion twist
+    )
     {
       Vector3 r = new Vector3(q.x, q.y, q.z); // (rotaiton axis) * cos(angle / 2)
 
@@ -80,35 +94,115 @@ namespace CjLib
       swing = q * Quaternion.Inverse(twist);
     }
 
-    // swing-twist interpolation
-    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float t)
+    public enum SterpMode
+    {
+      // non-constant angular velocity, faster
+      // use if interpolating across small angles or constant angular velocity is not important
+      Nlerp,
+
+      // constant angular velocity, slower
+      // use if interpolating across large angles and constant angular velocity is important
+      Slerp, 
+    };
+
+    // same swing & twist parameters
+    public static Quaternion Sterp
+    (
+      Quaternion a, 
+      Quaternion b, 
+      Vector3 twistAxis, 
+      float t, 
+      SterpMode mode = SterpMode.Slerp
+    )
     {
       Quaternion swing;
       Quaternion twist;
-      return Sterp(a, b, twistAxis, t, out swing, out twist);
+      return Sterp(a, b, twistAxis, t, out swing, out twist, mode);
     }
-    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float tSwing, float tTwist)
+
+    // same swing & twist parameters with individual interpolated swing & twist outputs
+    public static Quaternion Sterp
+    (
+      Quaternion a, 
+      Quaternion b, 
+      Vector3 twistAxis, 
+      float t, 
+      out Quaternion swing, 
+      out Quaternion twist, 
+      SterpMode mode = SterpMode.Slerp
+    )
+    {
+      return Sterp(a, b, twistAxis, t, t, out swing, out twist, mode);
+    }
+
+    // different swing & twist parameters
+    public static Quaternion Sterp
+    (
+      Quaternion a, 
+      Quaternion b, 
+      Vector3 twistAxis, 
+      float tSwing, 
+      float tTwist, 
+      SterpMode mode = SterpMode.Slerp
+    )
     {
       Quaternion swing;
       Quaternion twist;
-      return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist);
+      return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist, mode);
     }
-    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float t, out Quaternion swing, out Quaternion twist)
+
+    // different swing & twist parameters with individual interpolated swing & twist outputs
+    public static Quaternion Sterp
+    (
+      Quaternion a, 
+      Quaternion b, 
+      Vector3 twistAxis, 
+      float tSwing, 
+      float tTwist, 
+      out Quaternion swing, 
+      out Quaternion twist, 
+      SterpMode mode = SterpMode.Slerp
+    )
     {
-      return Sterp(a, b, twistAxis, t, t, out swing, out twist);
+      return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist, mode);
     }
-    public static Quaternion Sterp(Quaternion a, Quaternion b, Vector3 twistAxis, float tSwing, float tTwist, out Quaternion swing, out Quaternion twist)
+
+    // master sterp function
+    public static Quaternion Sterp
+    (
+      Quaternion a, 
+      Quaternion b, 
+      Vector3 twistAxis, 
+      float tSwing, 
+      float tTwist, 
+      SterpMode mode, 
+      out Quaternion swing, 
+      out Quaternion twist
+    )
     {
       Quaternion q = b * Quaternion.Inverse(a);
       Quaternion swingFull;
       Quaternion twistFull;
       QuaternionUtil.DecomposeSwingTwist(q, twistAxis, out swingFull, out twistFull);
 
-      swing = Quaternion.Slerp(Quaternion.identity, swingFull, tSwing);
-      twist = Quaternion.Slerp(Quaternion.identity, twistFull, tTwist);
+      switch (mode)
+      {
+        default:
+        case SterpMode.Nlerp:
+          swing = Nlerp(Quaternion.identity, swingFull, tSwing);
+          twist = Nlerp(Quaternion.identity, twistFull, tTwist);
+          break;
+        case SterpMode.Slerp:
+          swing = Quaternion.Slerp(Quaternion.identity, swingFull, tSwing);
+          twist = Quaternion.Slerp(Quaternion.identity, twistFull, tTwist);
+          break;
+      }
 
       return twist * swing;
     }
+
+    // ------------------------------------------------------------------------
+    // end: swing-twist decomposition & interpolation
 
   }
 }
