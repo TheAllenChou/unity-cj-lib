@@ -1,5 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
 using UnityEngine;
 
 using CjLib;
