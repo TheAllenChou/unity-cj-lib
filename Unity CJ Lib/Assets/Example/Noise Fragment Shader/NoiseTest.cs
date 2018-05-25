@@ -1,10 +1,25 @@
-﻿/******************************************************************************/
+﻿/**************************/******************************************************************************/
 /*
-  Project   - Starblaze
-  Publisher - Long Bunny Labs
-              http://LongBunnyLabs.com
-  Author    - Ming-Lun "Allen" Chou
-              http://AllenChou.net
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+
+  Based on Noise Shader Library for Unity
+  https://github.com/keijiro/NoiseShader
+
+  Original work (webgl-noise) Copyright (C) 2011 Ashima Arts.
+  Translation and modification was made by Keijiro Takahashi.
+
+    Description : Array and textureless GLSL 2D simplex noise function.
+        Author  : Ian McEwan, Ashima Arts.
+    Maintainer  : ijm
+        Lastmod : 20110822 (ijm)
+        License : Copyright (C) 2011 Ashima Arts. All rights reserved.
+                  Distributed under the MIT License. See LICENSE file.
+                  https://github.com/ashima/webgl-noise
 */
 /******************************************************************************/
 

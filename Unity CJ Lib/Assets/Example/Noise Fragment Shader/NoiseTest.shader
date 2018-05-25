@@ -1,10 +1,11 @@
 ﻿/******************************************************************************/
 /*
-  Project   - Starblaze
-  Publisher - Long Bunny Labs
-  http://LongBunnyLabs.com
-  Author    - Ming-Lun "Allen" Chou
-  http://AllenChou.net
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
 
   Based on Noise Shader Library for Unity
   https://github.com/keijiro/NoiseShader
