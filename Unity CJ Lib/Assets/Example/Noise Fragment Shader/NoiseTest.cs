@@ -26,7 +26,7 @@ public class NoiseTest : MonoBehaviour
 
   public NoiseType m_noiseType = NoiseType.Simplex;
   public bool m_is3D;
-  public int m_numOctavets = 6;
+  public int m_numOctaves = 6;
   public float m_octaveOffsetFactor = 1.2f;
 
   Material m_material;
@@ -60,7 +60,7 @@ public class NoiseTest : MonoBehaviour
       m_material.EnableKeyword("THREED");
 
     m_material.SetVector("_Offset", new Vector4(0.0f, -0.5f * Time.time, 0.0f, 0.0f));
-    m_material.SetInt("_NumOctaves", m_numOctavets);
+    m_material.SetInt("_NumOctaves", m_numOctaves);
     m_material.SetFloat("_OctaveOffsetFactor", m_octaveOffsetFactor);
 
     /*
