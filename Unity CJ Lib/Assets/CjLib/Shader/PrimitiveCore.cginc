@@ -1,11 +1,11 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-/******************************************************************************/
-// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members normal)
-#pragma exclude_renderers d3d11
+﻿/******************************************************************************/
 /*
   Project - Unity CJ Lib
             https://github.com/TheAllenChou/unity-cj-lib
+
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
 
   Author  - Ming-Lun "Allen" Chou
   Web     - http://AllenChou.net
