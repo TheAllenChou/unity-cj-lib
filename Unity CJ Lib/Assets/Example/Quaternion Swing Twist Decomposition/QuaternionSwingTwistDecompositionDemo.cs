@@ -32,8 +32,10 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
   State m_state;
   float m_phase;
 
+  /*
   Queue<Vector3> m_trajectory0;
   Queue<Vector3> m_trajectory1;
+  */
 
   const float kRodThickness = 0.15f;
   const float kRodLegnth = 1.2f;
@@ -57,8 +59,10 @@ public class QuaternionSwingTwistDecompositionDemo : MonoBehaviour
 
     m_state = State.InitEnd;
 
+    /*
     m_trajectory0 = new Queue<Vector3>();
     m_trajectory1 = new Queue<Vector3>();
+    */
   }
 
   public void Update()
