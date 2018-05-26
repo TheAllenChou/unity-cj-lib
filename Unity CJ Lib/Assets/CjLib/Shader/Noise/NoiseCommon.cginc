@@ -92,6 +92,11 @@ float3 fade(float3 t)
   return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
 
+int index(int3 id, int3 dimension)
+{
+  return ((id.z * dimension.z + id.y) * dimension.y) + id.x;
+}
+
 
 #define DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(NOISE_FUNC, RET_TYPE, PARAM_TYPE)            \
 RET_TYPE NOISE_FUNC                                                                     \
@@ -108,7 +113,7 @@ RET_TYPE NOISE_FUNC                                                             
   int i = 0;                                                                            \
   do                                                                                    \
   {                                                                                     \
-    o += w * NOISE_FUNC(s + offset);                                                    \
+    o += w * NOISE_FUNC(s - offset);                                                    \
     wTotal += w;                                                                        \
     offset *= 2.0 * octaveOffsetFactor;                                                 \
     s *= 2.0;                                                                           \
@@ -135,7 +140,7 @@ RET_TYPE NOISE_FUNC                                                             
   int i = 0;                                                                            \
   do                                                                                    \
   {                                                                                     \
-    o += w * NOISE_FUNC(s + offset, period);                                            \
+    o += w * NOISE_FUNC(s - offset, period);                                            \
     wTotal += w;                                                                        \
     offset *= 2.0 * octaveOffsetFactor;                                                 \
     period *= 2.0;                                                                      \
