@@ -98,19 +98,24 @@ RET_TYPE NOISE_FUNC                                                             
 (                                                                                       \
   PARAM_TYPE s,                                                                         \
   PARAM_TYPE offset,                                                                    \
-  uint numOctaves,                                                                      \
+  int numOctaves,                                                                       \
   float octaveOffsetFactor                                                              \
 )                                                                                       \
 {                                                                                       \
-  RET_TYPE o = 0.5;                                                                     \
+  RET_TYPE o = 0.0;                                                                     \
   float w = 0.5;                                                                        \
-  for (uint i = 0; i < numOctaves; ++i)                                                 \
+  float wTotal = 0.0;                                                                   \
+  int i = 0;                                                                            \
+  do                                                                                    \
   {                                                                                     \
     o += w * NOISE_FUNC(s + offset);                                                    \
+    wTotal += w;                                                                        \
     offset *= 2.0 * octaveOffsetFactor;                                                 \
     s *= 2.0;                                                                           \
     w *= 0.5;                                                                           \
-  }                                                                                     \
+  } while (++i < numOctaves);                                                           \
+  o *= 0.5 / wTotal;                                                                    \
+  o += 0.5;                                                                             \
   return o;                                                                             \
 }
 
@@ -120,20 +125,25 @@ RET_TYPE NOISE_FUNC                                                             
   PARAM_TYPE s,                                                                         \
   PARAM_TYPE offset,                                                                    \
   PARAM_TYPE period,                                                                    \
-  uint numOctaves,                                                                      \
+  int numOctaves,                                                                       \
   float octaveOffsetFactor                                                              \
 )                                                                                       \
 {                                                                                       \
-  RET_TYPE o = 0.5;                                                                     \
+  RET_TYPE o = 0.0;                                                                     \
   float w = 0.5;                                                                        \
-  for (uint i = 0; i < numOctaves; ++i)                                                 \
+  float wTotal = 0.0;                                                                   \
+  int i = 0;                                                                            \
+  do                                                                                    \
   {                                                                                     \
     o += w * NOISE_FUNC(s + offset, period);                                            \
+    wTotal += w;                                                                        \
     offset *= 2.0 * octaveOffsetFactor;                                                 \
     period *= 2.0;                                                                      \
     s *= 2.0;                                                                           \
     w *= 0.5;                                                                           \
-  }                                                                                     \
+  } while (++i < numOctaves);                                                           \
+  o *= 0.5 / wTotal;                                                                    \
+  o += 0.5;                                                                             \
   return o;                                                                             \
 }
 
