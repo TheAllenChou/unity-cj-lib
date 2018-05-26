@@ -1235,13 +1235,23 @@ namespace CjLib
 
             aNormal[iNormal++] = vert;
 
-            if (iLat < latSegments - 2)
-            {
-              int iQuad0 = iVert - 1;
-              int iQuad1 = iQuad0 + 1;
-              int iQuad2 = (iQuad0 + numVertsPerLong) % (longSegments * numVertsPerLong);
-              int iQuad3 = (iQuad0 + numVertsPerLong + 1) % (longSegments * numVertsPerLong);
+            int iQuad0 = iVert - 1;
+            int iQuad1 = iQuad0 + 1;
+            int iQuad2 = (iQuad0 + numVertsPerLong) % (longSegments * numVertsPerLong);
+            int iQuad3 = (iQuad0 + numVertsPerLong + 1) % (longSegments * numVertsPerLong);
 
+            if (latSegments == 2)
+            {
+              aIndex[iIndex++] = iTop;
+              aIndex[iIndex++] = iQuad2;
+              aIndex[iIndex++] = iQuad0;
+
+              aIndex[iIndex++] = iBottom;
+              aIndex[iIndex++] = iQuad1;
+              aIndex[iIndex++] = iQuad3;
+            }
+            else if (iLat < latSegments - 2)
+            {
               if (iLat == 0)
               {
                 aIndex[iIndex++] = iTop;
