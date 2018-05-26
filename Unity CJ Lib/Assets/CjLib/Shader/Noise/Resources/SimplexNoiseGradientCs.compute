@@ -1,0 +1,40 @@
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
+#pragma kernel SimplexGradient2
+#pragma kernel SimplexGradient3
+
+#include "../SimplexNoise2D.cginc"
+#include "../SimplexNoise3D.cginc"
+
+RWStructuredBuffer<float2> buffer2;
+RWStructuredBuffer<float3> buffer3;
+
+float seed;
+int3 dimension;
+float3 scale;
+float3 offset;
+int numOctaves;
+float octaveOffsetFactor;
+
+[numthreads(1, 1, 1)]
+void SimplexGradient2(uint3 id : SV_DispatchThreadID)
+{
+  buffer2[id.y * dimension.y + id.x] = 
+    snoise_grad(seed, offset.xy, numOctaves, octaveOffsetFactor).xy;
+}
+
+[numthreads(1, 1, 1)]
+void SimplexGradient3(uint3 id : SV_DispatchThreadID)
+{
+  buffer3[((id.z * dimension.z + id.y) * dimension.y) + id.x] = 
+    snoise_grad(seed, offset, numOctaves, octaveOffsetFactor).xyz;
+}

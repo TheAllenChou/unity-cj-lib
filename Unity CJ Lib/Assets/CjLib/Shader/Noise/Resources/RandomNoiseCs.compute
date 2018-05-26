@@ -1,0 +1,39 @@
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
+#pragma kernel Random1
+#pragma kernel Random2
+#pragma kernel Random3
+
+#include "../RandomNoise.cginc"
+
+RWStructuredBuffer<float> buffer;
+
+float seed;
+int3 dimension;
+
+[numthreads(1, 1, 1)]
+void Random1(uint3 id : SV_DispatchThreadID)
+{
+  buffer[index(id, dimension)] = rand(seed + id.x);
+}
+
+[numthreads(1, 1, 1)]
+void Random2(uint3 id : SV_DispatchThreadID)
+{
+  buffer[index(id, dimension)] = rand(seed + id.xy);
+}
+
+[numthreads(1, 1, 1)]
+void Random3(uint3 id : SV_DispatchThreadID)
+{
+  buffer[index(id, dimension)] = rand(seed + id.xyz);
+}
