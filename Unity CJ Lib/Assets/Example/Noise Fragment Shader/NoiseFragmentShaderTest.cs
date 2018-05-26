@@ -32,11 +32,11 @@ public class NoiseFragmentShaderTest : MonoBehaviour
   public enum NoiseType
   {
     Classic,
-    Periodic,
-    Simplex,
-    SimplexGradient,
+    ClassicPeriodic,
     Random, 
     RandomVector, 
+    Simplex,
+    SimplexGradient,
   }
 
   public NoiseType m_noiseType = NoiseType.Simplex;
@@ -60,7 +60,7 @@ public class NoiseFragmentShaderTest : MonoBehaviour
 
     if (m_noiseType == NoiseType.Classic)
       m_material.EnableKeyword("CNOISE");
-    else if (m_noiseType == NoiseType.Periodic)
+    else if (m_noiseType == NoiseType.ClassicPeriodic)
       m_material.EnableKeyword("PNOISE");
     else if (m_noiseType == NoiseType.Simplex)
       m_material.EnableKeyword("SNOISE");
