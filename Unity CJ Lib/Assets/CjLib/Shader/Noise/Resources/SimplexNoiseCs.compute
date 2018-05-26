@@ -9,7 +9,6 @@
 */
 /******************************************************************************/
 
-#pragma kernel Simplex1
 #pragma kernel Simplex2
 #pragma kernel Simplex3
 
@@ -27,25 +26,17 @@ int numOctaves;
 float octaveOffsetFactor;
 
 [numthreads(1, 1, 1)]
-void Simplex1(uint3 id : SV_DispatchThreadID)
-{
-  float2 s = scale.x * float2(id.x, 0.0f) + rand(seed);
-  buffer[index(id, dimension)] = 
-    snoise(s, float2(offset.x, 0.0), numOctaves, octaveOffsetFactor);
-}
-
-[numthreads(1, 1, 1)]
 void Simplex2(uint3 id : SV_DispatchThreadID)
 {
-  float2 s = scale.xy * id.xy;
+  float2 s = id.xy / scale.xy + rand(seed);
   buffer[index(id, dimension)] = 
-   snoise(s, offset.xy, numOctaves, octaveOffsetFactor);
+    snoise(s, offset.xy, numOctaves, octaveOffsetFactor);
 }
 
 [numthreads(1, 1, 1)]
 void Simplex3(uint3 id : SV_DispatchThreadID)
 {
-  float3 s = scale * id + rand(seed);
+  float3 s = id / scale + rand(seed);
   buffer[index(id, dimension)] = 
     snoise(s, offset, numOctaves, octaveOffsetFactor);
 }

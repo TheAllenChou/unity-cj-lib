@@ -9,7 +9,6 @@
 */
 /******************************************************************************/
 
-#pragma kernel ClassicPeriodic1
 #pragma kernel ClassicPeriodic2
 #pragma kernel ClassicPeriodic3
 
@@ -27,22 +26,17 @@ int numOctaves;
 float octaveOffsetFactor;
 
 [numthreads(1, 1, 1)]
-void ClassicPeriodic1(uint3 id : SV_DispatchThreadID)
-{
-  buffer[id.x] = 
-    pnoise(scale.x * float2(seed, 0.0), float2(offset.x, 0.0), float2(period.x, period.x) , numOctaves, octaveOffsetFactor);
-}
-
-[numthreads(1, 1, 1)]
 void ClassicPeriodic2(uint3 id : SV_DispatchThreadID)
 {
-  buffer[id.y * dimension.y + id.x] = 
-    pnoise(scale.xy * seed, offset.xy, period.xy, numOctaves, octaveOffsetFactor);
+  float2 s = id.xy / scale.xy + rand(seed);
+  buffer[index(id, dimension)] = 
+    pnoise(s, offset.xy, period.xy, numOctaves, octaveOffsetFactor);
 }
 
 [numthreads(1, 1, 1)]
 void ClassicPeriodic3(uint3 id : SV_DispatchThreadID)
 {
-  buffer[((id.z * dimension.z + id.y) * dimension.y) + id.x] = 
-    pnoise(scale * seed, offset, period, numOctaves, octaveOffsetFactor);
+  float3 s = id / scale + rand(seed);
+  buffer[index(id, dimension)] = 
+    pnoise(s, offset, period, numOctaves, octaveOffsetFactor);
 }

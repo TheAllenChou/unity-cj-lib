@@ -17,7 +17,6 @@ namespace CjLib
   {
     private static bool s_simplexInit = false;
     private static ComputeShader s_simplex;
-    private static int s_simplex1KernelId;
     private static int s_simplex2KernelId;
     private static int s_simplex3KernelId;
     private static void InitClassicPeriodic()
@@ -28,16 +27,8 @@ namespace CjLib
         return;
 
       s_simplex = (ComputeShader) Resources.Load("ClassicNoisePeriodicCs");
-      s_simplex1KernelId = s_simplex.FindKernel("ClassicPeriodic1");
       s_simplex2KernelId = s_simplex.FindKernel("ClassicPeriodic2");
       s_simplex3KernelId = s_simplex.FindKernel("ClassicPeriodic3");
-    }
-
-    private static void GetClassicPeriodic1(out ComputeShader shader, out int kernelId)
-    {
-      InitClassicPeriodic();
-      shader = s_simplex;
-      kernelId = s_simplex1KernelId;
     }
 
     private static void GetClassicPeriodic2(out ComputeShader shader, out int kernelId)
@@ -58,7 +49,7 @@ namespace CjLib
     {
       ComputeShader shader;
       int kernelId;
-      GetClassicPeriodic1(out shader, out kernelId);
+      GetClassicPeriodic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), 1, 1 };
       float[] aScale = new float[] { scale };
       float[] aOffset = new float[] { offset };

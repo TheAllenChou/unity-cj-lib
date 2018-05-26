@@ -45,6 +45,17 @@ namespace CjLib
       kernelId = s_simplexGradient3KernelId;
     }
 
+    public static void Compute(Vector2[] output, float scale, float offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    {
+      ComputeShader shader;
+      int kernelId;
+      GetSimplex2(out shader, out kernelId);
+      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
+      float[] aScale = { scale };
+      float[] aOffset = { offset };
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 2, aScale, aOffset, numOctaves, octaveOffsetFactor);
+    }
+
     public static void Compute(Vector2[,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
     {
       ComputeShader shader;
@@ -52,6 +63,17 @@ namespace CjLib
       GetSimplex2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
       NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 2, scale, offset, numOctaves, octaveOffsetFactor);
+    }
+
+    public static void Compute(Vector3[] output, float scale, float offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    {
+      ComputeShader shader;
+      int kernelId;
+      GetSimplex3(out shader, out kernelId);
+      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
+      float[] aScale = { scale };
+      float[] aOffset = { offset };
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 3, aScale, aOffset, numOctaves, octaveOffsetFactor);
     }
 
     public static void Compute(Vector3[,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor, int seed = 0)

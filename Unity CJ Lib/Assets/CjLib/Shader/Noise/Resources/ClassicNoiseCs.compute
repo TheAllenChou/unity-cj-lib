@@ -9,7 +9,6 @@
 */
 /******************************************************************************/
 
-#pragma kernel Classic1
 #pragma kernel Classic2
 #pragma kernel Classic3
 
@@ -27,17 +26,9 @@ int numOctaves;
 float octaveOffsetFactor;
 
 [numthreads(1, 1, 1)]
-void Classic1(uint3 id : SV_DispatchThreadID)
-{
-  float2 s = scale.x * float2(id.x, 0.0f) + rand(seed);
-  buffer[index(id, dimension)] =
-    cnoise(s, float2(offset.x, 0.0), numOctaves, octaveOffsetFactor);
-}
-
-[numthreads(1, 1, 1)]
 void Classic2(uint3 id : SV_DispatchThreadID)
 {
-  float2 s = scale.xy * id.xy + rand(seed);
+  float2 s = id.xy / scale.xy + rand(seed);
   buffer[index(id, dimension)] =
     cnoise(s, offset.xy, numOctaves, octaveOffsetFactor);
 }
@@ -45,7 +36,7 @@ void Classic2(uint3 id : SV_DispatchThreadID)
 [numthreads(1, 1, 1)]
 void Classic3(uint3 id : SV_DispatchThreadID)
 {
-  float3 s = scale * id + rand(seed);
+  float3 s = id / scale + rand(seed);
   buffer[index(id, dimension)] =
     cnoise(s, offset, numOctaves, octaveOffsetFactor);
 }

@@ -45,13 +45,31 @@ namespace CjLib
       kernelId = s_randomVec3KernelId;
     }
 
+    public static void Compute(Vector2[] output, int seed = 0)
+    {
+      ComputeShader shader;
+      int kernelId;
+      GetRandomVec2(out shader, out kernelId);
+      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 2);
+    }
+
     public static void Compute(Vector2[,] output, int seed = 0)
     {
       ComputeShader shader;
       int kernelId;
-      GetRandomVec3(out shader, out kernelId);
+      GetRandomVec2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
       NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 2);
+    }
+
+    public static void Compute(Vector3[] output, int seed = 0)
+    {
+      ComputeShader shader;
+      int kernelId;
+      GetRandomVec3(out shader, out kernelId);
+      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 3);
     }
 
     public static void Compute(Vector3[,] output, int seed = 0)

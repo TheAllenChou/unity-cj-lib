@@ -17,7 +17,6 @@ namespace CjLib
   {
     private static bool s_classicInit = false;
     private static ComputeShader s_classic;
-    private static int s_classic1KernelId;
     private static int s_classic2KernelId;
     private static int s_classic3KernelId;
     private static void InitClassic()
@@ -28,16 +27,8 @@ namespace CjLib
         return;
 
       s_classic = (ComputeShader) Resources.Load("ClassicNoiseCs");
-      s_classic1KernelId = s_classic.FindKernel("Classic1");
       s_classic2KernelId = s_classic.FindKernel("Classic2");
       s_classic3KernelId = s_classic.FindKernel("Classic3");
-    }
-
-    private static void GetClassic1(out ComputeShader shader, out int kernelId)
-    {
-      InitClassic();
-      shader = s_classic;
-      kernelId = s_classic1KernelId;
     }
 
     private static void GetClassic2(out ComputeShader shader, out int kernelId)
@@ -58,7 +49,7 @@ namespace CjLib
     {
       ComputeShader shader;
       int kernelId;
-      GetClassic1(out shader, out kernelId);
+      GetClassic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), 1, 1 };
       float[] aScale = new float[] { scale };
       float[] aOffset = new float[] { offset };
