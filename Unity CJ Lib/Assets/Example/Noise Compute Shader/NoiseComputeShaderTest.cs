@@ -67,21 +67,31 @@ public class NoiseComputeShaderTest : MonoBehaviour
   void Update()
   {
     float[] offset = new float[] { 0.5f * Time.time, 0.25f * Time.time, 0.25f * Time.time };
-    float[,] output2 = new float[10, 10];
-    float[,,] output3 = new float[10, 10, 10];
-    Vector2[,] output2v2 = new Vector2[10, 10];
-    Vector3[,] output2v3 = new Vector3[10, 10];
-    Vector3[,,] output3v3 = new Vector3[10, 10, 10];
-    float[] scale = new float[] { 0.02f, 0.02f, 0.02f };
+    int extent = 10;
+    float[] output1 = new float[extent];
+    float[,] output2 = new float[extent, extent];
+    float[,,] output3 = new float[extent, extent, extent];
+    Vector2[] output1v2 = new Vector2[extent];
+    Vector2[,] output2v2 = new Vector2[extent, extent];
+    Vector3[] output1v3 = new Vector3[extent];
+    Vector3[,] output2v3 = new Vector3[extent, extent];
+    Vector3[,,] output3v3 = new Vector3[extent, extent, extent];
+    float[] scale = new float[] { 3.0f, 3.0f, 3.0f };
     float[] period = new float[] { 0.15f, 0.15f, 0.15f };
 
     switch (m_noiseType)
     {
       case NoiseType.Classic1D:
+        ClassicNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+        Draw(output1);
         break;
       case NoiseType.Classic2D:
+        ClassicNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output2);
         break;
       case NoiseType.Classic3D:
+        ClassicNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output3);
         break;
       case NoiseType.ClassicPeriodic1D:
         break;
@@ -128,6 +138,17 @@ public class NoiseComputeShaderTest : MonoBehaviour
     }
   }
 
+  Vector3 ComputePoint(float[] value, int x)
+  {
+    return
+      new Vector3
+      (
+        ((((float)x) / value.GetLength(0)) - 0.5f) * m_drawDimension[0], 
+        0.0f, 
+        0.0f
+      );
+  }
+
   Vector3 ComputePoint(float[,] value, int x, int y)
   {
     return 
@@ -150,6 +171,12 @@ public class NoiseComputeShaderTest : MonoBehaviour
       );
   }
 
+  private void Draw(float[] value)
+  {
+    for (int x = 0; x < value.GetLength(0); ++x)
+      DebugUtil.DrawSphere(ComputePoint(value, x), 0.2f * value[x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+  }
+
   private void Draw(float[,] value)
   {
     for (int y = 0; y < value.GetLength(1); ++y)
@@ -165,9 +192,29 @@ public class NoiseComputeShaderTest : MonoBehaviour
           DebugUtil.DrawSphere(ComputePoint(value, x, y, z), 0.2f * value[x, y, z], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
   }
 
-  private void Draw(Vector3[,] value)
+  private void Draw(Vector2[] value)
   {
 
+  }
+
+  private void Draw(Vector2[,] value)
+  {
+
+  }
+
+  private void Draw(Vector2[,,] value)
+  {
+
+  }
+
+  private void Draw(Vector3[] value)
+  {
+
+  }
+
+  private void Draw(Vector3[,] value)
+  {
+  
   }
 
   private void Draw(Vector3[,,] value)
