@@ -81,6 +81,12 @@ namespace CjLib
       s_csIdInit = true;
     }
 
+    // so zero seed doesn't easily get passed into sine and get zero
+    internal static float JumbleSeed(float seed)
+    {
+      return (seed + 1.2345689f) * 1.23456789f;
+    }
+
     // scale-agnostic noise
     internal static void Compute
     (
@@ -102,7 +108,7 @@ namespace CjLib
       ComputeBuffer buffer = GetFloatBuffer(dimension[0] * dimension[1] * dimension[2], bufferStride);
       shader.SetBuffer(kernelId, csBufferId, buffer);
 
-      seed = (seed + 1.2345689f) * 1.23456789f;
+      seed = JumbleSeed(seed);
       shader.SetFloat(s_csSeedId, seed);
       shader.SetInts(s_csDimensionId, dimension);
 

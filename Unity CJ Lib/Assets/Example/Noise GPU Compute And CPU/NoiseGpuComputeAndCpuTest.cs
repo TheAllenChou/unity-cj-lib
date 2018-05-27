@@ -57,8 +57,15 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     SimplexGradient3DVec3, 
   }
 
+  public enum Mode
+  {
+    kGpuCompute, 
+    kCpu, 
+  }
+
   public NoiseType m_noiseType = NoiseType.Simplex3D;
-  public int m_numOctaves = 2;
+  public Mode m_mode = Mode.kGpuCompute;
+  public int m_numOctaves = 1;
   public float m_octaveOffsetFactor = 1.2f;
   public Color m_color = Color.white;
   public float m_elementSize = 0.15f;
@@ -80,6 +87,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     float[] scale = new float[] { 3.0f, 3.0f, 3.0f };
     float[] period = new float[] { 0.15f, 0.15f, 0.15f };
 
+    bool gpuCompute = (m_mode == Mode.kGpuCompute);
     switch (m_noiseType)
     {
       case NoiseType.Classic1D:
@@ -107,15 +115,42 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         Draw(output3);
         break;
       case NoiseType.Random1D:
-        RandomNoise.Compute(output1, Time.frameCount);
+        if (gpuCompute)
+        {
+          RandomNoise.Compute(output1, Time.frameCount);
+        }
+        else
+        {
+          for (int x = 0; x < output1.GetLength(0); ++x)
+            output1[x] = RandomNoise.Get(x, Time.frameCount);
+        }
         Draw(output1);
         break;
       case NoiseType.Random2D:
-        RandomNoise.Compute(output2, Time.frameCount);
+        if (gpuCompute)
+        {
+          RandomNoise.Compute(output2, Time.frameCount);
+        }
+        else
+        {
+          for (int y = 0; y < output2.GetLength(1); ++y)
+            for (int x = 0; x < output2.GetLength(0);  ++x)
+              output2[y, x] = RandomNoise.Get(new Vector2(x, y), Time.frameCount);
+        }
         Draw(output2);
         break;
       case NoiseType.Random3D:
-        RandomNoise.Compute(output3, Time.frameCount);
+        if (gpuCompute)
+        {
+          RandomNoise.Compute(output3, Time.frameCount);
+        }
+        else
+        {
+          for (int z = 0; z < output3.GetLength(2); ++z)
+            for (int y = 0; y < output3.GetLength(1); ++y)
+              for (int x = 0; x < output3.GetLength(0); ++x)
+                output3[z, y, x] = RandomNoise.Get(new Vector3(x, y, z), Time.frameCount);
+        }
         Draw(output3);
         break;
       case NoiseType.RandomVector1DVec2:
