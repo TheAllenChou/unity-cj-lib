@@ -29,7 +29,6 @@ using UnityEngine;
 
 using CjLib;
 
-[ExecuteInEditMode]
 public class NoiseComputeShaderTest : MonoBehaviour
 {
   public enum NoiseType
@@ -63,21 +62,21 @@ public class NoiseComputeShaderTest : MonoBehaviour
   public float m_octaveOffsetFactor = 1.2f;
   public Color m_color = Color.white;
   public float m_elementSize = 0.15f;
+  public int m_gridExtent = 6;
 
   private float[] m_drawDimension = new float[] { 2.0f, 2.0f, 2.0f };
 
   void Update()
   {
-    float[] offset = new float[] { 0.5f * Time.time, 0.0f * Time.time, 0.0f * Time.time };
-    int extent = 6;
-    float[] output1 = new float[extent];
-    float[,] output2 = new float[extent, extent];
-    float[,,] output3 = new float[extent, extent, extent];
-    Vector2[] output1v2 = new Vector2[extent];
-    Vector2[,] output2v2 = new Vector2[extent, extent];
-    Vector3[] output1v3 = new Vector3[extent];
-    Vector3[,] output2v3 = new Vector3[extent, extent];
-    Vector3[,,] output3v3 = new Vector3[extent, extent, extent];
+    float[] offset = new float[] { 0.5f * Time.time, 0.25f * Time.time, 0.1f * Time.time };
+    float[] output1 = new float[m_gridExtent];
+    float[,] output2 = new float[m_gridExtent, m_gridExtent];
+    float[,,] output3 = new float[m_gridExtent, m_gridExtent, m_gridExtent];
+    Vector2[] output1v2 = new Vector2[m_gridExtent];
+    Vector2[,] output2v2 = new Vector2[m_gridExtent, m_gridExtent];
+    Vector3[] output1v3 = new Vector3[m_gridExtent];
+    Vector3[,] output2v3 = new Vector3[m_gridExtent, m_gridExtent];
+    Vector3[,,] output3v3 = new Vector3[m_gridExtent, m_gridExtent, m_gridExtent];
     float[] scale = new float[] { 3.0f, 3.0f, 3.0f };
     float[] period = new float[] { 0.15f, 0.15f, 0.15f };
 
@@ -207,17 +206,37 @@ public class NoiseComputeShaderTest : MonoBehaviour
       );
   }
 
+  Color ComputeColor(Vector3 p, Vector3 near, Vector3 far, float farMult)
+  {
+    Vector3 c = Camera.main.transform.position;
+    Vector3 v = (far - c).normalized;
+    float n = Vector3.Dot(v, near - c) + 0.5f;
+    float f = Vector3.Dot(v, far - c) - 0.5f;
+    float d = Vector3.Dot(v, p - c);
+    float t = Mathf.Clamp01((f - d) / (f - n));
+    float m = Mathf.Lerp(1.0f, farMult, t);
+    return new Color(m_color.r * m, m_color.g * m, m_color.b * m, m_color.a);
+  }
+
   private void Draw(float[] value)
   {
     for (int x = 0; x < value.GetLength(0); ++x)
-      DebugUtil.DrawSphere(ComputePoint(value, x), m_elementSize * value[x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+    {
+      Vector3 p = ComputePoint(value, x);
+      Color c = ComputeColor(p, ComputePoint(value, 0), ComputePoint(value, m_gridExtent - 1), 0.8f);
+      DebugUtil.DrawSphere(p, m_elementSize * value[x], 2, 4, c, true, DebugUtil.Style.FlatShaded);
+    }
   }
 
   private void Draw(float[,] value)
   {
     for (int y = 0; y < value.GetLength(1); ++y)
       for (int x = 0; x < value.GetLength(0); ++x)
-        DebugUtil.DrawSphere(ComputePoint(value, x, y), m_elementSize * value[y, x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+      {
+        Vector3 p = ComputePoint(value, x, y);
+        Color c = ComputeColor(p, ComputePoint(value, 0, 0), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1), 0.6f);
+        DebugUtil.DrawSphere(p, m_elementSize * value[y, x], 2, 4, c, true, DebugUtil.Style.FlatShaded);
+      }
   }
 
   private void Draw(float[,,] value)
@@ -225,7 +244,11 @@ public class NoiseComputeShaderTest : MonoBehaviour
     for (int z = 0; z < value.GetLength(2); ++z)
       for (int y = 0; y < value.GetLength(1); ++y)
         for (int x = 0; x < value.GetLength(0); ++x)
-          DebugUtil.DrawSphere(ComputePoint(value, x, y, z), m_elementSize * value[z, y, x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+        {
+          Vector3 p = ComputePoint(value, x, y, z);
+          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.4f);
+          DebugUtil.DrawSphere(p, m_elementSize * value[z, y, x], 2, 4, c, true, DebugUtil.Style.FlatShaded);
+        }
   }
 
   private void Draw(Vector2[] value)
@@ -233,7 +256,8 @@ public class NoiseComputeShaderTest : MonoBehaviour
     for (int x = 0; x < value.GetLength(0); ++x)
     {
       Vector3 p = ComputePoint(value, x);
-      DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[x].x, value[x].y, 0.0f)), 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+      Color c = ComputeColor(p, ComputePoint(value, 0), ComputePoint(value, m_gridExtent - 1), 0.8f);
+      DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[x].x, value[x].y, 0.0f)), 0.05f, c, true, DebugUtil.Style.FlatShaded);
     }
   }
 
@@ -243,7 +267,8 @@ public class NoiseComputeShaderTest : MonoBehaviour
       for (int x = 0; x < value.GetLength(0); ++x)
       {
         Vector3 p = ComputePoint(value, x, y);
-        DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[y, x].x, value[y, x].y, 0.0f)), 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+        Color c = ComputeColor(p, ComputePoint(value, 0, 0), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1), 0.6f);
+        DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[y, x].x, value[y, x].y, 0.0f)), 0.05f, c, true, DebugUtil.Style.FlatShaded);
       }
   }
 
@@ -252,7 +277,8 @@ public class NoiseComputeShaderTest : MonoBehaviour
     for (int x = 0; x < value.GetLength(0); ++x)
     {
       Vector3 p = ComputePoint(value, x);
-      DebugUtil.DrawArrow(p, p + m_elementSize * value[x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+      Color c = ComputeColor(p, ComputePoint(value, 0), ComputePoint(value, m_gridExtent - 1), 0.8f);
+      DebugUtil.DrawArrow(p, p + m_elementSize * value[x], 0.05f, c, true, DebugUtil.Style.FlatShaded);
     }
   }
 
@@ -262,7 +288,8 @@ public class NoiseComputeShaderTest : MonoBehaviour
       for (int x = 0; x < value.GetLength(0); ++x)
       {
         Vector3 p = ComputePoint(value, x, y);
-        DebugUtil.DrawArrow(p, p + m_elementSize * value[y, x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+        Color c = ComputeColor(p, ComputePoint(value, 0, 0), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1), 0.6f);
+        DebugUtil.DrawArrow(p, p + m_elementSize * value[y, x], 0.05f, c, true, DebugUtil.Style.FlatShaded);
       }
   }
 
@@ -273,7 +300,8 @@ public class NoiseComputeShaderTest : MonoBehaviour
         for (int x = 0; x < value.GetLength(0); ++x)
         {
           Vector3 p = ComputePoint(value, x, y, z);
-          DebugUtil.DrawArrow(p, p + m_elementSize * value[z, y, x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.4f);
+          DebugUtil.DrawArrow(p, p + m_elementSize * value[z, y, x], 0.05f, c, true, DebugUtil.Style.FlatShaded);
         }
   }
 }
