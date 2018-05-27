@@ -98,7 +98,7 @@ int index(int3 id, int3 dimension)
 }
 
 
-#define DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(NOISE_FUNC, RET_TYPE, PARAM_TYPE)            \
+#define DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(NOISE_FUNC, RET_TYPE, PARAM_TYPE, CENTER)    \
 RET_TYPE NOISE_FUNC                                                                     \
 (                                                                                       \
   PARAM_TYPE s,                                                                         \
@@ -120,7 +120,7 @@ RET_TYPE NOISE_FUNC                                                             
     w *= 0.5;                                                                           \
   } while (++i < numOctaves);                                                           \
   o *= 0.5 / wTotal;                                                                    \
-  o += 0.5;                                                                             \
+  o += CENTER;                                                                          \
   return o;                                                                             \
 }
 

@@ -18,7 +18,6 @@
 RWStructuredBuffer<float2> buffer2;
 RWStructuredBuffer<float3> buffer3;
 
-float seed;
 int3 dimension;
 float3 scale;
 float3 offset;
@@ -28,7 +27,7 @@ float octaveOffsetFactor;
 [numthreads(1, 1, 1)]
 void SimplexGradient2(uint3 id : SV_DispatchThreadID)
 {
-  float2 s = id.xy / scale.xy + rand(seed);
+  float2 s = id.xy / scale.xy;
   buffer2[index(id, dimension)] = 
     snoise_grad(s, offset.xy, numOctaves, octaveOffsetFactor).xy;
 }
@@ -36,7 +35,7 @@ void SimplexGradient2(uint3 id : SV_DispatchThreadID)
 [numthreads(1, 1, 1)]
 void SimplexGradient3(uint3 id : SV_DispatchThreadID)
 {
-  float3 s = id / scale + rand(seed);
+  float3 s = id / scale;
   buffer3[index(id, dimension)] = 
     snoise_grad(s, offset, numOctaves, octaveOffsetFactor).xyz;
 }

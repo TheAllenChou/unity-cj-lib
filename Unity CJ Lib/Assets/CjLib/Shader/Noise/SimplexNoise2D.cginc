@@ -78,7 +78,7 @@ float snoise(float2 v)
 }
 
 // multiple octaves
-DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(snoise, float, float2);
+DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(snoise, float, float2, 0.5);
 
 // single octave
 float3 snoise_grad(float2 v)
@@ -135,6 +135,6 @@ float3 snoise_grad(float2 v)
 }
 
 // multiple octaves
-DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(snoise_grad, float3, float2);
+DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(snoise_grad, float3, float2, 0.0);
 
 #endif

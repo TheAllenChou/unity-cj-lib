@@ -101,7 +101,7 @@ float cnoise(float3 P)
 }
 
 // multiple octave
-DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(cnoise, float, float3);
+DEFINE_NOISE_FUNC_MULTIPLE_OCTAVES(cnoise, float, float3, 0.5);
 
 // classic Perlin noise, periodic variant
 // single octave

@@ -23,11 +23,11 @@ int3 dimension;
 [numthreads(1, 1, 1)]
 void RandomVec2(uint3 id : SV_DispatchThreadID)
 {
-  buffer2[id.y * dimension.y + id.x] = rand_vec(seed + id.xy);
+  buffer2[index(id, dimension)] = rand_vec(seed + id.xy);
 }
 
 [numthreads(1, 1, 1)]
 void RandomVec3(uint3 id : SV_DispatchThreadID)
 {
-  buffer3[((id.z * dimension.z + id.y) * dimension.y) + id.x] = rand_vec(seed + id.xyz);
+  buffer3[index(id, dimension)] = rand_vec(seed + id.xyz);
 }

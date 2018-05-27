@@ -33,7 +33,7 @@ float rand(float2 s)
 
 float2 rand_vec(float2 s)
 {
-  return normalize(float2(rand(s), rand(s * 1.23456789))) * rand(s * 9876.54321);
+  return normalize(float2(rand(s), rand(s * 1.23456789)) - 0.5) * rand(s * 9876.54321);
 }
 
 float rand(float3 s)
@@ -45,7 +45,7 @@ float rand(float3 s)
 
 float3 rand_vec(float3 s)
 {
-  return normalize(float3(rand(s), rand(s * 1.23456789), rand(s * 9876.54321))) * rand(s * 1357975.31313);
+  return normalize(float3(rand(s), rand(s * 1.23456789), rand(s * 9876.54321)) - 0.5) * rand(s * 1357975.31313);
 }
 
 #endif
