@@ -7,7 +7,7 @@
   Web     - http://AllenChou.net
   Twitter - @TheAllenChou
 
-  Based on Noise Shader Library for Unity
+  This example is based on Noise Shader Library for Unity
   https://github.com/keijiro/NoiseShader
 
   Original work (webgl-noise) Copyright (C) 2011 Ashima Arts.

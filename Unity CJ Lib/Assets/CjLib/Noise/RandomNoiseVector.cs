@@ -13,6 +13,9 @@ using UnityEngine;
 
 namespace CjLib
 {
+  // GPU compute
+  //-------------------------------------------------------------------------
+
   public class RandomNoiseVector
   {
     private static bool s_randomVecInit = false;
@@ -89,5 +92,45 @@ namespace CjLib
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
       NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float) * 3);
     }
+
+    //-------------------------------------------------------------------------
+    // end: GPU compute
+
+
+    // CPU
+    //-------------------------------------------------------------------------
+
+    public static Vector2 GetVector2(float v, int seed = 0)
+    {
+      // TODO
+      return new Vector2();
+    }
+
+    public static Vector2 GetVector2(Vector2 v, int seed = 0)
+    {
+      // TODO
+      return new Vector2();
+    }
+
+    public static Vector3 GetVector3(float v, int seed = 0)
+    {
+      // TODO
+      return new Vector3();
+    }
+
+    public static Vector3 GetVector3(Vector2 v, int seed = 0)
+    {
+      // TODO
+      return new Vector3();
+    }
+
+    public static Vector3 GetVector3(Vector3 v, int seed = 0)
+    {
+      // TODO
+      return new Vector3();
+    }
+
+    //-------------------------------------------------------------------------
+    // end: CPU
   }
 }

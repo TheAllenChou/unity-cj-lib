@@ -14,9 +14,7 @@ Utilities and extensions to Unity's existing math library, including vectors, qu
 
 Shader functions to generate noise. GPU compute & CPU variants coming soon.
 
-Original work (webgl-noise) Copyright (C) 2011 Ashima Arts.  
-Translation and modification was made by Keijiro Takahashi.  
-  
+Based on project "webgl-noise" by Ashima Arts.
 Description : Array and textureless GLSL 2D simplex noise function.  
     Author  : Ian McEwan, Ashima Arts.  
 Maintainer  : ijm  
