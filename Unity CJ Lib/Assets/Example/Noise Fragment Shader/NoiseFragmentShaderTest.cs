@@ -77,15 +77,5 @@ public class NoiseFragmentShaderTest : MonoBehaviour
     m_material.SetVector("_Offset", new Vector4(0.0f, -0.5f * Time.time, 0.0f, 0.0f));
     m_material.SetInt("_NumOctaves", m_numOctaves);
     m_material.SetFloat("_OctaveOffsetFactor", m_octaveOffsetFactor);
-
-    /*
-    float[] output0 = new float[1000];
-    float[,] output1 = new float[1000, 2];
-    float[,,] output2 = new float[1000, 2, 2];
-    RandomNoise.Compute(output0);
-    RandomNoise.Compute(output1);
-    RandomNoise.Compute(output2);
-    output0[0] = output0[0];
-    */
   }
 }

@@ -23,10 +23,13 @@
 */
 /******************************************************************************/
 
+using System;
+
 using UnityEngine;
 
 using CjLib;
 
+[ExecuteInEditMode]
 public class NoiseComputeShaderTest : MonoBehaviour
 {
   public enum NoiseType
@@ -40,34 +43,33 @@ public class NoiseComputeShaderTest : MonoBehaviour
     Random1D, 
     Random2D, 
     Random3D, 
-    RandomVector2Dv1D, 
-    RandomVector2Dv2D, 
-    RandomVector2Dv3D, 
-    RandomVector3Dv1D, 
-    RandomVector3Dv2D, 
-    RandomVector3Dv3D, 
+    RandomVector1DVec2, 
+    RandomVector2DVec2, 
+    RandomVector1DVec3, 
+    RandomVector2DVec3, 
+    RandomVector3DVec3, 
     Simplex1D, 
     Simplex2D, 
     Simplex3D, 
-    SimplexGradient2Dv1D, 
-    SimplexGradient2Dv2D, 
-    SimplexGradient2Dv3D, 
-    SimplexGradient3Dv1D, 
-    SimplexGradient3Dv2D, 
-    SimplexGradient3Dv3D, 
+    SimplexGradient1DVec2, 
+    SimplexGradient2DVec2, 
+    SimplexGradient1DVec3, 
+    SimplexGradient2DVec3, 
+    SimplexGradient3DVec3, 
   }
 
   public NoiseType m_noiseType = NoiseType.Simplex3D;
   public int m_numOctaves = 2;
   public float m_octaveOffsetFactor = 1.2f;
   public Color m_color = Color.white;
+  public float m_elementSize = 0.15f;
 
   private float[] m_drawDimension = new float[] { 2.0f, 2.0f, 2.0f };
 
   void Update()
   {
-    float[] offset = new float[] { 0.5f * Time.time, 0.25f * Time.time, 0.25f * Time.time };
-    int extent = 10;
+    float[] offset = new float[] { 0.5f * Time.time, 0.0f * Time.time, 0.0f * Time.time };
+    int extent = 6;
     float[] output1 = new float[extent];
     float[,] output2 = new float[extent, extent];
     float[,,] output3 = new float[extent, extent, extent];
@@ -94,51 +96,85 @@ public class NoiseComputeShaderTest : MonoBehaviour
         Draw(output3);
         break;
       case NoiseType.ClassicPeriodic1D:
+        ClassicNoisePeriodic.Compute(output1, scale[0], offset[0], period[0], m_numOctaves, m_octaveOffsetFactor);
+        Draw(output1);
         break;
       case NoiseType.ClassicPeriodic2D:
+        ClassicNoisePeriodic.Compute(output2, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output2);
         break;
       case NoiseType.ClassicPeriodic3D:
+        ClassicNoisePeriodic.Compute(output3, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output3);
         break;
       case NoiseType.Random1D:
+        RandomNoise.Compute(output1, Time.frameCount);
+        Draw(output1);
         break;
       case NoiseType.Random2D:
+        RandomNoise.Compute(output2, Time.frameCount);
+        Draw(output2);
         break;
       case NoiseType.Random3D:
+        RandomNoise.Compute(output3, Time.frameCount);
+        Draw(output3);
         break;
-      case NoiseType.RandomVector2Dv1D:
+      case NoiseType.RandomVector1DVec2:
+        RandomNoiseVector.Compute(output1v2, Time.frameCount);
+        Draw(output1v2);
         break;
-      case NoiseType.RandomVector2Dv2D:
+      case NoiseType.RandomVector2DVec2:
+        RandomNoiseVector.Compute(output2v2, Time.frameCount);
+        Draw(output2v2);
         break;
-      case NoiseType.RandomVector2Dv3D:
+      case NoiseType.RandomVector1DVec3:
+        RandomNoiseVector.Compute(output1v3, Time.frameCount);
+        Draw(output1v3);
         break;
-      case NoiseType.RandomVector3Dv1D:
+      case NoiseType.RandomVector2DVec3:
+        RandomNoiseVector.Compute(output2v3, Time.frameCount);
+        Draw(output2v3);
         break;
-      case NoiseType.RandomVector3Dv2D:
-        break;
-      case NoiseType.RandomVector3Dv3D:
+      case NoiseType.RandomVector3DVec3:
+        RandomNoiseVector.Compute(output3v3, Time.frameCount);
+        Draw(output3v3);
         break;
       case NoiseType.Simplex1D:
+        SimplexNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+        Draw(output1);
         break;
       case NoiseType.Simplex2D:
+        SimplexNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output2);
         break;
       case NoiseType.Simplex3D:
+        SimplexNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output3);
         break;
-      case NoiseType.SimplexGradient2Dv1D:
+      case NoiseType.SimplexGradient1DVec2:
+        SimplexNoiseGradient.Compute(output1v2, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+        Draw(output1v2);
         break;
-      case NoiseType.SimplexGradient2Dv2D:
+      case NoiseType.SimplexGradient2DVec2:
+        SimplexNoiseGradient.Compute(output2v2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output2v2);
         break;
-      case NoiseType.SimplexGradient2Dv3D:
+      case NoiseType.SimplexGradient1DVec3:
+        SimplexNoiseGradient.Compute(output1v3, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+        Draw(output1v3);
         break;
-      case NoiseType.SimplexGradient3Dv1D:
+      case NoiseType.SimplexGradient2DVec3:
+        SimplexNoiseGradient.Compute(output2v3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output2v3);
         break;
-      case NoiseType.SimplexGradient3Dv2D:
-        break;
-      case NoiseType.SimplexGradient3Dv3D:
+      case NoiseType.SimplexGradient3DVec3:
+        SimplexNoiseGradient.Compute(output3v3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+        Draw(output3v3);
         break;
     }
   }
 
-  Vector3 ComputePoint(float[] value, int x)
+  Vector3 ComputePoint(Array value, int x)
   {
     return
       new Vector3
@@ -149,7 +185,7 @@ public class NoiseComputeShaderTest : MonoBehaviour
       );
   }
 
-  Vector3 ComputePoint(float[,] value, int x, int y)
+  Vector3 ComputePoint(Array value, int x, int y)
   {
     return 
       new Vector3
@@ -160,7 +196,7 @@ public class NoiseComputeShaderTest : MonoBehaviour
       );
   }
 
-  Vector3 ComputePoint(float[,,] value, int x, int y, int z)
+  Vector3 ComputePoint(Array value, int x, int y, int z)
   {
     return
       new Vector3
@@ -174,14 +210,14 @@ public class NoiseComputeShaderTest : MonoBehaviour
   private void Draw(float[] value)
   {
     for (int x = 0; x < value.GetLength(0); ++x)
-      DebugUtil.DrawSphere(ComputePoint(value, x), 0.2f * value[x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+      DebugUtil.DrawSphere(ComputePoint(value, x), m_elementSize * value[x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
   }
 
   private void Draw(float[,] value)
   {
     for (int y = 0; y < value.GetLength(1); ++y)
       for (int x = 0; x < value.GetLength(0); ++x)
-        DebugUtil.DrawSphere(ComputePoint(value, x, y), 0.2f * value[x, y], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+        DebugUtil.DrawSphere(ComputePoint(value, x, y), m_elementSize * value[y, x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
   }
 
   private void Draw(float[,,] value)
@@ -189,36 +225,55 @@ public class NoiseComputeShaderTest : MonoBehaviour
     for (int z = 0; z < value.GetLength(2); ++z)
       for (int y = 0; y < value.GetLength(1); ++y)
         for (int x = 0; x < value.GetLength(0); ++x)
-          DebugUtil.DrawSphere(ComputePoint(value, x, y, z), 0.2f * value[x, y, z], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
+          DebugUtil.DrawSphere(ComputePoint(value, x, y, z), m_elementSize * value[z, y, x], 2, 4, m_color, true, DebugUtil.Style.FlatShaded);
   }
 
   private void Draw(Vector2[] value)
   {
-
+    for (int x = 0; x < value.GetLength(0); ++x)
+    {
+      Vector3 p = ComputePoint(value, x);
+      DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[x].x, value[x].y, 0.0f)), 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+    }
   }
 
   private void Draw(Vector2[,] value)
   {
-
-  }
-
-  private void Draw(Vector2[,,] value)
-  {
-
+    for (int y = 0; y < value.GetLength(1); ++y)
+      for (int x = 0; x < value.GetLength(0); ++x)
+      {
+        Vector3 p = ComputePoint(value, x, y);
+        DebugUtil.DrawArrow(p, p + m_elementSize * (new Vector3(value[y, x].x, value[y, x].y, 0.0f)), 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+      }
   }
 
   private void Draw(Vector3[] value)
   {
-
+    for (int x = 0; x < value.GetLength(0); ++x)
+    {
+      Vector3 p = ComputePoint(value, x);
+      DebugUtil.DrawArrow(p, p + m_elementSize * value[x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+    }
   }
 
   private void Draw(Vector3[,] value)
   {
-  
+    for (int y = 0; y < value.GetLength(1); ++y)
+      for (int x = 0; x < value.GetLength(0); ++x)
+      {
+        Vector3 p = ComputePoint(value, x, y);
+        DebugUtil.DrawArrow(p, p + m_elementSize * value[y, x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+      }
   }
 
   private void Draw(Vector3[,,] value)
   {
-    
+    for (int z = 0; z < value.GetLength(2); ++z)
+      for (int y = 0; y < value.GetLength(1); ++y)
+        for (int x = 0; x < value.GetLength(0); ++x)
+        {
+          Vector3 p = ComputePoint(value, x, y, z);
+          DebugUtil.DrawArrow(p, p + m_elementSize * value[z, y, x], 0.05f, m_color, true, DebugUtil.Style.FlatShaded);
+        }
   }
 }
