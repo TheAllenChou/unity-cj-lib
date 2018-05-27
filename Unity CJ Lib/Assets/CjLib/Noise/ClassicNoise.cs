@@ -45,33 +45,37 @@ namespace CjLib
       kernelId = s_classic3KernelId;
     }
 
-    public static void Compute(float[] output, float scale, float offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[] output, float scale, float offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      float[] aScale = new float[] { scale };
-      float[] aOffset = new float[] { offset };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), aScale, aOffset, numOctaves, octaveOffsetFactor);
+      float[] aScale = new float[] { scale, 1.0f, 1.0f };
+      float[] aOffset = new float[] { offset, 0.0f, 0.0f };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, numOctaves, octaveOffsetFactor);
     }
 
-    public static void Compute(float[,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), scale, offset, numOctaves, octaveOffsetFactor);
+      float[] aScale = new float[] { scale[0], scale[1], 1.0f };
+      float[] aOffset = new float[] { offset[0], offset[1], 0.0f };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, numOctaves, octaveOffsetFactor);
     }
 
-    public static void Compute(float[,,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[,,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassic3(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), scale, offset, numOctaves, octaveOffsetFactor);
+      float[] aScale = new float[] { scale[0], scale[1], scale[2] };
+      float[] aOffset = new float[] { offset[0], offset[1], offset[2] };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, numOctaves, octaveOffsetFactor);
     }
   }
 }

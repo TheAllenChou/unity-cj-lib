@@ -45,34 +45,40 @@ namespace CjLib
       kernelId = s_simplex3KernelId;
     }
 
-    public static void Compute(float[] output, float scale, float offset, float period, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[] output, float scale, float offset, float period, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassicPeriodic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      float[] aScale = new float[] { scale };
-      float[] aOffset = new float[] { offset };
-      float[] aPeriod = new float[] { period };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
+      float[] aScale = { scale, 1.0f, 1.0f };
+      float[] aOffset = { offset, 0.0f, 0.0f };
+      float[] aPeriod = new float[] { period, 1.0f, 1.0f };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
 
-    public static void Compute(float[,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassicPeriodic2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), scale, offset, period, numOctaves, octaveOffsetFactor);
+      float[] aScale = { scale[0], scale[1], 1.0f };
+      float[] aOffset = { offset[0], offset[1], 0.0f };
+      float[] aPeriod = { period[0], period[1], 1.0f };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
 
-    public static void Compute(float[,,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor, int seed = 0)
+    public static void Compute(float[,,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetClassicPeriodic3(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float), scale, offset, period, numOctaves, octaveOffsetFactor);
+      float[] aScale = { scale[0], scale[1], scale[2] };
+      float[] aOffset = { offset[0], offset[1], offset[2] };
+      float[] aPeriod = { period[0], period[1], period[2] };
+      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
   }
 }
