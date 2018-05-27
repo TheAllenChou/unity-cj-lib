@@ -17,7 +17,6 @@
 
 RWStructuredBuffer<float> buffer;
 
-float seed;
 int3 dimension;
 float3 scale;
 float3 offset;
@@ -28,7 +27,7 @@ float octaveOffsetFactor;
 [numthreads(1, 1, 1)]
 void ClassicPeriodic2(uint3 id : SV_DispatchThreadID)
 {
-  float2 s = id.xy / scale.xy + rand(seed);
+  float2 s = id.xy / scale.xy;
   buffer[index(id, dimension)] = 
     pnoise(s, offset.xy, period.xy, numOctaves, octaveOffsetFactor);
 }
@@ -36,7 +35,7 @@ void ClassicPeriodic2(uint3 id : SV_DispatchThreadID)
 [numthreads(1, 1, 1)]
 void ClassicPeriodic3(uint3 id : SV_DispatchThreadID)
 {
-  float3 s = id / scale + rand(seed);
+  float3 s = id / scale;
   buffer[index(id, dimension)] = 
     pnoise(s, offset, period, numOctaves, octaveOffsetFactor);
 }
