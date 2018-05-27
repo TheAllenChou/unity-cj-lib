@@ -104,6 +104,7 @@ namespace CjLib
 
       seed = (seed + 1.2345689f) * 1.23456789f;
       shader.SetFloat(s_csSeedId, seed);
+      shader.SetInts(s_csDimensionId, dimension);
 
       shader.Dispatch(kernelId, dimension[0], dimension[1], dimension[2]);
 
@@ -116,7 +117,6 @@ namespace CjLib
       Array output, 
       ComputeShader shader, 
       int kernelId, 
-      float seed, 
       int[] dimension, 
       int bufferStride, 
       float[] scale, 
@@ -134,9 +134,6 @@ namespace CjLib
 
       ComputeBuffer buffer = GetFloatBuffer(dimension[0] * dimension[1] * dimension[2], bufferStride);
       shader.SetBuffer(kernelId, csBufferId, buffer);
-
-      seed = (seed + 1.2345689f) * 1.23456789f;
-      shader.SetFloat(s_csSeedId, seed);
 
       shader.SetInts(s_csDimensionId, dimension);
       shader.SetFloats(s_csScaleId, scale);
@@ -155,7 +152,6 @@ namespace CjLib
       Array output, 
       ComputeShader shader, 
       int kernelId, 
-      float seed, 
       int[] dimension, 
       int bufferStride, 
       float[] scale, 
@@ -174,9 +170,6 @@ namespace CjLib
 
       ComputeBuffer buffer = GetFloatBuffer(dimension[0] * dimension[1] * dimension[2], bufferStride);
       shader.SetBuffer(kernelId, csBufferId, buffer);
-
-      seed = (seed + 1.2345689f) * 1.23456789f;
-      shader.SetFloat(s_csSeedId, seed);
 
       shader.SetInts(s_csDimensionId, dimension);
       shader.SetFloats(s_csScaleId, scale);
