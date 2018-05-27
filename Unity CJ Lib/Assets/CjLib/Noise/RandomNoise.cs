@@ -94,8 +94,8 @@ namespace CjLib
     public static float Get(float v, int seed = 0)
     {
       // return frac(sin(mod(s, 6.2831853)) * 43758.5453123);
-      seed = NoiseCommon.JumbleSeed(seed);
-      float r = Mathf.Sin(Mathf.Repeat(seed + v, 6.2831853f)) * 43758.5453123f;
+      float s = NoiseCommon.JumbleSeed(seed);
+      float r = Mathf.Sin(Mathf.Repeat(s + v, 6.2831853f)) * 43758.5453123f;
       r = (r >= 0.0f) ? r : -r;
       r -= Mathf.Floor(r);
       return r;
@@ -104,10 +104,10 @@ namespace CjLib
     public static float Get(Vector2 v, int seed = 0)
     {
       // float d = dot(s + 0.1234567, float2(1111112.9819837, 78.237173));
-      seed = NoiseCommon.JumbleSeed(seed);
+      float s = NoiseCommon.JumbleSeed(seed);
       float d = 
-          (seed + v.x + 0.1234567f) * 1111112.9819837f 
-        + (seed + v.y + 0.1234567f) * 78.237173f;
+          (s + v.x + 0.1234567f) * 1111112.9819837f 
+        + (s + v.y + 0.1234567f) * 78.237173f;
 
       // return frac(sin(m) * 43758.5453123);
       float r = Mathf.Sin(d) * 43758.5453123f;
@@ -116,14 +116,14 @@ namespace CjLib
       return r;
     }
 
-    public static float Get(Vector3 v, int seed)
+    public static float Get(Vector3 v, int seed = 0)
     {
       // float d = dot(s + 0.1234567, float3(11112.9819837, 378.237173, 3971977.9173179));
-      seed = NoiseCommon.JumbleSeed(seed);
+      float s = NoiseCommon.JumbleSeed(seed);
       float d =
-          (seed + v.x + 0.1234567f) * 1111112.9819837f
-        + (seed + v.y + 0.1234567f) * 378.237173f
-        + (seed + v.z + 0.1234567f) * 3971977.9173179f;
+          (s + v.x + 0.1234567f) * 1111112.9819837f
+        + (s + v.y + 0.1234567f) * 378.237173f
+        + (s + v.z + 0.1234567f) * 3971977.9173179f;
 
       // return frac(sin(m) * 43758.5453123);
       float r = Mathf.Sin(d) * 43758.5453123f;
