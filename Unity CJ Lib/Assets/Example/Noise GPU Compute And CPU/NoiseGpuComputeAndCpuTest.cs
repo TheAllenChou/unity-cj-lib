@@ -29,7 +29,7 @@ using UnityEngine;
 
 using CjLib;
 
-public class NoiseComputeShaderTest : MonoBehaviour
+public class NoiseGpuComputeAndCpuTest : MonoBehaviour
 {
   public enum NoiseType
   {
@@ -246,7 +246,7 @@ public class NoiseComputeShaderTest : MonoBehaviour
         for (int x = 0; x < value.GetLength(0); ++x)
         {
           Vector3 p = ComputePoint(value, x, y, z);
-          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.4f);
+          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.1f);
           DebugUtil.DrawSphere(p, m_elementSize * value[z, y, x], 2, 4, c, true, DebugUtil.Style.FlatShaded);
         }
   }
@@ -300,7 +300,7 @@ public class NoiseComputeShaderTest : MonoBehaviour
         for (int x = 0; x < value.GetLength(0); ++x)
         {
           Vector3 p = ComputePoint(value, x, y, z);
-          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.4f);
+          Color c = ComputeColor(p, ComputePoint(value, 0, 0, m_gridExtent - 1), ComputePoint(value, m_gridExtent - 1, m_gridExtent - 1, 0), 0.1f);
           DebugUtil.DrawArrow(p, p + m_elementSize * value[z, y, x], 0.05f, c, true, DebugUtil.Style.FlatShaded);
         }
   }

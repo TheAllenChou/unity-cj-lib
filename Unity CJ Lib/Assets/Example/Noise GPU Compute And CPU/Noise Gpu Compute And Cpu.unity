@@ -156,7 +156,7 @@ MonoBehaviour:
   m_noiseType: 0
   m_numOctaves: 1
   m_octaveOffsetFactor: 1.2
-  m_color: {r: 0, g: 0.56339693, b: 1, a: 1}
+  m_color: {r: 0, g: 0.6666667, b: 1, a: 1}
   m_elementSize: 0.2
   m_gridExtent: 6
 --- !u!1 &1274791856
