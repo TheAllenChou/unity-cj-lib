@@ -18,6 +18,9 @@ namespace CjLib
 {
   internal class NoiseCommon
   {
+    // common
+    //-------------------------------------------------------------------------
+
     internal static Dictionary<int, ComputeBuffer> s_csBufferPool;
     internal static ComputeBuffer GetFloatBuffer(int count, int stride)
     {
@@ -87,14 +90,123 @@ namespace CjLib
       return (seed + 1.2345689f) * 1.23456789f;
     }
 
+    //-------------------------------------------------------------------------
+    // end: common
+
+
+    // GPU compute / custom sample points
+    //-------------------------------------------------------------------------
+
     // scale-agnostic noise
     internal static void Compute
     (
+      Array input, 
       Array output, 
       ComputeShader shader, 
       int kernelId, 
       float seed, 
-      int[] dimension, 
+      int bufferStride
+    )
+    {
+      int csBufferId = s_csBufferId;
+      switch (bufferStride / sizeof(float))
+      {
+        case 2: csBufferId = s_csBuffer2Id; break;
+        case 3: csBufferId = s_csBuffer3Id; break;
+      }
+
+      ComputeBuffer buffer = GetFloatBuffer(input.Length, bufferStride);
+      shader.SetBuffer(kernelId, csBufferId, buffer);
+
+      seed = JumbleSeed(seed);
+      shader.SetFloat(s_csSeedId, seed);
+
+      shader.Dispatch(kernelId, input.Length, 1, 1);
+
+      buffer.GetData(output);
+    }
+
+    // scaled noise
+    internal static void Compute
+    (
+      Array input, 
+      Array output, 
+      ComputeShader shader, 
+      int kernelId, 
+      int bufferStride, 
+      float[] offset, 
+      int numOctaves, 
+      float octaveOffsetFactor
+    )
+    {
+      int csBufferId = s_csBufferId;
+      switch (bufferStride / sizeof(float))
+      {
+        case 2: csBufferId = s_csBuffer2Id; break;
+        case 3: csBufferId = s_csBuffer3Id; break;
+      }
+
+      ComputeBuffer buffer = GetFloatBuffer(input.Length, bufferStride);
+      shader.SetBuffer(kernelId, csBufferId, buffer);
+
+      shader.SetFloats(s_csOffsetId, offset);
+      shader.SetInt(s_csNumOctavesId, numOctaves);
+      shader.SetFloat(s_csOctaveOffsetFactorId, octaveOffsetFactor);
+
+      shader.Dispatch(kernelId, input.Length, 1, 1);
+
+      buffer.GetData(output);
+    }
+
+    // scaled periodic noise
+    internal static void Compute
+    (
+      Array input, 
+      Array output, 
+      ComputeShader shader, 
+      int kernelId, 
+      int bufferStride, 
+      float[] offset, 
+      float[] period, 
+      int numOctaves, 
+      float octaveOffsetFactor
+    )
+    {
+      int csBufferId = s_csBufferId;
+      switch (bufferStride / sizeof(float))
+      {
+        case 2: csBufferId = s_csBuffer2Id; break;
+        case 3: csBufferId = s_csBuffer3Id; break;
+      }
+
+      ComputeBuffer buffer = GetFloatBuffer(input.Length, bufferStride);
+      shader.SetBuffer(kernelId, csBufferId, buffer);
+
+      shader.SetFloats(s_csOffsetId, offset);
+      shader.SetInt(s_csNumOctavesId, numOctaves);
+      shader.SetFloat(s_csOctaveOffsetFactorId, octaveOffsetFactor);
+      shader.SetFloats(s_csPeriodId, period);
+
+      shader.Dispatch(kernelId, input.Length, 1, 1);
+
+      buffer.GetData(output);
+    }
+
+    //-------------------------------------------------------------------------
+    // end: GPU compute / custom sampel points
+
+
+    // GPU compute / grid sample points
+    //-------------------------------------------------------------------------
+
+    // scale-agnostic noise
+    internal static void Compute
+    (
+      Array output,
+      ComputeShader shader,
+      int kernelId,
+      float seed,
+      int[] dimension,
       int bufferStride
     )
     {
@@ -188,5 +300,8 @@ namespace CjLib
 
       buffer.GetData(output);
     }
+
+    //-------------------------------------------------------------------------
+    // end: GPU compute / grid sample points
   }
 }

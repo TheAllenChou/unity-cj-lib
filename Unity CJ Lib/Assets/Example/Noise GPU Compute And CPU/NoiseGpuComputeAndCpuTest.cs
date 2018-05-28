@@ -45,12 +45,13 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
 
   public enum Mode
   {
-    kGpuCompute, 
+    kGpuComputeGridSamples, 
+    kGpuComputeCustomSamples, 
     kCpu, 
   }
 
   public NoiseType m_noiseType = NoiseType.Simplex3D;
-  public Mode m_mode = Mode.kGpuCompute;
+  public Mode m_mode = Mode.kGpuComputeGridSamples;
   public int m_numOctaves = 1;
   public float m_octaveOffsetFactor = 1.2f;
   public Color m_color = Color.white;
@@ -73,7 +74,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     float[] scale = new float[] { 3.0f, 3.0f, 3.0f };
     float[] period = new float[] { 0.15f, 0.15f, 0.15f };
 
-    bool gpuCompute = (m_mode == Mode.kGpuCompute);
     switch (m_noiseType)
     {
       case NoiseType.Classic1D:
@@ -101,41 +101,50 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         Draw(output3);
         break;
       case NoiseType.Random1D:
-        if (gpuCompute)
+        switch (m_mode)
         {
-          RandomNoise.Compute(output1, Time.frameCount);
-        }
-        else
-        {
-          for (int x = 0; x < output1.GetLength(0); ++x)
-            output1[x] = RandomNoise.Get(x, Time.frameCount);
+          case Mode.kGpuComputeGridSamples:
+            RandomNoise.Compute(output1, Time.frameCount);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            break;
+          case Mode.kCpu:
+            for (int x = 0; x < output1.GetLength(0); ++x)
+              output1[x] = RandomNoise.Get(x, Time.frameCount);
+            break;
         }
         Draw(output1);
         break;
       case NoiseType.Random2D:
-        if (gpuCompute)
+        switch (m_mode)
         {
-          RandomNoise.Compute(output2, Time.frameCount);
-        }
-        else
-        {
-          for (int y = 0; y < output2.GetLength(1); ++y)
-            for (int x = 0; x < output2.GetLength(0);  ++x)
-              output2[y, x] = RandomNoise.Get(new Vector2(x, y), Time.frameCount);
+          case Mode.kGpuComputeGridSamples:
+            RandomNoise.Compute(output2, Time.frameCount);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            break;
+          case Mode.kCpu:
+            for (int y = 0; y < output2.GetLength(1); ++y)
+              for (int x = 0; x < output2.GetLength(0);  ++x)
+                output2[y, x] = RandomNoise.Get(new Vector2(x, y), Time.frameCount);
+            break;
         }
         Draw(output2);
         break;
       case NoiseType.Random3D:
-        if (gpuCompute)
+        switch (m_mode)
         {
-          RandomNoise.Compute(output3, Time.frameCount);
-        }
-        else
-        {
-          for (int z = 0; z < output3.GetLength(2); ++z)
-            for (int y = 0; y < output3.GetLength(1); ++y)
-              for (int x = 0; x < output3.GetLength(0); ++x)
-                output3[z, y, x] = RandomNoise.Get(new Vector3(x, y, z), Time.frameCount);
+          case Mode.kGpuComputeGridSamples:
+            RandomNoise.Compute(output3, Time.frameCount);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            break;
+          case Mode.kCpu:
+            for (int z = 0; z < output3.GetLength(2); ++z)
+              for (int y = 0; y < output3.GetLength(1); ++y)
+                for (int x = 0; x < output3.GetLength(0); ++x)
+                  output3[z, y, x] = RandomNoise.Get(new Vector3(x, y, z), Time.frameCount);
+            break;
         }
         Draw(output3);
         break;
