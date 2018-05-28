@@ -1,7 +1,6 @@
 ## CJ Lib - Utility Library for Unity
-by **Ming-Lun "Allen" Chou** / [AllenChou.net](http://AllenChou.net) / [@TheAllenChou](http://twitter.com/TheAllenChou)
-
-----
+by **Ming-Lun "Allen" Chou** / [AllenChou.net](http://AllenChou.net) / [@TheAllenChou](http://twitter.com/TheAllenChou)  
+  
 CJ Lib is a constant work in progress.
 
 This library is meant to provide various script utilities to aid in Unity development.
