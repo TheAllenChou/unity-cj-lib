@@ -15,7 +15,7 @@
 #include "../ClassicNoise2D.cginc"
 #include "../ClassicNoise3D.cginc"
 
-RWStructuredBuffer<float> buffer;
+RWStructuredBuffer<float> output;
 
 int3 dimension;
 float3 scale;
@@ -28,7 +28,7 @@ float octaveOffsetFactor;
 void ClassicPeriodic2(uint3 id : SV_DispatchThreadID)
 {
   float2 s = id.xy / scale.xy;
-  buffer[index(id, dimension)] = 
+  output[index(id, dimension)] =
     pnoise(s, offset.xy, period.xy, numOctaves, octaveOffsetFactor);
 }
 
@@ -36,6 +36,6 @@ void ClassicPeriodic2(uint3 id : SV_DispatchThreadID)
 void ClassicPeriodic3(uint3 id : SV_DispatchThreadID)
 {
   float3 s = id / scale;
-  buffer[index(id, dimension)] = 
+  output[index(id, dimension)] =
     pnoise(s, offset, period, numOctaves, octaveOffsetFactor);
 }

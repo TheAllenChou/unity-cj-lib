@@ -15,7 +15,7 @@ namespace CjLib
 {
   public class RandomNoise
   {
-    // GPU compute
+    // common
     //-------------------------------------------------------------------------
 
     private static bool s_randomInit = false;
@@ -31,9 +31,9 @@ namespace CjLib
         return;
 
       s_random = (ComputeShader) Resources.Load("RandomNoiseCs");
-      s_random1KernelId = s_random.FindKernel("Random1");
-      s_random2KernelId = s_random.FindKernel("Random2");
-      s_random3KernelId = s_random.FindKernel("Random3");
+      s_random1KernelId = s_random.FindKernel("RandomGrid1");
+      s_random2KernelId = s_random.FindKernel("RandomGrid2");
+      s_random3KernelId = s_random.FindKernel("RandomGrid3");
     }
 
     private static void GetRandom1(out ComputeShader shader, out int kernelId)
@@ -57,13 +57,20 @@ namespace CjLib
       kernelId = s_random3KernelId;
     }
 
+    //-------------------------------------------------------------------------
+    // end: common
+
+
+    // GPU compute / grid samples
+    //-------------------------------------------------------------------------
+
     public static void Compute(float[] output, int seed = 0)
     {
       ComputeShader shader;
       int kernelId;
       GetRandom1(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float));
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
     }
 
     public static void Compute(float[,] output, int seed = 0)
@@ -72,7 +79,7 @@ namespace CjLib
       int kernelId;
       GetRandom2(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float));
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
     }
 
     public static void Compute(float[,,] output, int seed = 0)
@@ -81,11 +88,11 @@ namespace CjLib
       int kernelId;
       GetRandom3(out shader, out kernelId);
       int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension, sizeof(float));
+      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
     }
 
     //-------------------------------------------------------------------------
-    // end: GPU compute
+    // end: GPU compute / grid samples
 
 
     // CPU

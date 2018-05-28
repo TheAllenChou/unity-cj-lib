@@ -54,7 +54,7 @@ namespace CjLib
       float[] aScale = { scale, 1.0f, 1.0f };
       float[] aOffset = { offset, 0.0f, 0.0f };
       float[] aPeriod = new float[] { period, 1.0f, 1.0f };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
 
     public static void Compute(float[,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor)
@@ -66,7 +66,7 @@ namespace CjLib
       float[] aScale = { scale[0], scale[1], 1.0f };
       float[] aOffset = { offset[0], offset[1], 0.0f };
       float[] aPeriod = { period[0], period[1], 1.0f };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
 
     public static void Compute(float[,,] output, float[] scale, float[] offset, float[] period, int numOctaves, float octaveOffsetFactor)
@@ -78,7 +78,7 @@ namespace CjLib
       float[] aScale = { scale[0], scale[1], scale[2] };
       float[] aOffset = { offset[0], offset[1], offset[2] };
       float[] aPeriod = { period[0], period[1], period[2] };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, sizeof(float), aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, aPeriod, numOctaves, octaveOffsetFactor);
     }
   }
 }

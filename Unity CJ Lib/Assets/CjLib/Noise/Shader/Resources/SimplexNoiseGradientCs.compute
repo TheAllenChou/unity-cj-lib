@@ -33,7 +33,7 @@ float octaveOffsetFactor;
 [numthreads(1, 1, 1)]
 void SimplexGradient2(uint3 id : SV_DispatchThreadID)
 {
-  float2 s = input2[id.x];
+  float2 s = input2[id.x] / scale.xy;
   output2[id.x] = 
     snoise_grad(s, offset.xy, numOctaves, octaveOffsetFactor).xy;
 }
@@ -42,7 +42,7 @@ void SimplexGradient2(uint3 id : SV_DispatchThreadID)
 [numthreads(1, 1, 1)]
 void SimplexGradient3(uint3 id : SV_DispatchThreadID)
 {
-  float3 s = input3[id.x];
+  float3 s = input3[id.x] / scale;
   output3[id.x] =
     snoise_grad(s, offset, numOctaves, octaveOffsetFactor).xyz;
 }

@@ -16,7 +16,7 @@
 #include "../SimplexNoise3D.cginc"
 #include "../RandomNoise.cginc"
 
-RWStructuredBuffer<float> buffer;
+RWStructuredBuffer<float> output;
 
 int3 dimension;
 float3 scale;
@@ -28,7 +28,7 @@ float octaveOffsetFactor;
 void Simplex2(uint3 id : SV_DispatchThreadID)
 {
   float2 s = id.xy / scale.xy;
-  buffer[index(id, dimension)] = 
+  output[index(id, dimension)] =
     snoise(s, offset.xy, numOctaves, octaveOffsetFactor);
 }
 
@@ -36,6 +36,6 @@ void Simplex2(uint3 id : SV_DispatchThreadID)
 void Simplex3(uint3 id : SV_DispatchThreadID)
 {
   float3 s = id / scale;
-  buffer[index(id, dimension)] = 
+  output[index(id, dimension)] =
     snoise(s, offset, numOctaves, octaveOffsetFactor);
 }
