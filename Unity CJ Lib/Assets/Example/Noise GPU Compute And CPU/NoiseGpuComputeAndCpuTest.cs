@@ -110,16 +110,53 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     switch (m_noiseType)
     {
       case NoiseType.Classic1D:
-        ClassicNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
-        Draw(output1);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            ClassicNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+            Draw(output1);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            ClassicNoise.Compute(input1v2, output1, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2, output1);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.Classic2D:
-        ClassicNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output2);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            ClassicNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output2);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            offset[2] = 0.0f;
+            ClassicNoise.Compute(input1v2Sqr, output1Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2Sqr, output1Sqr);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.Classic3D:
-        ClassicNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output3);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            ClassicNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output3);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            ClassicNoise.Compute(input1v3Cub, output1Cub, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v3Cub, output1Cub);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.ClassicPeriodic1D:
         ClassicNoisePeriodic.Compute(output1, scale[0], offset[0], period[0], m_numOctaves, m_octaveOffsetFactor);
