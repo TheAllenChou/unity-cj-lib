@@ -12,8 +12,16 @@ Utilities and extensions to Unity's existing math library, including vectors, qu
 
 ### Noise
 
-Shader functions to generate noise. GPU compute & CPU variants coming soon.  
-Based on [webgl-noise](https://github.com/ashima/webgl-noise).  
+Shader functions for noise generation, including:  
+  * Classic Perlin noise.
+  * Periodic classic Perlin noise.
+  * Random noise.
+  * Random vector noise.
+  * Simplex noise.
+  * Simplex noise gradient.
+  
+GPU compute & CPU variants coming soon.   
+Classic Perlin & Simplex noise based on [webgl-noise](https://github.com/ashima/webgl-noise).  
 
 ### Debug Draw
 
