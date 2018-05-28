@@ -25,8 +25,11 @@ Classic Perlin & Simplex noise based on [webgl-noise](https://github.com/ashima/
 
 ### Debug Draw
 
-Utilities to draw various primitives in differnt styles for debugging purposes.
-
+Utilities to draw various primitives in differnt styles, including:  
+  * Wireframe.
+  * Solid color.
+  * Flat shaded.
+  * Smooth shaded.
 
 ----
 **Ming-Lun "Allen" Chou**  
