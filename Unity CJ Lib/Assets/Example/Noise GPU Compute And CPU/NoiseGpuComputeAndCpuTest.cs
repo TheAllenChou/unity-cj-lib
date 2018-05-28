@@ -63,7 +63,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
   void Update()
   {
     float[] offset = new float[] { 0.5f * Time.time, 0.25f * Time.time, 0.1f * Time.time };
-    int seed = (int) Mathf.Floor(Time.time);
+    int seed = (int) Mathf.Floor(2.0f * Time.time);
     float[] output1 = new float[m_gridExtent];
     float[] output1Sqr = new float[m_gridExtent * m_gridExtent];
     float[] output1Cub = new float[m_gridExtent * m_gridExtent * m_gridExtent];
