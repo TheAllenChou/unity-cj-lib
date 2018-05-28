@@ -4,6 +4,8 @@ CJ Lib is a constant work in progress.
 
 This library is meant to provide various script utilities to aid in Unity development.
 
+If you use CJ Lib in your work, credits and link-backs are highly appreciated.
+
 
 ### [Math](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Math)
 
