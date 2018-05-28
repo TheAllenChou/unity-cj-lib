@@ -64,6 +64,8 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
   {
     float[] offset = new float[] { 0.05f * Time.time, 0.025f * Time.time, 0.01f * Time.time };
     float[] output1 = new float[m_gridExtent];
+    float[] output1Sqr = new float[m_gridExtent * m_gridExtent];
+    float[] output1Cub = new float[m_gridExtent * m_gridExtent * m_gridExtent];
     float[,] output2 = new float[m_gridExtent, m_gridExtent];
     float[,,] output3 = new float[m_gridExtent, m_gridExtent, m_gridExtent];
     Vector2[] output1v2 = new Vector2[m_gridExtent];
@@ -78,10 +80,10 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     float[] period = new float[] { 0.15f, 0.15f, 0.15f };
 
     Vector2[] input1v2 = new Vector2[m_gridExtent];
-    Vector2[] input2v2 = new Vector2[m_gridExtent * m_gridExtent];
+    Vector2[] input1v2Sqr = new Vector2[m_gridExtent * m_gridExtent];
     Vector3[] input1v3 = new Vector3[m_gridExtent];
-    Vector3[] input2v3 = new Vector3[m_gridExtent * m_gridExtent];
-    Vector3[] input3v3 = new Vector3[m_gridExtent * m_gridExtent * m_gridExtent];
+    Vector3[] input1v3Sqr = new Vector3[m_gridExtent * m_gridExtent];
+    Vector3[] input1v3Cub = new Vector3[m_gridExtent * m_gridExtent * m_gridExtent];
     for (int z = 0; z < m_gridExtent; ++z)
       for (int y = 0; y < m_gridExtent; ++y)
         for (int x = 0; x < m_gridExtent; ++x)
@@ -97,12 +99,12 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             }
 
             Vector3 p2 = new Vector3(x, y, z);
-            input2v2[i].Set(p2.x, p2.y);
-            input2v3[i] = p2;
+            input1v2Sqr[i].Set(p2.x, p2.y);
+            input1v3Sqr[i] = p2;
           }
 
           Vector3 p3 = new Vector3(x, y, z);
-          input3v3[i] = p3;
+          input1v3Cub[i] = p3;
         }
 
     switch (m_noiseType)
@@ -205,16 +207,53 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         Draw(output3v3);
         break;
       case NoiseType.Simplex1D:
-        SimplexNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
-        Draw(output1);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            SimplexNoise.Compute(output1, scale[0], offset[0], m_numOctaves, m_octaveOffsetFactor);
+            Draw(output1);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            SimplexNoise.Compute(input1v2, output1, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2, output1);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.Simplex2D:
-        SimplexNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output2);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            SimplexNoise.Compute(output2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output2);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            offset[2] = 0.0f;
+            SimplexNoise.Compute(input1v2Sqr, output1Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2Sqr, output1Sqr);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.Simplex3D:
-        SimplexNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output3);
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            SimplexNoise.Compute(output3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output3);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            SimplexNoise.Compute(input1v3Cub, output1Cub, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v3Cub, output1Cub);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
         break;
       case NoiseType.SimplexGradient1DVec2:
         switch (m_mode)
@@ -224,6 +263,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output1v2);
             break;
           case Mode.kGpuComputeCustomSamples:
+            offset[1] = offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v2, output1v2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v2, output1v2);
             break;
@@ -240,8 +280,9 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2v2);
             break;
           case Mode.kGpuComputeCustomSamples:
-            SimplexNoiseGradient.Compute(input2v2, output1v2Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-            Draw(input2v2, output1v2Sqr);
+            offset[2] = 0.0f;
+            SimplexNoiseGradient.Compute(input1v2Sqr, output1v2Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2Sqr, output1v2Sqr);
             break;
           case Mode.kCpu:
             // TODO
@@ -256,6 +297,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output1v3);
             break;
           case Mode.kGpuComputeCustomSamples:
+            offset[1] = offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v3, output1v3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v3, output1v3);
             break;
@@ -272,8 +314,9 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2v3);
             break;
           case Mode.kGpuComputeCustomSamples:
-            SimplexNoiseGradient.Compute(input2v3, output1v3Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-            Draw(input2v3, output1v3Sqr);
+            offset[2] = 0.0f;
+            SimplexNoiseGradient.Compute(input1v3Sqr, output1v3Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v3Sqr, output1v3Sqr);
             break;
           case Mode.kCpu:
             // TODO
@@ -288,8 +331,8 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output3v3);
             break;
           case Mode.kGpuComputeCustomSamples:
-            SimplexNoiseGradient.Compute(input3v3, output1v3Cub, scale, offset, m_numOctaves, m_octaveOffsetFactor);
-            Draw(input3v3, output1v3Cub);
+            SimplexNoiseGradient.Compute(input1v3Cub, output1v3Cub, scale, offset, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v3Cub, output1v3Cub);
             break;
           case Mode.kCpu:
             // TODO
@@ -435,8 +478,14 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
   {
     for (int i = 0; i < input.Length; ++i)
     {
-      float farMult = (input.Length == m_gridExtent) ? 0.8f : ((input.Length == m_gridExtent * m_gridExtent) ? 0.6f : 0.1f);
-      Vector3 p = ComputePoint((int)input[i].x, (int)input[i].y);
+      float farMult =
+        (input.Length == m_gridExtent)
+          ? 0.8f
+          : 0.6f;
+      Vector3 p =
+        (input.Length == m_gridExtent)
+          ? ComputePoint((int)input[i].x)
+          : ComputePoint((int)input[i].x, (int)input[i].y);
       Color c = ComputeColor(p, ComputePoint(0, 0, m_gridExtent - 1), ComputePoint(m_gridExtent - 1, m_gridExtent - 1, 0), farMult);
       DebugUtil.DrawSphere(p, m_elementSize * value[i], 2, 4, c, true, DebugUtil.Style.FlatShaded);
     }
@@ -446,8 +495,18 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
   {
     for (int i = 0; i < input.Length; ++i)
     {
-      float farMult = (input.Length == m_gridExtent) ? 0.8f : ((input.Length == m_gridExtent * m_gridExtent) ? 0.6f : 0.1f);
-      Vector3 p = ComputePoint((int)input[i].x, (int)input[i].y, (int)input[i].z);
+      float farMult =
+        (input.Length == m_gridExtent)
+          ? 0.8f
+          : (input.Length == m_gridExtent * m_gridExtent)
+            ? 0.6f
+            : 0.1f;
+      Vector3 p =
+        (input.Length == m_gridExtent)
+          ? ComputePoint((int)input[i].x)
+          : (input.Length == m_gridExtent * m_gridExtent)
+            ? ComputePoint((int)input[i].x, (int)input[i].y)
+            : ComputePoint((int)input[i].x, (int)input[i].y, (int)input[i].z);
       Color c = ComputeColor(p, ComputePoint(0, 0, m_gridExtent - 1), ComputePoint(m_gridExtent - 1, m_gridExtent - 1, 0), farMult);
       DebugUtil.DrawSphere(p, m_elementSize * value[i], 2, 4, c, true, DebugUtil.Style.FlatShaded);
     }

@@ -20,10 +20,10 @@ namespace CjLib
 
     private static bool s_simplexGradientInit = false;
     private static ComputeShader s_simplexGradient;
-    private static int s_simplexGradient2KernelId;
-    private static int s_simplexGradient3KernelId;
     private static int s_simplexGradientGrid2KernelId;
     private static int s_simplexGradientGrid3KernelId;
+    private static int s_simplexGradientCustom2KernelId;
+    private static int s_simplexGradientCustum3KernelId;
     private static void InitSimplex()
     {
       NoiseCommon.InitCsId();
@@ -32,24 +32,10 @@ namespace CjLib
         return;
 
       s_simplexGradient = (ComputeShader) Resources.Load("SimplexNoiseGradientCs");
-      s_simplexGradient2KernelId = s_simplexGradient.FindKernel("SimplexGradient2");
-      s_simplexGradient3KernelId = s_simplexGradient.FindKernel("SimplexGradient3");
       s_simplexGradientGrid2KernelId = s_simplexGradient.FindKernel("SimplexGradientGrid2");
       s_simplexGradientGrid3KernelId = s_simplexGradient.FindKernel("SimplexGradientGrid3");
-    }
-
-    private static void GetSimplexGradient2(out ComputeShader shader, out int kernelId)
-    {
-      InitSimplex();
-      shader = s_simplexGradient;
-      kernelId = s_simplexGradient2KernelId;
-    }
-
-    private static void GetSimplexGradient3(out ComputeShader shader, out int kernelId)
-    {
-      InitSimplex();
-      shader = s_simplexGradient;
-      kernelId = s_simplexGradient3KernelId;
+      s_simplexGradientCustom2KernelId = s_simplexGradient.FindKernel("SimplexGradientCustom2");
+      s_simplexGradientCustum3KernelId = s_simplexGradient.FindKernel("SimplexGradientCustom3");
     }
 
     private static void GetSimplexGradientGrid2(out ComputeShader shader, out int kernelId)
@@ -64,6 +50,20 @@ namespace CjLib
       InitSimplex();
       shader = s_simplexGradient;
       kernelId = s_simplexGradientGrid3KernelId;
+    }
+
+    private static void GetSimplexGradientCustom2(out ComputeShader shader, out int kernelId)
+    {
+      InitSimplex();
+      shader = s_simplexGradient;
+      kernelId = s_simplexGradientCustom2KernelId;
+    }
+
+    private static void GetSimplexGradientCustom3(out ComputeShader shader, out int kernelId)
+    {
+      InitSimplex();
+      shader = s_simplexGradient;
+      kernelId = s_simplexGradientCustum3KernelId;
     }
 
     //-------------------------------------------------------------------------
@@ -139,7 +139,7 @@ namespace CjLib
     {
       ComputeShader shader;
       int kernelId;
-      GetSimplexGradient2(out shader, out kernelId);
+      GetSimplexGradientCustom2(out shader, out kernelId);
       float[] aScale = { scale[0], scale[1], 1.0f };
       float[] aOffset = { offset[0], offset[1], 0.0f };
       NoiseCommon.Compute(input, output, shader, kernelId, aScale, aOffset, numOctaves, octaveOffsetFactor);
@@ -149,7 +149,7 @@ namespace CjLib
     {
       ComputeShader shader;
       int kernelId;
-      GetSimplexGradient3(out shader, out kernelId);
+      GetSimplexGradientCustom3(out shader, out kernelId);
       float[] aScale = { scale[0], scale[1], scale[2] };
       float[] aOffset = { offset[0], offset[1], offset[2] };
       NoiseCommon.Compute(input, output, shader, kernelId, aScale, aOffset, numOctaves, octaveOffsetFactor);
