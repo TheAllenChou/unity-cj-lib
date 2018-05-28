@@ -110,6 +110,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
     switch (m_noiseType)
     {
       case NoiseType.Classic1D:
+        offset[1] = offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -126,6 +127,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.Classic2D:
+        offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -133,7 +135,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[2] = 0.0f;
             ClassicNoise.Compute(input1v2Sqr, output1Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v2Sqr, output1Sqr);
             break;
@@ -159,22 +160,61 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.ClassicPeriodic1D:
-        ClassicNoisePeriodic.Compute(output1, scale[0], offset[0], period[0], m_numOctaves, m_octaveOffsetFactor);
-        Draw(output1);
-        break;
-      case NoiseType.ClassicPeriodic2D:
-        ClassicNoisePeriodic.Compute(output2, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output2);
-        break;
-      case NoiseType.ClassicPeriodic3D:
-        ClassicNoisePeriodic.Compute(output3, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
-        Draw(output3);
-        break;
-      case NoiseType.Random1D:
+        offset[1] = offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
-            RandomNoise.Compute(output1, Time.frameCount);
+            ClassicNoisePeriodic.Compute(output1, scale[0], offset[0], period[0], m_numOctaves, m_octaveOffsetFactor);
+            Draw(output1);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            ClassicNoisePeriodic.Compute(input1v2, output1, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2, output1);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
+        break;
+      case NoiseType.ClassicPeriodic2D:
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            ClassicNoisePeriodic.Compute(output2, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output2);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            offset[2] = 0.0f;
+            ClassicNoisePeriodic.Compute(input1v2Sqr, output1Sqr, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v2Sqr, output1Sqr);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
+        break;
+      case NoiseType.ClassicPeriodic3D:
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            ClassicNoisePeriodic.Compute(output3, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+            Draw(output3);
+            break;
+          case Mode.kGpuComputeCustomSamples:
+            ClassicNoisePeriodic.Compute(input1v3Cub, output1Cub, scale, offset, period, m_numOctaves, m_octaveOffsetFactor);
+            Draw(input1v3Cub, output1Cub);
+            break;
+          case Mode.kCpu:
+            // TODO
+            break;
+        }
+        break;
+      case NoiseType.Random1D:
+        offset[1] = offset[2] = 0.0f;
+        switch (m_mode)
+        {
+          case Mode.kGpuComputeGridSamples:
+            RandomNoise.Compute(output1, seed);
             Draw(output1);
             break;
           case Mode.kGpuComputeCustomSamples:
@@ -260,6 +300,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.Simplex2D:
+        offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -267,7 +308,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[2] = 0.0f;
             SimplexNoise.Compute(input1v2Sqr, output1Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v2Sqr, output1Sqr);
             break;
@@ -293,6 +333,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.SimplexGradient1DVec2:
+        offset[1] = offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -300,7 +341,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output1v2);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[1] = offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v2, output1v2, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v2, output1v2);
             break;
@@ -310,6 +350,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.SimplexGradient2DVec2:
+        offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -317,7 +358,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2v2);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v2Sqr, output1v2Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v2Sqr, output1v2Sqr);
             break;
@@ -327,6 +367,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.SimplexGradient1DVec3:
+        offset[1] = offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -334,7 +375,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output1v3);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[1] = offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v3, output1v3, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v3, output1v3);
             break;
@@ -344,6 +384,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         }
         break;
       case NoiseType.SimplexGradient2DVec3:
+        offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
@@ -351,7 +392,6 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             Draw(output2v3);
             break;
           case Mode.kGpuComputeCustomSamples:
-            offset[2] = 0.0f;
             SimplexNoiseGradient.Compute(input1v3Sqr, output1v3Sqr, scale, offset, m_numOctaves, m_octaveOffsetFactor);
             Draw(input1v3Sqr, output1v3Sqr);
             break;
