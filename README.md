@@ -17,12 +17,12 @@ Utilities and extensions to Unity's existing math library, including vectors, qu
 ### [Noise](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Noise)
 
 Shader functions for noise generation, including:  
-  * Classic Perlin noise.
-  * Periodic classic Perlin noise.
-  * Random noise.
-  * Random vector noise.
-  * Simplex noise.
-  * Simplex noise gradient.
+  * Classic Perlin noise
+  * Periodic classic Perlin noise
+  * Random noise
+  * Random vector noise
+  * Simplex noise
+  * Simplex noise gradient
   
 GPU compute & CPU variants coming soon.   
 Classic Perlin & simplex noise based on [webgl-noise](https://github.com/ashima/webgl-noise).  
@@ -30,8 +30,19 @@ Classic Perlin & simplex noise based on [webgl-noise](https://github.com/ashima/
 ----
 ### [Debug](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Debug)
 
-Utilities to draw various primitives in differnt styles, including:  
-  * Wireframe.
-  * Solid color.
-  * Flat shaded.
-  * Smooth shaded.
+Utilities to draw various primitives:  
+  * Line
+  * Arrow
+  * Rectangle
+  * Box
+  * Circle
+  * Sphere
+  * Cylinder
+  * Capsule
+  * Cone
+
+Available styles include:  
+  * Wireframe
+  * Solid color
+  * Flat shaded
+  * Smooth shaded
