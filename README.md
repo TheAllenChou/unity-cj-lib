@@ -25,7 +25,7 @@ Shader functions for noise generation, including:
   * Simplex noise gradient.
   
 GPU compute & CPU variants coming soon.   
-Classic Perlin & Simplex noise based on [webgl-noise](https://github.com/ashima/webgl-noise).  
+Classic Perlin & simplex noise based on [webgl-noise](https://github.com/ashima/webgl-noise).  
 
 ----
 ### [Debug](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Debug)
