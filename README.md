@@ -4,14 +4,15 @@ CJ Lib is a constant work in progress.
 
 This library is meant to provide various script utilities to aid in Unity development.
 
-**If you use CJ Lib in your work, credits and link-backs are highly appreciated.**
+If you use CJ Lib in your work, credits and link-backs are highly appreciated.
 
-
+----
 ### [Math](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Math)
 
 Utilities and extensions to Unity's existing math library, including vectors, quaternions, etc.
 
 
+----
 ### [Noise](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Noise)
 
 Shader functions for noise generation, including:  
@@ -25,6 +26,7 @@ Shader functions for noise generation, including:
 GPU compute & CPU variants coming soon.   
 Classic Perlin & Simplex noise based on [webgl-noise](https://github.com/ashima/webgl-noise).  
 
+----
 ### [Debug](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Debug)
 
 Utilities to draw various primitives in differnt styles, including:  
