@@ -215,11 +215,9 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
+          case Mode.kGpuComputeCustomSamples:  // pointless
             RandomNoise.Compute(output1, seed);
             Draw(output1);
-            break;
-          case Mode.kGpuComputeCustomSamples:
-            // TODO
             break;
           case Mode.kCpu:
             for (int x = 0; x < output1.GetLength(0); ++x)
@@ -233,11 +231,9 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
+          case Mode.kGpuComputeCustomSamples:  // pointless
             RandomNoise.Compute(output2, seed);
             Draw(output2);
-            break;
-          case Mode.kGpuComputeCustomSamples:
-            // TODO
             break;
           case Mode.kCpu:
             for (int y = 0; y < output2.GetLength(1); ++y)
@@ -251,10 +247,8 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
+          case Mode.kGpuComputeCustomSamples: // pointless
             RandomNoise.Compute(output3, seed);
-            break;
-          case Mode.kGpuComputeCustomSamples:
-            // TODO
             break;
           case Mode.kCpu:
             for (int z = 0; z < output3.GetLength(2); ++z)
