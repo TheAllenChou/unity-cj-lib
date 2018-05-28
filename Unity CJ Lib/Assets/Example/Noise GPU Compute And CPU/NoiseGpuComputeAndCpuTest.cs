@@ -62,7 +62,8 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
 
   void Update()
   {
-    float[] offset = new float[] { 0.05f * Time.time, 0.025f * Time.time, 0.01f * Time.time };
+    float[] offset = new float[] { 0.5f * Time.time, 0.25f * Time.time, 0.1f * Time.time };
+    int seed = (int) Mathf.Floor(Time.time);
     float[] output1 = new float[m_gridExtent];
     float[] output1Sqr = new float[m_gridExtent * m_gridExtent];
     float[] output1Cub = new float[m_gridExtent * m_gridExtent * m_gridExtent];
@@ -222,16 +223,17 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             break;
           case Mode.kCpu:
             for (int x = 0; x < output1.GetLength(0); ++x)
-              output1[x] = RandomNoise.Get(x, Time.frameCount);
+              output1[x] = RandomNoise.Get(x, seed);
             Draw(output1);
             break;
         }
         break;
       case NoiseType.Random2D:
+        offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
-            RandomNoise.Compute(output2, Time.frameCount);
+            RandomNoise.Compute(output2, seed);
             Draw(output2);
             break;
           case Mode.kGpuComputeCustomSamples:
@@ -240,7 +242,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
           case Mode.kCpu:
             for (int y = 0; y < output2.GetLength(1); ++y)
               for (int x = 0; x < output2.GetLength(0);  ++x)
-                output2[y, x] = RandomNoise.Get(new Vector2(x, y), Time.frameCount);
+                output2[y, x] = RandomNoise.Get(new Vector2(x, y), seed);
             Draw(output2);
             break;
         }
@@ -249,7 +251,7 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
-            RandomNoise.Compute(output3, Time.frameCount);
+            RandomNoise.Compute(output3, seed);
             break;
           case Mode.kGpuComputeCustomSamples:
             // TODO
@@ -258,32 +260,37 @@ public class NoiseGpuComputeAndCpuTest : MonoBehaviour
             for (int z = 0; z < output3.GetLength(2); ++z)
               for (int y = 0; y < output3.GetLength(1); ++y)
                 for (int x = 0; x < output3.GetLength(0); ++x)
-                  output3[z, y, x] = RandomNoise.Get(new Vector3(x, y, z), Time.frameCount);
+                  output3[z, y, x] = RandomNoise.Get(new Vector3(x, y, z), seed);
             break;
         }
         Draw(output3);
         break;
       case NoiseType.RandomVector1DVec2:
-        RandomNoiseVector.Compute(output1v2, Time.frameCount);
+        offset[1] = offset[2] = 0.0f;
+        RandomNoiseVector.Compute(output1v2, seed);
         Draw(output1v2);
         break;
       case NoiseType.RandomVector2DVec2:
-        RandomNoiseVector.Compute(output2v2, Time.frameCount);
+        offset[2] = 0.0f;
+        RandomNoiseVector.Compute(output2v2, seed);
         Draw(output2v2);
         break;
       case NoiseType.RandomVector1DVec3:
-        RandomNoiseVector.Compute(output1v3, Time.frameCount);
+        offset[1] = offset[2] = 0.0f;
+        RandomNoiseVector.Compute(output1v3, seed);
         Draw(output1v3);
         break;
       case NoiseType.RandomVector2DVec3:
-        RandomNoiseVector.Compute(output2v3, Time.frameCount);
+        offset[2] = 0.0f;
+        RandomNoiseVector.Compute(output2v3, seed);
         Draw(output2v3);
         break;
       case NoiseType.RandomVector3DVec3:
-        RandomNoiseVector.Compute(output3v3, Time.frameCount);
+        RandomNoiseVector.Compute(output3v3, seed);
         Draw(output3v3);
         break;
       case NoiseType.Simplex1D:
+        offset[1] = offset[2] = 0.0f;
         switch (m_mode)
         {
           case Mode.kGpuComputeGridSamples:
