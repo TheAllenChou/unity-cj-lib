@@ -324,118 +324,87 @@ namespace CjLib
   // type-merging utilities
   //---------------------------------------------------------------------------
 
-  public class NoiseScale
+  public class NoiseParams
   {
-    private static float kDefault = 1.0f;
-
     private float[] m_array;
     public float[] GetArray() { return m_array; }
 
-    public static implicit operator NoiseScale(float value) { return new NoiseScale(value); }
-    public NoiseScale(float value)
+    public NoiseParams(float value)
     {
       m_array = new float[] { value, value, value };
     }
 
-    public static implicit operator NoiseScale(float[] array) { return new NoiseScale(array); }
-    public NoiseScale(float[] array)
+    public NoiseParams(float[] array, float defaultValue)
     {
       m_array =
         new float[]
         {
-          (array.Length >= 1) ? array[0] : kDefault,
-          (array.Length >= 2) ? array[1] : kDefault,
-          (array.Length >= 3) ? array[2] : kDefault
+          (array.Length >= 1) ? array[0] : defaultValue,
+          (array.Length >= 2) ? array[1] : defaultValue,
+          (array.Length >= 3) ? array[2] : defaultValue
         };
     }
 
-    public static implicit operator NoiseScale(Vector2 vector) { return new NoiseScale(vector); }
-    public NoiseScale(Vector2 vector)
+    public NoiseParams(Vector2 vector, float defaultValue)
     {
-      m_array = new float[] { vector.x, vector.y, kDefault };
+      m_array = new float[] { vector.x, vector.y, defaultValue };
     }
 
-    public static implicit operator NoiseScale(Vector3 vector) { return new NoiseScale(vector); }
-    public NoiseScale(Vector3 vector)
+    public NoiseParams(Vector3 vector)
     {
       m_array = new float[] { vector.x, vector.y, vector.z };
     }
   }
 
-  public class NoiseOffset
+  public class NoiseScale : NoiseParams
+  {
+    private static float kDefault = 1.0f;
+
+    public static implicit operator NoiseScale(float value) { return new NoiseScale(value); }
+    public NoiseScale(float value) : base(value) { }
+
+    public static implicit operator NoiseScale(float[] array) { return new NoiseScale(array); }
+    public NoiseScale(float[] array) : base(array, kDefault) { }
+
+    public static implicit operator NoiseScale(Vector2 vector) { return new NoiseScale(vector); }
+    public NoiseScale(Vector2 vector) : base(vector, kDefault) { }
+
+    public static implicit operator NoiseScale(Vector3 vector) { return new NoiseScale(vector); }
+    public NoiseScale(Vector3 vector) : base(vector) { }
+  }
+
+  public class NoiseOffset : NoiseParams
   {
     private static float kDefault = 0.0f;
 
-    private float[] m_array;
-    public float[] GetArray() { return m_array; }
-
     public static implicit operator NoiseOffset(float value) { return new NoiseOffset(value); }
-    public NoiseOffset(float value)
-    {
-      m_array = new float[] { value, value, value };
-    }
+    public NoiseOffset(float value) : base(value) { }
 
     public static implicit operator NoiseOffset(float[] array) { return new NoiseOffset(array); }
-    public NoiseOffset(float[] array)
-    {
-      m_array =
-        new float[]
-        {
-          (array.Length >= 1) ? array[0] : kDefault,
-          (array.Length >= 2) ? array[1] : kDefault,
-          (array.Length >= 3) ? array[2] : kDefault
-        };
-    }
+    public NoiseOffset(float[] array) : base(array, kDefault) { }
 
     public static implicit operator NoiseOffset(Vector2 vector) { return new NoiseOffset(vector); }
-    public NoiseOffset(Vector2 vector)
-    {
-      m_array = new float[] { vector.x, vector.y, kDefault };
-    }
+    public NoiseOffset(Vector2 vector) : base(vector, kDefault) { }
 
     public static implicit operator NoiseOffset(Vector3 vector) { return new NoiseOffset(vector); }
-    public NoiseOffset(Vector3 vector)
-    {
-      m_array = new float[] { vector.x, vector.y, vector.z };
-    }
+    public NoiseOffset(Vector3 vector) : base(vector) { }
   }
 
-  public class NoisePeriod
+  public class NoisePeriod : NoiseParams
   {
     private static float kDefault = 1.0f;
 
-    private float[] m_array;
-    public float[] GetArray() { return m_array; }
-
     public static implicit operator NoisePeriod(float value) { return new NoisePeriod(value); }
-    public NoisePeriod(float value)
-    {
-      m_array = new float[] { value, value, value };
-    }
+    public NoisePeriod(float value) : base(value) { }
 
     public static implicit operator NoisePeriod(float[] array) { return new NoisePeriod(array); }
-    public NoisePeriod(float[] array)
-    {
-      m_array =
-        new float[]
-        {
-          (array.Length >= 1) ? array[0] : kDefault,
-          (array.Length >= 2) ? array[1] : kDefault,
-          (array.Length >= 3) ? array[2] : kDefault
-        };
-    }
+    public NoisePeriod(float[] array) : base(array, kDefault) { }
 
     public static implicit operator NoisePeriod(Vector2 vector) { return new NoisePeriod(vector); }
-    public NoisePeriod(Vector2 vector)
-    {
-      m_array = new float[] { vector.x, vector.y, kDefault };
-    }
+    public NoisePeriod(Vector2 vector) : base(vector, kDefault) { }
 
     public static implicit operator NoisePeriod(Vector3 vector) { return new NoisePeriod(vector); }
-    public NoisePeriod(Vector3 vector)
-    {
-      m_array = new float[] { vector.x, vector.y, vector.z };
-    }
+    public NoisePeriod(Vector3 vector) : base(vector) { }
   }
 
   internal interface INoiseDataArray
