@@ -26,8 +26,6 @@ namespace CjLib
     private static int s_classicPeriodicCustom3KernelId;
     private static void InitClassicPeriodic()
     {
-      NoiseCommon.InitCsId();
-
       if (s_classicPeriodicInit)
         return;
 

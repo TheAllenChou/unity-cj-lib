@@ -26,8 +26,6 @@ namespace CjLib
     private static int s_classicCustom3KernelId;
     private static void InitClassic()
     {
-      NoiseCommon.InitCsId();
-
       if (s_classicInit)
         return;
 

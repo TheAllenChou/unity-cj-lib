@@ -25,8 +25,6 @@ namespace CjLib
     private static int s_random3KernelId;
     private static void InitRandom()
     {
-      NoiseCommon.InitCsId();
-
       if (s_randomInit)
         return;
 

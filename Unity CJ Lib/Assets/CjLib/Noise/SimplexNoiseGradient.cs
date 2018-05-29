@@ -26,8 +26,6 @@ namespace CjLib
     private static int s_simplexGradientCustum3KernelId;
     private static void InitSimplex()
     {
-      NoiseCommon.InitCsId();
-
       if (s_simplexGradientInit)
         return;
 

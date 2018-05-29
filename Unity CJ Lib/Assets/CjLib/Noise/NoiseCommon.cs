@@ -22,14 +22,14 @@ namespace CjLib
     // common
     //-------------------------------------------------------------------------
 
-    internal enum Io
+    private enum Io
     {
       kInput, 
       kOutput, 
     };
 
-    internal static Dictionary<int, ComputeBuffer> s_csBufferPool;
-    internal static ComputeBuffer GetFloatBuffer(int count, int stride, Io io)
+    private static Dictionary<int, ComputeBuffer> s_csBufferPool;
+    private static ComputeBuffer GetFloatBuffer(int count, int stride, Io io)
     {
       // round up to the next highest power of 2
       // https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
@@ -63,21 +63,21 @@ namespace CjLib
       return buffer;
     }
 
-    internal static bool s_csIdInit = false;
-    internal static int s_csSeedId;
-    internal static int s_csDimensionId;
-    internal static int s_csScaleId;
-    internal static int s_csOffsetId;
-    internal static int s_csNumOctavesId;
-    internal static int s_csOctaveOffsetFactorId;
-    internal static int s_csPeriodId;
-    internal static int s_csInputId;
-    internal static int s_csInput2Id;
-    internal static int s_csInput3Id;
-    internal static int s_csOutputId;
-    internal static int s_csOutput2Id;
-    internal static int s_csOutput3Id;
-    internal static void InitCsId()
+    private static bool s_csIdInit = false;
+    private static int s_csSeedId;
+    private static int s_csDimensionId;
+    private static int s_csScaleId;
+    private static int s_csOffsetId;
+    private static int s_csNumOctavesId;
+    private static int s_csOctaveOffsetFactorId;
+    private static int s_csPeriodId;
+    private static int s_csInputId;
+    private static int s_csInput2Id;
+    private static int s_csInput3Id;
+    private static int s_csOutputId;
+    private static int s_csOutput2Id;
+    private static int s_csOutput3Id;
+    private static void InitCsId()
     {
       if (s_csIdInit)
         return;
@@ -105,7 +105,7 @@ namespace CjLib
       return (seed + 1.2345689f) * 1.23456789f;
     }
 
-    internal static int[] GetDimension(Array array)
+    private static int[] GetDimension(Array array)
     {
       return 
         new int[]
@@ -116,7 +116,7 @@ namespace CjLib
         };
     }
 
-    internal static ComputeBuffer SetInputOutputBuffers(ComputeShader shader, int kernelId, Array input, Array output)
+    private static ComputeBuffer SetInputOutputBuffers(ComputeShader shader, int kernelId, Array input, Array output)
     {
       int csInputId = -1;
       int inputStride = Marshal.SizeOf(input.GetType().GetElementType());
@@ -144,7 +144,7 @@ namespace CjLib
       return outputBuffer;
     }
 
-    internal static ComputeBuffer SetOutputBuffer(ComputeShader shader, int kernelId, Array output, int[] dimension)
+    private static ComputeBuffer SetOutputBuffer(ComputeShader shader, int kernelId, Array output, int[] dimension)
     {
       int csOutputId = -1;
       int outputStride = Marshal.SizeOf(output.GetType().GetElementType());
@@ -176,6 +176,8 @@ namespace CjLib
       float seed
     )
     {
+      InitCsId();
+
       Array aOutput = output.GetArray();
 
       int[] dimension = GetDimension(aOutput);
@@ -203,6 +205,8 @@ namespace CjLib
       float octaveOffsetFactor
     )
     {
+      InitCsId();
+
       Array aOutput = output.GetArray();
 
       int[] dimension = GetDimension(aOutput);
@@ -233,6 +237,8 @@ namespace CjLib
       float octaveOffsetFactor
     )
     {
+      InitCsId();
+
       Array aOutput = output.GetArray();
 
       int[] dimension = GetDimension(aOutput);
@@ -271,6 +277,8 @@ namespace CjLib
       float octaveOffsetFactor
     )
     {
+      InitCsId();
+
       Array aInput = input.GetArray();
       Array aOutput = output.GetArray();
 
@@ -300,6 +308,8 @@ namespace CjLib
       float octaveOffsetFactor
     )
     {
+      InitCsId();
+
       Array aInput = input.GetArray();
       Array aOutput = output.GetArray();
 

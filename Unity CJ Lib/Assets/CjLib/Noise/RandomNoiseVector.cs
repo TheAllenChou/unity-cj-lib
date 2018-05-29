@@ -24,8 +24,6 @@ namespace CjLib
     private static int s_randomVec3KernelId;
     private static void InitRandomVec()
     {
-      NoiseCommon.InitCsId();
-
       if (s_randomVecInit)
         return;
 
