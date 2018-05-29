@@ -73,37 +73,12 @@ namespace CjLib
     // GPU compute / grid samples
     //-------------------------------------------------------------------------
 
-    public static void Compute(float[] output, float scale, float offset, int numOctaves, float octaveOffsetFactor)
+    public static void Compute(FloatArray output, NoiseScale scale, NoiseOffset offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetSimplexGrid2(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      float[] aScale = { scale, 1.0f, 1.0f };
-      float[] aOffset = { offset, 0.0f, 0.0f };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, numOctaves, octaveOffsetFactor);
-    }
-
-    public static void Compute(float[,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetSimplexGrid2(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      float[] aScale = { scale[0], scale[1], 1.0f };
-      float[] aOffset = { offset[0], offset[1], 0.0f };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, numOctaves, octaveOffsetFactor);
-    }
-
-    public static void Compute(float[,,] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetSimplexGrid3(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      float[] aScale = { scale[0], scale[1], scale[2] };
-      float[] aOffset = { offset[0], offset[1], offset[2] };
-      NoiseCommon.Compute(output, shader, kernelId, dimension, aScale, aOffset, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(output, shader, kernelId, scale, offset, numOctaves, octaveOffsetFactor);
     }
 
     //-------------------------------------------------------------------------
@@ -113,27 +88,32 @@ namespace CjLib
     // GPU compute / custom samples
     //-------------------------------------------------------------------------
 
-    public static void Compute(Vector2[] input, float[] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
+    public static void Compute(Vector2Array input, FloatArray output, NoiseScale scale, NoiseOffset offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetSimplexCustom2(out shader, out kernelId);
-      float[] aScale = { scale[0], scale[1], 1.0f };
-      float[] aOffset = { offset[0], offset[1], 0.0f };
-      NoiseCommon.Compute(input, output, shader, kernelId, aScale, aOffset, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(input, output, shader, kernelId, scale, offset, numOctaves, octaveOffsetFactor);
     }
 
-    public static void Compute(Vector3[] input, float[] output, float[] scale, float[] offset, int numOctaves, float octaveOffsetFactor)
+    public static void Compute(Vector3Array input, FloatArray output, NoiseScale scale, NoiseOffset offset, int numOctaves, float octaveOffsetFactor)
     {
       ComputeShader shader;
       int kernelId;
       GetSimplexCustom3(out shader, out kernelId);
-      float[] aScale = { scale[0], scale[1], scale[2] };
-      float[] aOffset = { offset[0], offset[1], offset[2] };
-      NoiseCommon.Compute(input, output, shader, kernelId, aScale, aOffset, numOctaves, octaveOffsetFactor);
+      NoiseCommon.Compute(input, output, shader, kernelId, scale, offset, numOctaves, octaveOffsetFactor);
     }
 
     //-------------------------------------------------------------------------
     // end: GPU compute / custom samples
+
+
+    // CPU
+    //-------------------------------------------------------------------------
+
+    
+
+    //-------------------------------------------------------------------------
+    // end: CPU
   }
 }

@@ -64,31 +64,12 @@ namespace CjLib
     // GPU compute / grid samples
     //-------------------------------------------------------------------------
 
-    public static void Compute(float[] output, int seed = 0)
+    public static void Compute(FloatArray output, int seed = 0)
     {
       ComputeShader shader;
       int kernelId;
       GetRandom1(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
-    }
-
-    public static void Compute(float[,] output, int seed = 0)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetRandom2(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
-    }
-
-    public static void Compute(float[,,] output, int seed = 0)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetRandom3(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
+      NoiseCommon.Compute(output, shader, kernelId, seed);
     }
 
     //-------------------------------------------------------------------------

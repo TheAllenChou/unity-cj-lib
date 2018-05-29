@@ -48,49 +48,20 @@ namespace CjLib
       kernelId = s_randomVec3KernelId;
     }
 
-    public static void Compute(Vector2[] output, int seed = 0)
+    public static void Compute(Vector2Array output, int seed = 0)
     {
       ComputeShader shader;
       int kernelId;
       GetRandomVec2(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
+      NoiseCommon.Compute(output, shader, kernelId, seed);
     }
 
-    public static void Compute(Vector2[,] output, int seed = 0)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetRandomVec2(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
-    }
-
-    public static void Compute(Vector3[] output, int seed = 0)
+    public static void Compute(Vector3Array output, int seed = 0)
     {
       ComputeShader shader;
       int kernelId;
       GetRandomVec3(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), 1, 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
-    }
-
-    public static void Compute(Vector3[,] output, int seed = 0)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetRandomVec3(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), 1 };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
-    }
-
-    public static void Compute(Vector3[,,] output, int seed = 0)
-    {
-      ComputeShader shader;
-      int kernelId;
-      GetRandomVec3(out shader, out kernelId);
-      int[] dimension = new int[] { output.GetLength(0), output.GetLength(1), output.GetLength(2) };
-      NoiseCommon.Compute(output, shader, kernelId, seed, dimension);
+      NoiseCommon.Compute(output, shader, kernelId, seed);
     }
 
     //-------------------------------------------------------------------------
