@@ -17,12 +17,12 @@ namespace CjLib
   {
 
     public static readonly float Pi        = Mathf.PI;
-    public static readonly float TwiPi     = 2.0f * Mathf.PI;
+    public static readonly float TwoPi     = 2.0f * Mathf.PI;
     public static readonly float HalfPi    = Mathf.PI / 2.0f;
     public static readonly float ThirdPi   = Mathf.PI / 3.0f;
     public static readonly float QuarterPi = Mathf.PI / 4.0f;
     public static readonly float FifthPi   = Mathf.PI / 5.0f;
-    public static readonly float SixthPi   = Mathf.PI / 5.0f;
+    public static readonly float SixthPi   = Mathf.PI / 6.0f;
 
     public static readonly float Sqrt2    = Mathf.Sqrt(2.0f);
     public static readonly float Sqrt2Inv = 1.0f / Mathf.Sqrt(2.0f);
