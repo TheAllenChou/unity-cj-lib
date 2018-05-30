@@ -18,8 +18,8 @@
 */
 /******************************************************************************/
 
-#ifndef SIMPLEX_NOISE_3D
-#define SIMPLEX_NOISE_3D
+#ifndef CJ_LIB_SIMPLEX_NOISE_3D
+#define CJ_LIB_SIMPLEX_NOISE_3D
 
 #include "NoiseCommon.cginc"
 

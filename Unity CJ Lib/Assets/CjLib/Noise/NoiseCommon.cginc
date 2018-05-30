@@ -19,8 +19,8 @@
 /******************************************************************************/
 
 
-#ifndef NOISE_COMMON
-#define NOISE_COMMON
+#ifndef CJ_LIB_NOISE_COMMON
+#define CJ_LIB_NOISE_COMMON
 
 float mod(float x, float y)
 {

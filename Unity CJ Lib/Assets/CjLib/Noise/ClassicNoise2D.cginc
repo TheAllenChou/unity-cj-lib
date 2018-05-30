@@ -19,8 +19,8 @@
 /******************************************************************************/
 
 
-#ifndef CLASSIC_NOISE_2D
-#define CLASSIC_NOISE_2D
+#ifndef CJ_LIB_CLASSIC_NOISE_2D
+#define CJ_LIB_CLASSIC_NOISE_2D
 
 #include "NoiseCommon.cginc"
 

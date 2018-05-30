@@ -14,8 +14,8 @@
 /******************************************************************************/
 
 
-#ifndef RANDOM_NOISE
-#define RANDOM_NOISE
+#ifndef CJ_LIB_RANDOM_NOISE
+#define CJ_LIB_RANDOM_NOISE
 
 #include "NoiseCommon.cginc"
 

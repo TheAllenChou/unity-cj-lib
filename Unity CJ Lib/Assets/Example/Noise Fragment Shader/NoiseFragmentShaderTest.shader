@@ -39,7 +39,7 @@ Shader "CjLib/Example/NoiseTest"
 
   #include "UnityCG.cginc"
 
-  #include "../../CjLib/Noise/Shader/Noise.cginc"
+  #include "../../CjLib/Noise/Noise.cginc"
 
   float4 _Offset;
   uint _NumOctaves;

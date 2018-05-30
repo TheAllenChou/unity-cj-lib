@@ -13,8 +13,8 @@
 */
 /******************************************************************************/
 
-#ifndef PRIMITIVE_CORE
-#define PRIMITIVE_CORE
+#ifndef CJ_LIB_PRIMITIVE_CORE
+#define CJ_LIB_PRIMITIVE_CORE
 
 #include "UnityCG.cginc"
 
