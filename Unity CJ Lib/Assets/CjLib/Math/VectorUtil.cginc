@@ -9,22 +9,14 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_VECTOR_H
-#define CJ_LIB_VECTOR_H
+#ifndef CJ_LIB_VECTOR_UTIL_H
+#define CJ_LIB_VECTOR_UTIL_H
 
-#include "Math.cginc"
+#include "MathUtil.cginc"
 
 float3 find_ortho(float3 v)
 {
   if (v.x >= kSqrt3Inv)
-    return float3(v.y, -v.x, 0.0);
-  else
-    return float3(0.0, v.z, -v.y);
-}
-
-float3 find_ortho(float3 v)
-{
-  if (v.x >= kCjLibSqrt3Inv)
     return float3(v.y, -v.x, 0.0);
   else
     return float3(0.0, v.z, -v.y);
@@ -38,17 +30,12 @@ float3 slerp(float3 a, float3 b, float t)
   {
     return lerp(a, b, t);
   }
-  else if (d < -0.99999)
-  {
-    float3 a = find_ortho(v);
-    return quat_mul(quat_axis_angle(kCjLibPi * t, a), a);
-  }
 
   float r = acos(saturate(d));
-  return (sin(1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
+  return (sin((1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
 }
 
-float3 nlerp(float3, float b, float t)
+float3 nlerp(float3 a, float b, float t)
 {
   return normalize(lerp(a, b, t));
 }
