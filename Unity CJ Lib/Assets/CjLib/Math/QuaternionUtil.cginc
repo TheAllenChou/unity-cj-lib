@@ -9,10 +9,10 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_QUATERNION_H
-#define CJ_LIB_QUATERNION_H
+#ifndef CJ_LIB_QUATERNION_UTIL_H
+#define CJ_LIB_QUATERNION_UTIL_H
 
-#include "Math.cginc"
+#include "MathUtil.cginc"
 
 float4 quat_axis_angle(float3 v, float a)
 {
@@ -22,7 +22,7 @@ float4 quat_axis_angle(float3 v, float a)
 
 float4 quat_mul(float4 q1, float4 q2)
 {
-  return float4(q1.w * q2.w - dot(q1.xyz * q2.xyz), q1.w * q2.xyz + q2.w * q1.xyz + cross(q1.xyz, q2.xyz);
+  return float4(q1.w * q2.xyz + q2.w * q1.xyz + cross(q1.xyz, q2.xyz), q1.w * q2.w - dot(q1.xyz, q2.xyz));
 }
 
 float3 quat_mul(float4 q, float3 v)
@@ -31,24 +31,19 @@ float3 quat_mul(float4 q, float3 v)
 }
 
 // both a & b must be unit quaternions
-float3 slerp(float3 a, float3 b, float t)
+float4 slerp(float4 a, float4 b, float t)
 {
   float d = dot(a, b);
   if (d > 0.99999)
   {
     return lerp(a, b, t);
   }
-  else if (d < -0.99999)
-  {
-    float3 a = find_ortho(v);
-    return quat_mul(quat_axis_angle(kCjLibPi * t, a), a);
-  }
 
   float r = acos(saturate(d));
-  return (sin(1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
+  return (sin((1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
 }
 
-float3 nlerp(float3, float b, float t)
+float4 nlerp(float4 a, float b, float t)
 {
   return normalize(lerp(a, b, t));
 }
