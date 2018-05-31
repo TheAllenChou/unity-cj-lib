@@ -9,29 +9,29 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_MATH_H
-#define CJ_LIB_MATH_H
+#ifndef CJ_LIB_MATH_UTIL_H
+#define CJ_LIB_MATH_UTIL_H
 
-#define kCjLibPi          (3.1415926535)
-#define kCjLibTwoPi       (6.2831853071)
-#define kCjLibHalfPi      (1.5707963267)
-#define kCjLibThirdPi     (1.0471975511)
-#define kCjLibQuaterPi    (0.7853981633)
-#define kCjLibFifthPi     (0.6283185307)
-#define kCjLibSixthPi     (0.5235987755)
+#define kPi          (3.1415926535)
+#define kTwoPi       (6.2831853071)
+#define kHalfPi      (1.5707963267)
+#define kThirdPi     (1.0471975511)
+#define kQuaterPi    (0.7853981633)
+#define kFifthPi     (0.6283185307)
+#define kSixthPi     (0.5235987755)
 
-#define kCjLibSqrt2       (1.4142135623)
-#define kCjLibSqrt3       (1.7320508075)
-#define kCjLibSqrt2Inv    (0.7071067811)
-#define kCjLibSqrt3Inv    (0.5773502691)
+#define kSqrt2       (1.4142135623)
+#define kSqrt3       (1.7320508075)
+#define kSqrt2Inv    (0.7071067811)
+#define kSqrt3Inv    (0.5773502691)
 
-#define kCjLibEpsilon     (0.0000000001)
-#define kCjLibEpsilonComp (0.9999999999)
+#define kEpsilon     (0.0000000001)
+#define kEpsilonComp (0.9999999999)
 
-#define kCjLibRad2Deg     (57.295779513)
-#define kCjLibDeg2Rad     (0.0174532925)
+#define kRad2Deg     (57.295779513)
+#define kDeg2Rad     (0.0174532925)
 
-#include "Vector.cginc"
-#include "Quaternion.cginc"
+#include "VectorUtil.cginc"
+#include "QuaternionUtil.cginc"
 
 #endif
