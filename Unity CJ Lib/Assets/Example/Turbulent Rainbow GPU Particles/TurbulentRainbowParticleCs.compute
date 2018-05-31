@@ -1,0 +1,75 @@
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+  https://github.com/TheAllenChou/unity-cj-lib
+
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
+#pragma kernel Init
+#pragma kernel Integrate
+
+#include "../../CjLib/Math/ColorUtil.cginc"
+#include "../../CjLib/Math/MathUtil.cginc"
+#include "../../CjLib/Noise/RandomNoise.cginc"
+
+#include "TurbulentRainbowParticleStruct.cginc"
+
+RWStructuredBuffer<Particle> particleBuffer;
+
+float minSpeed;
+float maxSpeed;
+float minSpin;
+float maxSpin;
+float4 lifetime; // (head, min body, max body, tail)
+
+int numParticles;
+
+[numthreads(1, 1, 1)]
+void Init(uint3 id : SV_DispatchThreadID)
+{
+  float3 seed = id.x;
+
+  particleBuffer[id.x].position = float3(0.0, 0.0, 0.0);
+
+  particleBuffer[id.x].damping = rand(seed.x);
+  seed = rand_vec(seed);
+
+  float3 rotationAxis = rand_uvec(seed);
+  seed = rand_vec(seed);
+  float rotationAngle = rand(seed.x) * kPi;
+  seed = rand_vec(seed);
+  particleBuffer[id.x].rotation = quat_axis_angle(rotationAxis, rotationSpeed);
+
+  float3 linearDirection = normalize(rand_vec(seed));
+  seed = rand_vec(seed)
+  float linearSpeed = rand_range(seed.x, minSpeed, maxSpeed);
+  rand = rand_vec(seed);
+  particleBuffer[id.x].linearVelocity = linearSpeed * linearDirection;
+
+  float3 angularDirection = rand_uvec(seed);
+  seed = rand_vec(seed);
+  float angularSpeed = rand_range(seed.x, minSpin, maxSpin);
+  seed = rand_vec(seed);
+  particleBuffer[id.x].angularVelocity = quat_axis_angle(angularDirection, angularSpeed);
+
+  // TODO: lower 
+
+  float lifetimeBody = rand_range(seed.x, lifetime.y, lifetime.z);
+  seed = rand_vec(seed);
+  float lifetimeCurrent = 0.0; // TODO
+  particleBuffer[id.x].lifetime = float4(lifetime.x, lifetimebody, lifetime.w, lifetimeCurrent);
+
+  // TODO: color
+}
+
+float deltaTime;
+
+[numthreads(1, 1, 1)]
+void Integrate(uint3 id : SV_DispatchThreadID)
+{
+  // TODO
+}
