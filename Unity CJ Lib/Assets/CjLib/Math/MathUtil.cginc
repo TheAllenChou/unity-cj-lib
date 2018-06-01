@@ -31,7 +31,8 @@
 #define kRad2Deg     (57.295779513)
 #define kDeg2Rad     (0.0174532925)
 
-#include "VectorUtil.cginc"
+#include "ColorUtil.cginc"
 #include "QuaternionUtil.cginc"
+#include "VectorUtil.cginc"
 
 #endif
