@@ -10,7 +10,7 @@
 /******************************************************************************/
 
 #pragma kernel Init
-#pragma kernel Integrate
+#pragma kernel Step
 
 #include "../../CjLib/Math/ColorUtil.cginc"
 #include "../../CjLib/Math/MathUtil.cginc"
@@ -20,10 +20,9 @@
 
 RWStructuredBuffer<Particle> particleBuffer;
 
-float minSpeed;
-float maxSpeed;
-float minSpin;
-float maxSpin;
+float2 scale;    // (min, max)
+float damping;
+float4 speed;    // (min linear, max linear, min angular, max angular)
 float4 lifetime; // (head, min body, max body, tail)
 
 int numParticles;
@@ -31,45 +30,79 @@ int numParticles;
 [numthreads(1, 1, 1)]
 void Init(uint3 id : SV_DispatchThreadID)
 {
+  float t = float(id.x) / float(numParticles);
   float3 seed = id.x;
 
   particleBuffer[id.x].position = float3(0.0, 0.0, 0.0);
-
-  particleBuffer[id.x].damping = rand(seed.x);
-  seed = rand_vec(seed);
 
   float3 rotationAxis = rand_uvec(seed);
   seed = rand_vec(seed);
   float rotationAngle = rand(seed.x) * kPi;
   seed = rand_vec(seed);
-  particleBuffer[id.x].rotation = quat_axis_angle(rotationAxis, rotationSpeed);
+  particleBuffer[id.x].rotation = quat_axis_angle(rotationAxis, rotationAngle);
+
+  particleBuffer[id.x].scale = rand_range(seed.x, scale.x, scale.y);
+  seed = rand_vec(seed);
+
+  particleBuffer[id.x].damping = damping;
 
   float3 linearDirection = normalize(rand_vec(seed));
-  seed = rand_vec(seed)
-  float linearSpeed = rand_range(seed.x, minSpeed, maxSpeed);
-  rand = rand_vec(seed);
+  seed = rand_vec(seed);
+  float linearSpeed = rand_range(seed.x, speed.x, speed.y);
+  seed = rand_vec(seed);
   particleBuffer[id.x].linearVelocity = linearSpeed * linearDirection;
 
   float3 angularDirection = rand_uvec(seed);
   seed = rand_vec(seed);
-  float angularSpeed = rand_range(seed.x, minSpin, maxSpin);
+  float angularSpeed = rand_range(seed.x, speed.z, speed.w);
   seed = rand_vec(seed);
   particleBuffer[id.x].angularVelocity = quat_axis_angle(angularDirection, angularSpeed);
 
-  // TODO: lower 
-
   float lifetimeBody = rand_range(seed.x, lifetime.y, lifetime.z);
   seed = rand_vec(seed);
-  float lifetimeCurrent = 0.0; // TODO
-  particleBuffer[id.x].lifetime = float4(lifetime.x, lifetimebody, lifetime.w, lifetimeCurrent);
+  float lifetimeCurrent = -t * (lifetime.x + lifetime.z + lifetime.w);
+  particleBuffer[id.x].lifetime = float4(lifetime.x, lifetimeBody, lifetime.w, lifetimeCurrent);
 
-  // TODO: color
+  particleBuffer[id.x].color = float4(hsv2rgb(float3(360.0 * t, 1.0, 1.0)), 1.0);
 }
 
-float deltaTime;
+float2 time; // (current, delta)
 
 [numthreads(1, 1, 1)]
-void Integrate(uint3 id : SV_DispatchThreadID)
+void Step(uint3 id : SV_DispatchThreadID)
 {
-  // TODO
+  // respawn particle
+  particleBuffer[id.x].lifetime.w += time.y;
+  float4 lifetime = particleBuffer[id.x].lifetime;
+  if (lifetime.w > dot(lifetime.xyz, float3(1.0, 1.0, 1.0)))
+  {
+    float3 seed = id.x + time.x;
+
+    particleBuffer[id.x].position = float3(0.0, 0.0, 0.0);
+    particleBuffer[id.x].lifetime.w = 0.0;
+
+    float3 linearDirection = normalize(rand_vec(seed));
+    seed = rand_vec(seed);
+    float linearSpeed = rand_range(seed.x, speed.x, speed.y);
+    seed = rand_vec(seed);
+    particleBuffer[id.x].linearVelocity = linearSpeed * linearDirection;
+
+    float3 angularDirection = rand_uvec(seed);
+    seed = rand_vec(seed);
+    float angularSpeed = rand_range(seed.x, speed.z, speed.w);
+    seed = rand_vec(seed);
+    particleBuffer[id.x].angularVelocity = quat_axis_angle(angularDirection, angularSpeed);
+  }
+
+  if (lifetime.w < 0.0)
+    return;
+
+  // integrate
+  particleBuffer[id.x].position += particleBuffer[id.x].linearVelocity * time.y;
+  float4 q = quat_pow(particleBuffer[id.x].angularVelocity, time.y);
+  particleBuffer[id.x].rotation = quat_mul(q, particleBuffer[id.x].rotation);
+
+  // damping
+  float d = 1.0 - particleBuffer[id.x].damping * time.y;
+  particleBuffer[id.x].linearVelocity *= d;
 }

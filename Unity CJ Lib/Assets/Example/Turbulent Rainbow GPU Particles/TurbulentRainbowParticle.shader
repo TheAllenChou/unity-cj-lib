@@ -21,13 +21,21 @@ Shader "CjLib/Example/TurbulentRainbowBox"
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
+      #pragma multi_compile_instancing
       #pragma target 5.0
 
       #include "UnityCG.cginc"
 
       #include "../../CjLib/Math/MathUtil.cginc"
 
-      #include "TurbulentRainbowBoxStruct.cginc"
+      #include "TurbulentRainbowParticleStruct.cginc"
+
+    struct appdata
+    {
+      float4 vertex : POSITION;
+      float3 normal : NORMAL;
+      UNITY_VERTEX_INPUT_INSTANCE_ID
+    };
 
       struct v2f
       {
@@ -39,11 +47,13 @@ Shader "CjLib/Example/TurbulentRainbowBox"
       // particles' data
       StructuredBuffer<Particle> particleBuffer;
 
-      v2f vert(appdata_base i, uint instance_id : SV_InstanceID)
+      v2f vert(appdata i, uint instance_id : SV_InstanceID)
       {
         v2f o;
 
-        float3 posOs = i.vertex + particleBuffer[instance_id].position;
+        UNITY_SETUP_INSTANCE_ID(i);
+
+        float3 posOs = i.vertex;
         float4 rotOs = particleBuffer[instance_id].rotation;
         posOs = quat_mul(rotOs, posOs);
 
@@ -57,8 +67,11 @@ Shader "CjLib/Example/TurbulentRainbowBox"
             saturate(dot(lifetime, float4(1.0, 1.0, 1.0, -1.0)) / lifetime.z)
           );
 
-        o.position = UnityObjectToClipPos(scale * posOs);
-        o.normal = mul(UNITY_MATRIX_IT_MV, i.normal);
+        float3 posWs = scale * posOs + particleBuffer[instance_id].position;
+        float3 normWs = quat_mul(rotOs, i.normal);
+
+        o.position = UnityObjectToClipPos(posWs);
+        o.normal = mul(UNITY_MATRIX_IT_MV, normWs);
         o.color = particleBuffer[instance_id].color;
 
         return o;
