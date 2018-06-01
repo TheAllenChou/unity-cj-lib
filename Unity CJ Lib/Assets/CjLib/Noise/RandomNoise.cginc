@@ -49,12 +49,12 @@ float2 rand_range(float2 s, float2 a, float2 b)
   return a + (b - a) * rand(s);
 }
 
-float rand_range(float3 s, float3 a, float3 b)
+float3 rand_range(float3 s, float3 a, float3 b)
 {
   return a + (b - a) * rand(s);
 }
 
-float2 rand_uvec(float2)
+float2 rand_uvec(float2 s)
 {
   return normalize(float2(rand(s), rand(s * 1.23456789)) - 0.5);
 }
