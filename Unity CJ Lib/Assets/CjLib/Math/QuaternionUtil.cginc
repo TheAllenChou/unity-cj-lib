@@ -14,6 +14,25 @@
 
 #include "MathUtil.cginc"
 
+#define kUnitQuat (float4(0.0, 0.0, 0.0, 1.0))
+
+float4 quat_conj(float4 q)
+{
+  return float4(-q.xyz, q.w);
+}
+
+// q must be unit quaternion
+float4 quat_pow(float4 q, float p)
+{
+  float r = length(q.xyz);
+  if (r < kEpsilon)
+    return kUnitQuat;
+
+  float t = p * atan2(q.w, r);
+
+  return float4(sin(t) * q.xyz / r, cos(t));
+}
+
 float4 quat_axis_angle(float3 v, float a)
 {
   float h = 0.5 * a;
@@ -27,7 +46,7 @@ float4 quat_mul(float4 q1, float4 q2)
 
 float3 quat_mul(float4 q, float3 v)
 {
-  return 2.0 * dot(q.xyz, v) * q.xyz + (q.w * q.w - dot(q.xyz, q.xyz)) * v + 2.0 * cross(q.xyz, v);
+  return dot(q.xyz, v) * q.xyz + q.w * q.w * v + 2.0 * q.w * cross(q.xyz, v) - cross(cross(q.xyz, v), q.xyz);
 }
 
 // both a & b must be unit quaternions
