@@ -83,7 +83,6 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
     m_csNumParticlesId   = Shader.PropertyToID("numParticles");
     m_csTimeId           = Shader.PropertyToID("time");
 
-    m_material = new Material(Shader.Find("CjLib/Example/TurbulentRainbowBox"));
     m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
     m_material.enableInstancing = true;
 
@@ -103,7 +102,7 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
     m_computeBuffer.GetData(m_debugBuffer);
   }
   
-  void Update ()
+  void Update()
   {
     m_shader.SetFloats(m_csTimeId, new float[] { Time.time, Time.deltaTime });
     m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);

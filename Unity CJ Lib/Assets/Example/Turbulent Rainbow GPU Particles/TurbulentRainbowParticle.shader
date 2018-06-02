@@ -9,81 +9,74 @@
 */
 /******************************************************************************/
 
-Shader "CjLib/Example/TurbulentRainbowBox"
+Shader "CjLib/Example/TurbulentRainbowParticle"
 {
   SubShader
   {
+    Tags { "RenderType" = "Opaque" }
+
     Pass
     {
-      Tags{ "RenderType" = "Opaque" }
-      LOD 200
-
+      Name "ForwardBase"
+      Tags { "LightMode" = "ForwardBase" }
       CGPROGRAM
+      #pragma target 5.0
       #pragma vertex vert
       #pragma fragment frag
       #pragma multi_compile_instancing
-      #pragma target 5.0
+      #pragma multi_compile_fwdbase
+      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
+      #define PASS_FORWARD
+      #define PASS_FORWARD_BASE
+      #include "TurbulentRainbowParticleCore.cginc"
+      ENDCG
+    }
 
-      #include "UnityCG.cginc"
-
-      #include "../../CjLib/Math/MathUtil.cginc"
-
-      #include "TurbulentRainbowParticleStruct.cginc"
-
-    struct appdata
+    Pass
     {
-      float4 vertex : POSITION;
-      float3 normal : NORMAL;
-      UNITY_VERTEX_INPUT_INSTANCE_ID
-    };
+      Name "ForwardAdd"
+      Tags { "LightMode" = "ForwardAdd" }
+      Blend One One
+      CGPROGRAM
+      #pragma target 5.0
+      #pragma vertex vert
+      #pragma fragment frag
+      #pragma multi_compile_instancing
+      #pragma multi_compile_fwdbase
+      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
+      #define PASS_FORWARD
+      #define PASS_FORWARD_ADD
+      #include "TurbulentRainbowParticleCore.cginc"
+      ENDCG
+    }
 
-      struct v2f
-      {
-        float4 position : SV_POSITION;
-        float4 normal   : NORMAL;
-        float4 color    : COLOR0;
-      };
+    Pass
+    {
+      Name "Deferred"
+      Tags { "LightMode" = "Deferred" }
+      CGPROGRAM
+      #pragma target 5.0
+      #pragma vertex vert
+      #pragma fragment frag
+      #pragma multi_compile_instancing
+      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
+      #define PASS_DEFERRED
+      #include "TurbulentRainbowParticleCore.cginc"
+      ENDCG
+    }
 
-      // particles' data
-      StructuredBuffer<Particle> particleBuffer;
-
-      v2f vert(appdata i, uint instance_id : SV_InstanceID)
-      {
-        v2f o;
-
-        UNITY_SETUP_INSTANCE_ID(i);
-
-        float3 posOs = i.vertex;
-        float4 rotOs = particleBuffer[instance_id].rotation;
-        posOs = quat_mul(rotOs, posOs);
-
-        float scale = particleBuffer[instance_id].scale;
-        float4 lifetime = particleBuffer[instance_id].lifetime;
-        scale = 
-          lerp
-          (
-            0.0, 
-            lerp(0.0, scale, saturate(lifetime.w / lifetime.x)),
-            saturate(dot(lifetime, float4(1.0, 1.0, 1.0, -1.0)) / lifetime.z)
-          );
-
-        float3 posWs = scale * posOs + particleBuffer[instance_id].position;
-        float3 normWs = quat_mul(rotOs, i.normal);
-
-        o.position = UnityObjectToClipPos(posWs);
-        o.normal = mul(UNITY_MATRIX_IT_MV, normWs);
-        o.color = particleBuffer[instance_id].color;
-
-        return o;
-      }
-
-      float4 frag(v2f i) : COLOR
-      {
-        float4 color = i.color;
-        color.rgb *= 0.7 * i.normal.z + 0.3;
-        return color;
-      }
-
+    Pass
+    {
+      Name "ShadowCaster"
+      Tags { "LightMode" = "ShadowCaster" }
+      CGPROGRAM
+      #pragma target 5.0
+      #pragma vertex vert
+      #pragma fragment frag
+      #pragma multi_compile_instancing
+      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
+      #define PASS_SHADOW_CASTER
+      #include "TurbulentRainbowParticleCore.cginc"
       ENDCG
     }
   }
