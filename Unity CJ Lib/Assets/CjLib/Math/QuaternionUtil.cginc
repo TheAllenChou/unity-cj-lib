@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_QUATERNION_UTIL_H
-#define CJ_LIB_QUATERNION_UTIL_H
+#ifndef CJ_LIB_QUATERNION_UTIL
+#define CJ_LIB_QUATERNION_UTIL
 
 #include "MathUtil.cginc"
 

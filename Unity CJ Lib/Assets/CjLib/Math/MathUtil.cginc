@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_MATH_UTIL_H
-#define CJ_LIB_MATH_UTIL_H
+#ifndef CJ_LIB_MATH_UTIL
+#define CJ_LIB_MATH_UTIL
 
 #define kPi          (3.1415926535)
 #define kTwoPi       (6.2831853071)

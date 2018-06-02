@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_VECTOR_UTIL_H
-#define CJ_LIB_VECTOR_UTIL_H
+#ifndef CJ_LIB_VECTOR_UTIL
+#define CJ_LIB_VECTOR_UTIL
 
 #include "MathUtil.cginc"
 
