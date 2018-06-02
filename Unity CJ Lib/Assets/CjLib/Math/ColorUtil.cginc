@@ -9,30 +9,28 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_COLOR_UTIL_H
-#define CJ_LIB_COLOR_UTIL_H
+#ifndef CJ_LIB_COLOR_UTIL
+#define CJ_LIB_COLOR_UTIL
 
-float3 hsv2rgb(float3 hsv) // hue is in degrees
+float3 hsv2rgb(float3 hsv)
 {
-  float h = hsv.x - 360.0 * floor(hsv.x / 360.0);
-  float c = hsv.y * hsv.z;
-  float hp = hsv.x / 60.0;
-  hp = h - 2.0 * floor(h / 2.0) - 1.0;
-  float x = c * (1.0 - abs(hp));
-  float m = hsv.z - c;
+  hsv.x = hsv.x - floor(hsv.x);
+  int h = ((int) (hsv.x * 6));
+  float f = hsv.x * 6.0 - h;
+  float p = hsv.z * (1.0 - hsv.y);
+  float q = hsv.z * (1.0 - f * hsv.y);
+  float t = hsv.z * (1.0 - (1.0 - f) * hsv.y);
 
-  if (h >= 0.0f && h < 60.0)
-    return float3(c, x, 0.0) + m;
-  else if (h >= 60.0 && h < 120.0)
-    return float3(x, c, 0.0) + m;
-  else if (h >= 120.0 && h < 180.0)
-    return float3(0.0, c, x) + m;
-  else if (h >= 180.0 && h < 240.0)
-    return float3(0.0, x, c) + m;
-  else if (h >= 240.0 && h < 300.0)
-    return float3(x, 0.0, c) + m;
-  else
-    return float3(c, 0.0, x) + m;
+  switch (h)
+  {
+    default:
+    case 0: return float3(hsv.z, t, p);
+    case 1: return float3(q, hsv.z, p);
+    case 2: return float3(p, hsv.z, t);
+    case 3: return float3(p, q, hsv.z);
+    case 4: return float3(t, p, hsv.z);
+    case 5: return float3(hsv.z, p, q);
+  }
 }
 
 #endif
