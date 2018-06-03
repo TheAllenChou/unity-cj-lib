@@ -16,6 +16,8 @@ Utilities and extensions to Unity's existing math library, including vectors, qu
 ----
 ### [Noise](https://github.com/TheAllenChou/unity-cj-lib/tree/master/Unity%20CJ%20Lib/Assets/CjLib/Noise)
 
+![button-spring](/img/turbulent-rainbow-cubes.gif)
+
 Shader functions for noise generation, including:  
   * Classic Perlin noise
   * Periodic classic Perlin noise
