@@ -24,6 +24,7 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
 
   private const int kNumParticles = 10000;
 
+  /*
   private struct Particle
   {
     // 4 floats
@@ -46,9 +47,10 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
     // 4 floats
     Color m_color;
   };
+  */
 
   private ComputeBuffer m_computeBuffer;
-  private Particle[] m_debugBuffer;
+  //private Particle[] m_debugBuffer;
   private Matrix4x4[] m_aMatrix;
 
   private Mesh m_mesh;
@@ -77,10 +79,8 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
         aIndex[i] = i;
       m_mesh.SetIndices(aIndex, MeshTopology.Points, 0);
     }
-      
-    
 
-    m_debugBuffer = new Particle[kNumParticles];
+    //m_debugBuffer = new Particle[kNumParticles];
     m_aMatrix = new Matrix4x4[kNumParticles];
     for (int i = 0; i < kNumParticles; ++i)
       m_aMatrix[i] = Matrix4x4.identity;
@@ -110,7 +110,7 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
 
     m_shader.Dispatch(m_csInitKernelId, kNumParticles, 1, 1);
 
-    m_computeBuffer.GetData(m_debugBuffer);
+    //m_computeBuffer.GetData(m_debugBuffer);
   }
   
   void Update()
@@ -118,7 +118,7 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
     m_shader.SetFloats(m_csTimeId, new float[] { Time.time, 0.016f });
     m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);
 
-    m_computeBuffer.GetData(m_debugBuffer);
+    //m_computeBuffer.GetData(m_debugBuffer);
 
     Graphics.DrawMesh(m_mesh, Matrix4x4.identity, m_material, 0, null, 0, m_materialProperties);
   }
