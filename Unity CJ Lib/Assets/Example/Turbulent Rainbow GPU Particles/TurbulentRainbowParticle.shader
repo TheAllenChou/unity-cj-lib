@@ -17,49 +17,13 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
 
     Pass
     {
-      Name "ForwardBase"
-      Tags { "LightMode" = "ForwardBase" }
-      CGPROGRAM
-      #pragma target 5.0
-      #pragma vertex vert
-      #pragma fragment frag
-      #pragma multi_compile_instancing
-      #pragma multi_compile_fwdbase
-      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
-      #define PASS_FORWARD
-      #define PASS_FORWARD_BASE
-      #include "TurbulentRainbowParticleCore.cginc"
-      ENDCG
-    }
-
-    Pass
-    {
-      Name "ForwardAdd"
-      Tags { "LightMode" = "ForwardAdd" }
-      Blend One One
-      CGPROGRAM
-      #pragma target 5.0
-      #pragma vertex vert
-      #pragma fragment frag
-      #pragma multi_compile_instancing
-      #pragma multi_compile_fwdbase
-      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
-      #define PASS_FORWARD
-      #define PASS_FORWARD_ADD
-      #include "TurbulentRainbowParticleCore.cginc"
-      ENDCG
-    }
-
-    Pass
-    {
       Name "Deferred"
       Tags { "LightMode" = "Deferred" }
       CGPROGRAM
       #pragma target 5.0
       #pragma vertex vert
+      #pragma geometry geom
       #pragma fragment frag
-      #pragma multi_compile_instancing
-      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_DEFERRED
       #include "TurbulentRainbowParticleCore.cginc"
       ENDCG
@@ -67,14 +31,13 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
 
     Pass
     {
-      Name "ShadowCaster"
+      Name "Deferred"
       Tags { "LightMode" = "ShadowCaster" }
       CGPROGRAM
       #pragma target 5.0
       #pragma vertex vert
+      #pragma geometry geom
       #pragma fragment frag
-      #pragma multi_compile_instancing
-      #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_SHADOW_CASTER
       #include "TurbulentRainbowParticleCore.cginc"
       ENDCG

@@ -13,123 +13,92 @@
 #include "UnityCG.cginc"
 
 #include "../../CjLib/Math/MathUtil.cginc"
-#include "../../CjLib/Render/ForwardUtil.cginc"
+#include "../../CjLib/Render/MeshUtil.cginc"
 
 #include "TurbulentRainbowParticleStruct.cginc"
 
 
 struct appdata
 {
-  float4 vertex : POSITION;
-
-#if defined(PASS_FORWARD) || defined(PASS_DEFERRED)
-  float3 normal : NORMAL;
-  UNITY_VERTEX_INPUT_INSTANCE_ID
-#endif
+  uint id : SV_VertexID;
 };
 
-struct v2f
+struct v2g
 {
-  float4 pos : SV_POSITION;
+  uint id : TEXCOORD0;
+};
 
-#if defined(PASS_FORWARD) || defined(PASS_DEFERRED)
+struct g2f
+{
+  float4 posCs : SV_POSITION;
+
   float3 normWs : NORMAL;
   float4 color  : COLOR0;
-#endif
-
-#if defined (PASS_FORWARD)
-  float3 posWs  : COLOR1;
-#endif
-
-#if defined(PASS_FORWARD_BASE)
-  float3 vertLight : COLOR2;
-#endif
-
-#if defined(PASS_FORWARD)
-  LIGHTING_COORDS(0, 1)
-#endif
 };
 
 struct fout
 {
   fixed4 c0 : COLOR0; // diffuse (rgb), occlusion (a)
-
-#if defined(PASS_DEFERRED)
   fixed4 c1 : COLOR1; // spec (rgb), smoothness (a)
-  fixed4 c2 : COLOR2;
-  fixed4 c3 : COLOR3;
-#endif
+  fixed4 c2 : COLOR2; // normalWs (rgb), 
+  fixed4 c3 : COLOR3; // emission
 };
 
-// particles' data
+// particle data
 StructuredBuffer<Particle> particleBuffer;
 
-v2f vert(appdata v, uint instance_id : SV_InstanceID)
+v2g vert(appdata i)
 {
-  v2f o;
-
-  float3 posOs = v.vertex;
-  float4 rotOs = particleBuffer[instance_id].rotation;
-  posOs = quat_mul(rotOs, posOs);
-
-  float scale = particleBuffer[instance_id].scale;
-  float4 lifetime = particleBuffer[instance_id].lifetime;
-  scale = 
-    lerp
-    (
-      0.0, 
-      lerp(0.0, scale, saturate(lifetime.w / lifetime.x)),
-      saturate(dot(lifetime, float4(1.0, 1.0, 1.0, -1.0)) / lifetime.z)
-    );
-
-  float3 posWs = scale * posOs + particleBuffer[instance_id].position;
-
-  o.pos = UnityObjectToClipPos(posWs);
-
-#if defined(PASS_FORWARD) || defined(PASS_DEFERRED)
-  float3 normWs = quat_mul(rotOs, v.normal);
-  o.normWs = normWs;
-  o.color = particleBuffer[instance_id].color;
-
-  v.vertex = float4(posWs, 1.0);
-
-  UNITY_SETUP_INSTANCE_ID(v);
-#endif
-
-#if defined(PASS_FORWARD_BASE)
-  o.vertLight = o.color * CJ_LIB_SHADE_POINT_LIGHTS(posWs, normWs);
-#endif
-
-#if defined(PASS_FORWARD)
-  o.posWs = posWs;
-  TRANSFER_VERTEX_TO_FRAGMENT(o);
-#endif
-
+  v2g o;
+  o.id = i.id;
   return o;
 }
 
-fout frag(v2f i)
+
+[maxvertexcount(36)]
+void geom(point v2g i[1], inout TriangleStream<g2f> stream)
+{
+  Particle p = particleBuffer[i[0].id];
+
+  g2f o;
+
+  o.color = p.color;
+
+  float scale =
+    lerp
+    (
+      0.0,
+      lerp(0.0, p.scale, saturate(p.lifetime.w / p.lifetime.x)),
+      saturate(dot(p.lifetime, float4(1.0, 1.0, 1.0, -1.0)) / p.lifetime.z)
+    );
+
+  for (uint i = 0; i < 12; ++i)
+  {
+    o.normWs = quat_mul(p.rotation, kCubeMeshNorms[i / 2]);
+    for (uint j = 0; j < 3; ++j)
+    {
+      float3 posWs = 
+        p.position 
+        + scale * quat_mul(p.rotation, kCubeMeshVerts[kCubeMeshVertIdx[i * 3 + j]]);
+
+      o.posCs = UnityObjectToClipPos(posWs);
+      stream.Append(o);
+    }
+
+    stream.RestartStrip();
+  }
+}
+
+fout frag(g2f i)
 {
   fout o;
 
-#if defined(PASS_SHADOW_CASTER)
-  o.c0.rgba = float4(0.0, 0.0, 0.0, 1.0);
-#elif defined(PASS_FORWARD)
-  o.c0.rgb = i.color.rgb * CJ_LIB_SHADE_MAIN_LIGHT(i, i.posWs, i.normWs);
-  o.c0.a = i.color.a;
-#elif defined(PASS_DEFERRED)
-  o.c0.rgb = i.color;
-  o.c0.a = 0.0;
+  o.c0 = i.color;
   o.c1.rgb = 0.0;
-  o.c1.a = 0.0;
+  o.c1.a = 1.0;
   o.c2.rgb = i.normWs;
   o.c2.a = 0.0;
-  o.c3 = 0.0;
-#endif
-
-#if defined(PASS_FORWARD_BASE)
-  o.c0.rgb += i.color.rgb * i.vertLight;
-#endif
+  o.c3 = 0.3 * i.color;
 
   return o;
 }

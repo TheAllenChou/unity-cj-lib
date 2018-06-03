@@ -20,8 +20,9 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
 {
   public ComputeShader m_shader;
   public Material m_material;
+  public MaterialPropertyBlock m_materialProperties;
 
-  private const int kNumParticles = 1000;
+  private const int kNumParticles = 10000;
 
   private struct Particle
   {
@@ -67,6 +68,18 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
   {
     int particleStride = sizeof(float) * 24;
     m_computeBuffer = new ComputeBuffer(kNumParticles, particleStride);
+
+    m_mesh = new Mesh();
+    m_mesh.vertices = new Vector3[kNumParticles];
+    {
+      int[] aIndex = new int[kNumParticles];
+      for (int i = 0; i < kNumParticles; ++i)
+        aIndex[i] = i;
+      m_mesh.SetIndices(aIndex, MeshTopology.Points, 0);
+    }
+      
+    
+
     m_debugBuffer = new Particle[kNumParticles];
     m_aMatrix = new Matrix4x4[kNumParticles];
     for (int i = 0; i < kNumParticles; ++i)
@@ -83,15 +96,13 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
     m_csNumParticlesId   = Shader.PropertyToID("numParticles");
     m_csTimeId           = Shader.PropertyToID("time");
 
-    m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
-    m_material.enableInstancing = true;
+    m_materialProperties = new MaterialPropertyBlock();
+    m_materialProperties.SetBuffer(m_csParticleBufferId, m_computeBuffer);
 
-    m_mesh = PrimitiveMeshFactory.BoxFlatShaded();
-
-    m_shader.SetFloats(m_csScaleId, new float[] { 0.1f, 0.3f });
-    m_shader.SetFloat(m_csDampingId, 2.0f);
-    m_shader.SetFloats(m_csSpeedId, new float[] { 5.0f, 12.0f, 1.0f, 6.0f });
-    m_shader.SetFloats(m_csLifetimeId, new float[] { 0.1f, 1.0f, 2.0f, 0.2f });
+    m_shader.SetFloats(m_csScaleId, new float[] { 0.15f, 0.3f });
+    m_shader.SetFloat(m_csDampingId, 6.0f);
+    m_shader.SetFloats(m_csSpeedId, new float[] { 3.0f, 4.0f, 1.0f, 6.0f });
+    m_shader.SetFloats(m_csLifetimeId, new float[] { 0.1f, 0.5f, 0.5f, 0.1f });
     m_shader.SetInt(m_csNumParticlesId, kNumParticles);
 
     m_shader.SetBuffer(m_csInitKernelId, m_csParticleBufferId, m_computeBuffer);
@@ -109,6 +120,6 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
 
     m_computeBuffer.GetData(m_debugBuffer);
 
-    Graphics.DrawMeshInstanced(m_mesh, 0, m_material, m_aMatrix, kNumParticles);
+    Graphics.DrawMesh(m_mesh, Matrix4x4.identity, m_material, 0, null, 0, m_materialProperties);
   }
 }

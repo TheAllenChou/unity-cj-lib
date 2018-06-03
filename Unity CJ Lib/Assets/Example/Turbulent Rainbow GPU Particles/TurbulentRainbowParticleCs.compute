@@ -14,7 +14,7 @@
 
 #include "../../CjLib/Math/ColorUtil.cginc"
 #include "../../CjLib/Math/MathUtil.cginc"
-#include "../../CjLib/Noise/RandomNoise.cginc"
+#include "../../CjLib/Noise/Noise.cginc"
 
 #include "TurbulentRainbowParticleStruct.cginc"
 
@@ -72,13 +72,20 @@ float2 time; // (current, delta)
 void Step(uint3 id : SV_DispatchThreadID)
 {
   // respawn particle
+  float prevLife = particleBuffer[id.x].lifetime.w;
   particleBuffer[id.x].lifetime.w += time.y;
   float4 lifetime = particleBuffer[id.x].lifetime;
-  if (lifetime.w > dot(lifetime.xyz, float3(1.0, 1.0, 1.0)))
+  float totalLife = dot(lifetime.xyz, float3(1.0, 1.0, 1.0));
+  if (lifetime.w > totalLife)
   {
+    // easy way to achieve sub-frame interpolation
+    lifetime.w -= totalLife;
+    time.x += lifetime.w;
+
     float3 seed = id.x + time.x;
 
-    particleBuffer[id.x].position = float3(0.0, 0.0, 0.0);
+    float3 emitterPos = float3(6.0 * sin(3.0 * time.x), 2.0 * sin(6.0 * time.x), 0.0);
+    particleBuffer[id.x].position = emitterPos;
     particleBuffer[id.x].lifetime.w = 0.0;
 
     float3 linearDirection = normalize(rand_vec(seed));
@@ -96,6 +103,10 @@ void Step(uint3 id : SV_DispatchThreadID)
 
   if (lifetime.w < 0.0)
     return;
+
+  // turbulence
+  float3 turbulence = snoise_grad(0.4 * particleBuffer[id.x].position, float3(0.0, time.y, 0.0), 2, 1.2).xyz;
+  particleBuffer[id.x].linearVelocity += 0.3f * turbulence;
 
   // integrate
   particleBuffer[id.x].position += particleBuffer[id.x].linearVelocity * time.y;
