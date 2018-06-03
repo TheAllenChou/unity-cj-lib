@@ -29,6 +29,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       ENDCG
     }
 
+    /*
     Pass
     {
       Name "Deferred"
@@ -42,5 +43,6 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #include "TurbulentRainbowParticleCore.cginc"
       ENDCG
     }
+    */
   }
 }

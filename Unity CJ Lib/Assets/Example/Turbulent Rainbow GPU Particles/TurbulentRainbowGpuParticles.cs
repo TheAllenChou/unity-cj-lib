@@ -115,7 +115,7 @@ public class TurbulentRainbowGpuParticles : MonoBehaviour
   
   void Update()
   {
-    m_shader.SetFloats(m_csTimeId, new float[] { Time.time, Time.deltaTime });
+    m_shader.SetFloats(m_csTimeId, new float[] { Time.time, 0.016f });
     m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);
 
     m_computeBuffer.GetData(m_debugBuffer);

@@ -84,7 +84,7 @@ void Step(uint3 id : SV_DispatchThreadID)
 
     float3 seed = id.x + time.x;
 
-    float3 emitterPos = float3(6.0 * sin(3.0 * time.x), 2.0 * sin(6.0 * time.x), 0.0);
+    float3 emitterPos = float3(6.0 * sin(3.0 * time.x), 1.0 * sin(6.0 * time.x), 1.0 * sin(6.0 * time.x));
     particleBuffer[id.x].position = emitterPos;
     particleBuffer[id.x].lifetime.w = 0.0;
 
@@ -105,7 +105,7 @@ void Step(uint3 id : SV_DispatchThreadID)
     return;
 
   // turbulence
-  float3 turbulence = snoise_grad(0.4 * particleBuffer[id.x].position, float3(0.0, time.y, 0.0), 2, 1.2).xyz;
+  float3 turbulence = snoise_grad(0.4 * particleBuffer[id.x].position, float3(0.0, time.x, 0.0), 2, 1.2).xyz;
   particleBuffer[id.x].linearVelocity += 0.3f * turbulence;
 
   // integrate
