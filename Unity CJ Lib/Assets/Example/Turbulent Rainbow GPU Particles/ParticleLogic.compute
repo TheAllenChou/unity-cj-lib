@@ -16,7 +16,7 @@
 #include "../../CjLib/Math/MathUtil.cginc"
 #include "../../CjLib/Noise/Noise.cginc"
 
-#include "TurbulentRainbowParticleStruct.cginc"
+#include "ParticleStruct.cginc"
 
 RWStructuredBuffer<Particle> particleBuffer;
 

@@ -25,7 +25,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma geometry geom
       #pragma fragment frag
       #define PASS_DEFERRED
-      #include "TurbulentRainbowParticleCore.cginc"
+      #include "ParticleCore.cginc"
       ENDCG
     }
 
@@ -40,7 +40,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma geometry geom
       #pragma fragment frag
       #define PASS_SHADOW_CASTER
-      #include "TurbulentRainbowParticleCore.cginc"
+      #include "ParticleCore.cginc"
       ENDCG
     }
     */

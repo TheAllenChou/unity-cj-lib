@@ -28,7 +28,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_FORWARD
       #define PASS_FORWARD_BASE
-      #include "TurbulentRainbowParticleCoreWithForward.cginc"
+      #include "ParticleCoreWithForwardPass.cginc"
       ENDCG
     }
 
@@ -46,7 +46,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_FORWARD
       #define PASS_FORWARD_ADD
-      #include "TurbulentRainbowParticleCoreWithForward.cginc"
+      #include "ParticleCoreWithForwardPass.cginc"
       ENDCG
     }
 
@@ -61,7 +61,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma multi_compile_instancing
       #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_DEFERRED
-      #include "TurbulentRainbowParticleCoreWithForward.cginc"
+      #include "ParticleCoreWithForwardPass.cginc"
       ENDCG
     }
 
@@ -76,7 +76,7 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       #pragma multi_compile_instancing
       #pragma multi_compile_prepassfinal noshadowmask nodynlightmap nodirlightmap nolightmap
       #define PASS_SHADOW_CASTER
-      #include "TurbulentRainbowParticleCoreWithForward.cginc"
+      #include "ParticleCoreWithForwardPass.cginc"
       ENDCG
     }
   }

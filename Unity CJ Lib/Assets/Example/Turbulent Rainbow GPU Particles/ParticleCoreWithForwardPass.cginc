@@ -15,7 +15,7 @@
 #include "../../CjLib/Math/MathUtil.cginc"
 #include "../../CjLib/Render/ForwardUtil.cginc"
 
-#include "TurbulentRainbowParticleStruct.cginc"
+#include "ParticleStruct.cginc"
 
 
 struct appdata
