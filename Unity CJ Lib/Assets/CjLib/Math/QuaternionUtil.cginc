@@ -39,7 +39,7 @@ float4 quat_axis_angle(float3 v, float a)
   return float4(sin(h) * normalize(v), cos(h));
 }
 
-float4 quat_mul(float4 q1, float4 q2)
+float4 quat_concat(float4 q1, float4 q2)
 {
   return float4(q1.w * q2.xyz + q2.w * q1.xyz + cross(q1.xyz, q2.xyz), q1.w * q2.w - dot(q1.xyz, q2.xyz));
 }
