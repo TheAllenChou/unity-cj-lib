@@ -10,8 +10,6 @@
 /******************************************************************************/
 
 
-using System.Runtime.InteropServices;
-
 using UnityEngine;
 
 using CjLib;
@@ -21,8 +19,6 @@ namespace TurbulentRainbowGpuParticles
   public class Main : MonoBehaviour
   {
     public ComputeShader m_shader;
-    public Material m_material;
-    public MaterialPropertyBlock m_materialProperties;
 
     private const int kNumParticles = 10000;
 
@@ -52,10 +48,12 @@ namespace TurbulentRainbowGpuParticles
     */
 
     private ComputeBuffer m_computeBuffer;
+    private ComputeBuffer m_instanceArgsBuffer;
     //private Particle[] m_debugBuffer;
-    private Matrix4x4[] m_aMatrix;
 
     private Mesh m_mesh;
+    private Material m_material;
+    private MaterialPropertyBlock m_materialProperties;
 
     private int m_csInitKernelId;
     private int m_csStepKernelId;
@@ -70,22 +68,21 @@ namespace TurbulentRainbowGpuParticles
 
     void OnEnable()
     {
+      m_mesh = new Mesh();
+      m_mesh = PrimitiveMeshFactory.BoxFlatShaded();
+
       int particleStride = sizeof(float) * 24;
       m_computeBuffer = new ComputeBuffer(kNumParticles, particleStride);
 
-      m_mesh = new Mesh();
-      m_mesh.vertices = new Vector3[kNumParticles];
-      {
-        int[] aIndex = new int[kNumParticles];
-        for (int i = 0; i < kNumParticles; ++i)
-          aIndex[i] = i;
-        m_mesh.SetIndices(aIndex, MeshTopology.Points, 0);
-      }
+      uint[] instanceArgs = new uint[] { 0, 0, 0, 0, 0 };
+      m_instanceArgsBuffer = new ComputeBuffer(1, instanceArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+      instanceArgs[0] = (uint) m_mesh.GetIndexCount(0);
+      instanceArgs[1] = (uint) kNumParticles;
+      instanceArgs[2] = (uint) m_mesh.GetIndexStart(0);
+      instanceArgs[3] = (uint) m_mesh.GetBaseVertex(0);
+      m_instanceArgsBuffer.SetData(instanceArgs);
 
       //m_debugBuffer = new Particle[kNumParticles];
-      m_aMatrix = new Matrix4x4[kNumParticles];
-      for (int i = 0; i < kNumParticles; ++i)
-        m_aMatrix[i] = Matrix4x4.identity;
 
       m_csInitKernelId = m_shader.FindKernel("Init");
       m_csStepKernelId = m_shader.FindKernel("Step");
@@ -98,8 +95,10 @@ namespace TurbulentRainbowGpuParticles
       m_csNumParticlesId = Shader.PropertyToID("numParticles");
       m_csTimeId = Shader.PropertyToID("time");
 
+      m_material = new Material(Shader.Find("CjLib/Example/TurbulentRainbowParticle"));
+      m_material.enableInstancing = true;
+      m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
       m_materialProperties = new MaterialPropertyBlock();
-      m_materialProperties.SetBuffer(m_csParticleBufferId, m_computeBuffer);
 
       m_shader.SetFloats(m_csScaleId, new float[] { 0.15f, 0.3f });
       m_shader.SetFloat(m_csDampingId, 6.0f);
@@ -122,7 +121,7 @@ namespace TurbulentRainbowGpuParticles
 
       //m_computeBuffer.GetData(m_debugBuffer);
 
-      Graphics.DrawMesh(m_mesh, Matrix4x4.identity, m_material, 0, null, 0, m_materialProperties);
+      Graphics.DrawMeshInstancedIndirect(m_mesh, 0, m_material, new Bounds(Vector3.zero, 20.0f * Vector3.one), m_instanceArgsBuffer, 0, m_materialProperties, UnityEngine.Rendering.ShadowCastingMode.On);
     }
 
     void OnDisable()
@@ -131,6 +130,12 @@ namespace TurbulentRainbowGpuParticles
       {
         m_computeBuffer.Dispose();
         m_computeBuffer = null;
+      }
+
+      if (m_instanceArgsBuffer != null)
+      {
+        m_instanceArgsBuffer.Dispose();
+        m_instanceArgsBuffer = null;
       }
     }
   }

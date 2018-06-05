@@ -17,21 +17,16 @@
 
 #include "ParticleStruct.cginc"
 
-
 struct appdata
 {
-  uint id : SV_VertexID;
+  float4 posOs  : POSITION;
+  float3 normOs : NORMAL;
+  uint   id     : SV_InstanceId;
 };
 
-struct v2g
+struct v2f
 {
-  uint id : TEXCOORD0;
-};
-
-struct g2f
-{
-  float4 posCs : SV_POSITION;
-
+  float4 posCs  : SV_POSITION;
   float3 normWs : NORMAL;
   float4 color  : COLOR0;
 };
@@ -44,25 +39,15 @@ struct fout
   fixed4 c3 : COLOR3; // emission
 };
 
-// particle data
 StructuredBuffer<Particle> particleBuffer;
+float4x4 viewMatrix;
+float4x4 projMatrix;
 
-v2g vert(appdata i)
+v2f vert(appdata i)
 {
-  v2g o;
-  o.id = i.id;
-  return o;
-}
+  v2f o;
 
-
-[maxvertexcount(36)]
-void geom(point v2g i[1], inout TriangleStream<g2f> stream)
-{
-  Particle p = particleBuffer[i[0].id];
-
-  g2f o;
-
-  o.color = p.color;
+  Particle p = particleBuffer[i.id];
 
   float scale =
     lerp
@@ -72,24 +57,18 @@ void geom(point v2g i[1], inout TriangleStream<g2f> stream)
       saturate(dot(p.lifetime, float4(1.0, 1.0, 1.0, -1.0)) / p.lifetime.z)
     );
 
-  for (uint i = 0; i < 12; ++i)
-  {
-    o.normWs = quat_mul(p.rotation, kCubeMeshNorms[i / 2]);
-    for (uint j = 0; j < 3; ++j)
-    {
-      float3 posWs = 
-        p.position 
-        + scale * quat_mul(p.rotation, kCubeMeshVerts[kCubeMeshVertIdx[i * 3 + j]]);
+  float3 posWs = 
+    p.position 
+    + scale * quat_mul(p.rotation, i.posOs.xyz);
 
-      o.posCs = UnityObjectToClipPos(posWs);
-      stream.Append(o);
-    }
+  o.posCs = UnityObjectToClipPos(posWs);
+  o.normWs = quat_mul(p.rotation, i.normOs);
+  o.color = p.color;
 
-    stream.RestartStrip();
-  }
+  return o;
 }
 
-fout frag(g2f i)
+fout frag(v2f i)
 {
   fout o;
 

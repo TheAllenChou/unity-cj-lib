@@ -111,7 +111,7 @@ void Step(uint3 id : SV_DispatchThreadID)
   // integrate
   particleBuffer[id.x].position += particleBuffer[id.x].linearVelocity * time.y;
   float4 q = quat_pow(particleBuffer[id.x].angularVelocity, time.y);
-  particleBuffer[id.x].rotation = quat_mul(q, particleBuffer[id.x].rotation);
+  particleBuffer[id.x].rotation = quat_concat(q, particleBuffer[id.x].rotation);
 
   // damping
   float d = 1.0 - particleBuffer[id.x].damping * time.y;

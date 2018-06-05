@@ -22,27 +22,25 @@ Shader "CjLib/Example/TurbulentRainbowParticle"
       CGPROGRAM
       #pragma target 5.0
       #pragma vertex vert
-      #pragma geometry geom
       #pragma fragment frag
+      #pragma multi_compile_instancing
       #define PASS_DEFERRED
       #include "ParticleCore.cginc"
       ENDCG
     }
 
-    /*
     Pass
     {
-      Name "Deferred"
+      Name "Shadow Caster"
       Tags { "LightMode" = "ShadowCaster" }
       CGPROGRAM
       #pragma target 5.0
       #pragma vertex vert
-      #pragma geometry geom
       #pragma fragment frag
+      #pragma multi_compile_instancing
       #define PASS_SHADOW_CASTER
       #include "ParticleCore.cginc"
       ENDCG
     }
-    */
   }
 }

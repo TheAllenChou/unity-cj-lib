@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - m_shader: {fileID: 7200000, guid: c6689aa98202bc2429cce4ed01db01df, type: 3}
-  - m_material: {fileID: 2100000, guid: d35ba30892126b34b92acfe9dd148337, type: 2}
+  - m_material: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
