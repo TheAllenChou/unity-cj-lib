@@ -14,7 +14,7 @@
 
 #include "UnityStandardCore.cginc"
 
-#define CJ_LIB_SHADE_MAIN_LIGHT(v, posWs, normWs)                   \
+#define CJ_LIB_SHADE_MAIN_LIGHT(v, posWs, normWs)                    \
 (                                                                    \
   dot(normWs, normalize(WorldSpaceLightDir(float4(posWs.xyz, 1.0)))) \
   * LIGHT_ATTENUATION(v)                                             \
