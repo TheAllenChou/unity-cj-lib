@@ -151,7 +151,7 @@ namespace CjLib
       return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist, mode);
     }
 
-    // different swing & twist parameters with individual interpolated swing & twist outputs
+    // master sterp function
     public static Quaternion Sterp
     (
       Quaternion a, 
@@ -161,23 +161,7 @@ namespace CjLib
       float tTwist, 
       out Quaternion swing, 
       out Quaternion twist, 
-      SterpMode mode = SterpMode.Slerp
-    )
-    {
-      return Sterp(a, b, twistAxis, tSwing, tTwist, out swing, out twist, mode);
-    }
-
-    // master sterp function
-    public static Quaternion Sterp
-    (
-      Quaternion a, 
-      Quaternion b, 
-      Vector3 twistAxis, 
-      float tSwing, 
-      float tTwist, 
-      SterpMode mode, 
-      out Quaternion swing, 
-      out Quaternion twist
+      SterpMode mode
     )
     {
       Quaternion q = b * Quaternion.Inverse(a);
