@@ -12,9 +12,9 @@
 #pragma kernel Init
 #pragma kernel Step
 
-#include "../../CjLib/Math/ColorUtil.cginc"
-#include "../../CjLib/Math/MathUtil.cginc"
-#include "../../CjLib/Noise/Noise.cginc"
+#include "../../CjLib/Shader/Math/ColorUtil.cginc"
+#include "../../CjLib/Shader/Math/MathUtil.cginc"
+#include "../../CjLib/Shader/Noise/Noise.cginc"
 
 #include "ParticleStruct.cginc"
 
