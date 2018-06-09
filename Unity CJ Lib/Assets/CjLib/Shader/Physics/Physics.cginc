@@ -93,7 +93,7 @@ inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float r
 inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float restitution, float friction)
 {
   CollisionResult res;
-  float d = min(0.0, dot(float4(s.xyz, 1.0), plane) - s.w);
+  float d = max(0.0, s.w - dot(float4(s.xyz, 1.0), plane));
   float3 n = plane.xyz;
   res.position = s.xyz + d * n;
   res.velocity = vel + step(kEpsilon, d) * bounce(vel, n, restitution, friction);
