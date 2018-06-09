@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_MATH_UTIL
-#define CJ_LIB_MATH_UTIL
+#ifndef CJ_LIB_MATH
+#define CJ_LIB_MATH
 
 #define kPi          (3.1415926535)
 #define kTwoPi       (6.2831853071)
@@ -31,8 +31,8 @@
 #define kRad2Deg     (57.295779513)
 #define kDeg2Rad     (0.0174532925)
 
-#include "ColorUtil.cginc"
-#include "QuaternionUtil.cginc"
-#include "VectorUtil.cginc"
+#include "Color.cginc"
+#include "Quaternion.cginc"
+#include "Vector.cginc"
 
 #endif

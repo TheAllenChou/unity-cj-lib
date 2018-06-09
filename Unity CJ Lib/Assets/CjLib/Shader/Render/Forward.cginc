@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_FORWARD_UTIL
-#define CJ_LIB_FORWARD_UTIL
+#ifndef CJ_LIB_FORWARD
+#define CJ_LIB_FORWARD
 
 #include "UnityStandardCore.cginc"
 

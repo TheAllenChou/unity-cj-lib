@@ -12,8 +12,8 @@
 #include "AutoLight.cginc"
 #include "UnityCG.cginc"
 
-#include "../../CjLib/Shader/Math/MathUtil.cginc"
-#include "../../CjLib/Shader/Render/ForwardUtil.cginc"
+#include "../../CjLib/Shader/Math/Math.cginc"
+#include "../../CjLib/Shader/Render/Forward.cginc"
 
 #include "ParticleStruct.cginc"
 

@@ -9,6 +9,10 @@
 */
 /******************************************************************************/
 
+
+#ifndef PARTICLE_STRUCT
+#define PARTICLE_STRUCT
+
 struct Particle
 {
   float3 position;
@@ -25,3 +29,5 @@ struct Particle
 
   float4 color;
 };
+
+#endif

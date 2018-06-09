@@ -9,12 +9,12 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_VECTOR_UTIL
-#define CJ_LIB_VECTOR_UTIL
+#ifndef CJ_LIB_VECTOR
+#define CJ_LIB_VECTOR
 
-#include "MathUtil.cginc"
+#include "Math.cginc"
 
-float3 find_ortho(float3 v)
+inline float3 find_ortho(float3 v)
 {
   if (v.x >= kSqrt3Inv)
     return float3(v.y, -v.x, 0.0);
@@ -23,7 +23,7 @@ float3 find_ortho(float3 v)
 }
 
 // both a & b must be unit vectors
-float3 slerp(float3 a, float3 b, float t)
+inline float3 slerp(float3 a, float3 b, float t)
 {
   float d = dot(a, b);
   if (d > 0.99999)
@@ -35,7 +35,7 @@ float3 slerp(float3 a, float3 b, float t)
   return (sin((1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
 }
 
-float3 nlerp(float3 a, float b, float t)
+inline float3 nlerp(float3 a, float b, float t)
 {
   return normalize(lerp(a, b, t));
 }

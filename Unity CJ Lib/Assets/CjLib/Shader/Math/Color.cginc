@@ -9,8 +9,8 @@
 */
 /******************************************************************************/
 
-#ifndef CJ_LIB_COLOR_UTIL
-#define CJ_LIB_COLOR_UTIL
+#ifndef CJ_LIB_COLOR
+#define CJ_LIB_COLOR
 
 float3 hsv2rgb(float3 hsv)
 {

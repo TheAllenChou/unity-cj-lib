@@ -95,7 +95,7 @@ namespace TurbulentRainbowGpuParticles
       m_csNumParticlesId = Shader.PropertyToID("numParticles");
       m_csTimeId = Shader.PropertyToID("time");
 
-      m_material = new Material(Shader.Find("CjLib/Example/TurbulentRainbowParticle"));
+      m_material = new Material(Shader.Find("CjLib/Example/TurbulentRainbowGpuParticles"));
       m_material.enableInstancing = true;
       m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
       m_materialProperties = new MaterialPropertyBlock();
@@ -116,7 +116,7 @@ namespace TurbulentRainbowGpuParticles
 
     void Update()
     {
-      m_shader.SetFloats(m_csTimeId, new float[] { Time.time, 0.016f });
+      m_shader.SetFloats(m_csTimeId, new float[] { Time.time, Time.fixedDeltaTime });
       m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);
 
       //m_computeBuffer.GetData(m_debugBuffer);
