@@ -62,13 +62,6 @@ inline CollisionResult resolveCollision(float3 pos, float3 norm, float3 vel, flo
 // VS plane
 //-----------------------------------------------------------------------------
 
-inline float3 pointVsPlane(float3 p, float4 plane)
-{
-  float d = max(0.0, -dot(float4(p, 1.0), plane));
-  float3 n = plane.xyz;
-  return p + d * n;
-}
-
 inline CollisionResult pointVsPlane(float3 p, float4 plane, float3 vel, float restitution)
 {
   CollisionResult res;
@@ -82,13 +75,6 @@ inline CollisionResult pointVsPlane(float3 p, float4 plane, float3 vel, float re
   float d = max(0.0, -dot(float4(p, 1.0), plane));
   float3 n = plane.xyz;
   return resolveCollision(p, n, vel, d, restitution, friction);
-}
-
-inline float3 sphereVsPlane(float4 s, float4 plane)
-{
-  float d = max(0.0, s.w - dot(float4(s.xyz, 1.0), plane));
-  float3 n = plane.xyz;
-  return s.xyz + d * n;
 }
 
 inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float restitution)
@@ -112,14 +98,6 @@ inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float r
 // VS sphere
 //-----------------------------------------------------------------------------
 
-inline float3 pointVsSphere(float3 p, float4 sphere)
-{
-  float3 r = p - sphere.xyz;
-  float d = max(0.0, sphere.w - length(r));
-  float3 n = normalize(r);
-  return p + d * n;
-}
-
 inline CollisionResult pointVsSphere(float3 p, float4 sphere, float3 vel, float restitution)
 {
   float3 r = p - sphere.xyz;
@@ -134,14 +112,6 @@ inline CollisionResult pointVsSphere(float3 p, float4 sphere, float3 vel, float 
   float d = max(0.0, sphere.w - length(r));
   float3 n = normalize(r);
   return resolveCollision(p, n, vel, d, restitution, friction);
-}
-
-inline float3 sphereVsSphere(float4 s, float4 sphere)
-{
-  float3 r = s.xyz - sphere.xyz;
-  float d = max(0.0, s.w + sphere.w - length(r));
-  float3 n = normalize(r);
-  return s.xyz + d * n;
 }
 
 inline CollisionResult sphereVsSphere(float4 s, float4 sphere, float3 vel, float restitution)
