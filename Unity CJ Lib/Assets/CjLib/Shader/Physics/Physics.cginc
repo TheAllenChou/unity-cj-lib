@@ -48,45 +48,45 @@ inline float3 bounce(float3 i, float3 n, float restitution, float friction)
 
 inline float3 pointVsPlane(float3 p, float4 plane)
 {
-  float d = min(0.0, dot(float4(p, 1.0), plane));
+  float d = max(0.0, -dot(float4(p, 1.0), plane));
   float3 n = plane.xyz;
-  return p - n * d;
+  return p + d * n;
 }
 
 inline CollisionResult pointVsPlane(float3 p, float4 plane, float3 vel, float restitution)
 {
   CollisionResult res;
-  float d = min(0.0, dot(float4(p, 1.0), plane));
+  float d = max(0.0, -dot(float4(p, 1.0), plane));
   float3 n = plane.xyz;
-  res.position = p - n * d;
-  res.velocity = d >= 0.0 ? vel : bounce(vel, n, restitution);
+  res.position = p + d * n;
+  res.velocity = d <= 0.0 ? vel : bounce(vel, n, restitution);
   return res;
 }
 
 inline CollisionResult pointVsPlane(float3 p, float4 plane, float3 vel, float restitution, float friction)
 {
   CollisionResult res;
-  float d = min(0.0, dot(float4(p, 1.0), plane));
+  float d = max(0.0, -dot(float4(p, 1.0), plane));
   float3 n = plane.xyz;
-  res.position = p - n * d;
-  res.velocity = d >= 0.0 ? vel : bounce(vel, n, restitution, friction);
+  res.position = p + d * n;
+  res.velocity = d <= 0.0 ? vel : bounce(vel, n, restitution, friction);
   return res;
 }
 
 inline float3 sphereVsPlane(float4 s, float4 plane)
 {
-  float d = min(0.0, dot(float4(s.xyz, 1.0), plane) - s.w);
+  float d = max(0.0, s.w - dot(float4(s.xyz, 1.0), plane));
   float3 n = plane.xyz;
-  return s.xyz - n * d;
+  return s.xyz + d * n;
 }
 
 inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float restitution)
 {
   CollisionResult res;
-  float d = min(0.0, dot(float4(s.xyz, 1.0), plane) - s.w);
+  float d = max(0.0, s.w - dot(float4(s.xyz, 1.0), plane));
   float3 n = plane.xyz;
-  res.position = s.xyz - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution);
+  res.position = s.xyz + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution);
   return res;
 }
 
@@ -95,8 +95,8 @@ inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float r
   CollisionResult res;
   float d = min(0.0, dot(float4(s.xyz, 1.0), plane) - s.w);
   float3 n = plane.xyz;
-  res.position = s.xyz - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution, friction);
+  res.position = s.xyz + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution, friction);
   return res;
 }
 
@@ -110,19 +110,19 @@ inline CollisionResult sphereVsPlane(float4 s, float4 plane, float3 vel, float r
 inline float3 pointVsSphere(float3 p, float4 sphere)
 {
   float3 r = p - sphere.xyz;
-  float d = min(0.0, length(r) - sphere.w);
+  float d = max(0.0, sphere.w - length(r));
   float3 n = normalize(r);
-  return p - n * d;
+  return p + d * n;
 }
 
 inline CollisionResult pointVsSphere(float3 p, float4 sphere, float3 vel, float restitution)
 {
   CollisionResult res;
   float3 r = p - sphere.xyz;
-  float d = min(0.0, length(r) - sphere.w);
+  float d = min(0.0, sphere.w - length(r));
   float3 n = normalize(r);
-  res.position = p - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution);
+  res.position = p + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution);
   return res;
 }
 
@@ -130,29 +130,29 @@ inline CollisionResult pointVsSphere(float3 p, float4 sphere, float3 vel, float 
 {
   CollisionResult res;
   float3 r = p - sphere.xyz;
-  float d = min(0.0, length(r) - sphere.w);
+  float d = max(0.0, sphere.w - length(r));
   float3 n = normalize(r);
-  res.position = p - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution, friction);
+  res.position = p + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution, friction);
   return res;
 }
 
 inline float3 sphereVsSphere(float4 s, float4 sphere)
 {
   float3 r = s.xyz - sphere.xyz;
-  float d = min(0.0, length(r) - s.w - sphere.w);
+  float d = max(0.0, s.w + sphere.w - length(r));
   float3 n = normalize(r);
-  return s.xyz - n * d;
+  return s.xyz + d * n;
 }
 
 inline CollisionResult sphereVsSphere(float4 s, float4 sphere, float3 vel, float restitution)
 {
   CollisionResult res;
   float3 r = s.xyz - sphere.xyz;
-  float d = min(0.0, length(r) - s.w - sphere.w);
+  float d = max(0.0, s.w + sphere.w - length(r));
   float3 n = normalize(r);
-  res.position = s.xyz - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution);
+  res.position = s.xyz + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution);
   return res;
 }
 
@@ -160,10 +160,10 @@ inline CollisionResult sphereVsSphere(float4 s, float4 sphere, float3 vel, float
 {
   CollisionResult res;
   float3 r = s.xyz - sphere.xyz;
-  float d = min(0.0, length(r) - s.w - sphere.w);
+  float d = max(0.0, s.w + sphere.w - length(r));
   float3 n = normalize(r);
-  res.position = s.xyz - n * d;
-  res.velocity = (d >= 0.0) ? vel : bounce(vel, n, restitution, friction);
+  res.position = s.xyz + d * n;
+  res.velocity = (d <= 0.0) ? vel : bounce(vel, n, restitution, friction);
   return res;
 }
 
