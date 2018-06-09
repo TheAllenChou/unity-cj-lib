@@ -1,0 +1,143 @@
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+  https://github.com/TheAllenChou/unity-cj-lib
+
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+*/
+/******************************************************************************/
+
+#pragma kernel Init
+#pragma kernel Step
+
+#include "../../CjLib/Shader/Math/Math.cginc"
+#include "../../CjLib/Shader/Noise/Noise.cginc"
+#include "../../CjLib/Shader/Physics/Physics.cginc"
+
+#include "ParticleStruct.cginc"
+
+RWStructuredBuffer<Particle> particleBuffer;
+
+float2 scale;    // (min, max)
+float damping;
+float4 speed;    // (min linear, max linear, min angular, max angular)
+float4 lifetime; // (head, min body, max body, tail)
+
+int numParticles;
+
+[numthreads(1, 1, 1)]
+void Init(uint3 id : SV_DispatchThreadID)
+{
+  float t = float(id.x) / float(numParticles);
+  float3 seed = id.x;
+
+  particleBuffer[id.x].position = float3(0.0, 3.0, 0.0);
+
+  float3 rotationAxis = rand_uvec(seed);
+  seed = rand_vec(seed);
+  float rotationAngle = rand(seed.x) * kPi;
+  seed = rand_vec(seed);
+  particleBuffer[id.x].rotation = quat_axis_angle(rotationAxis, rotationAngle);
+
+  particleBuffer[id.x].scale = rand_range(seed.x, scale.x, scale.y);
+  seed = rand_vec(seed);
+
+  particleBuffer[id.x].damping = damping;
+
+  float3 linearDirection = normalize(rand_vec(seed));
+  seed = rand_vec(seed);
+  float linearSpeed = rand_range(seed.x, speed.x, speed.y);
+  seed = rand_vec(seed);
+  particleBuffer[id.x].linearVelocity = linearSpeed * linearDirection;
+
+  float3 angularDirection = rand_uvec(seed);
+  seed = rand_vec(seed);
+  float angularSpeed = rand_range(seed.x, speed.z, speed.w);
+  seed = rand_vec(seed);
+  particleBuffer[id.x].angularVelocity = quat_axis_angle(angularDirection, angularSpeed);
+
+  float lifetimeBody = rand_range(seed.x, lifetime.y, lifetime.z);
+  seed = rand_vec(seed);
+  float lifetimeCurrent = -t * (lifetime.x + lifetime.z + lifetime.w);
+  particleBuffer[id.x].lifetime = float4(lifetime.x, lifetimeBody, lifetime.w, lifetimeCurrent);
+
+  particleBuffer[id.x].color = float4(hsv2rgb(float3(t, 1.0, 1.0)), 1.0);
+}
+
+float2 time; // (current, delta)
+float3 dynamics; // (gravity, restitution, friction)
+float4 aSphere[3];
+float4 aSphereVel[3];
+float4 plane;
+
+[numthreads(1, 1, 1)]
+void Step(uint3 id : SV_DispatchThreadID)
+{
+  // respawn particle
+  float prevLife = particleBuffer[id.x].lifetime.w;
+  particleBuffer[id.x].lifetime.w += time.y;
+  float4 lifetime = particleBuffer[id.x].lifetime;
+  float totalLife = dot(lifetime.xyz, float3(1.0, 1.0, 1.0));
+  if (lifetime.w > totalLife)
+  {
+    // easy way to achieve sub-frame interpolation
+    lifetime.w -= totalLife;
+    time.x += lifetime.w;
+
+    float3 seed = id.x + time.x;
+
+    float3 emitterPos = float3(0.0, 3.0, 0.0);
+    particleBuffer[id.x].position = emitterPos;
+    particleBuffer[id.x].lifetime.w = 0.0;
+
+    float3 linearDirection = normalize(rand_vec(seed));
+    seed = rand_vec(seed);
+    float linearSpeed = rand_range(seed.x, speed.x, speed.y);
+    seed = rand_vec(seed);
+    particleBuffer[id.x].linearVelocity = linearSpeed * linearDirection;
+
+    float3 angularDirection = rand_uvec(seed);
+    seed = rand_vec(seed);
+    float angularSpeed = rand_range(seed.x, speed.z, speed.w);
+    seed = rand_vec(seed);
+    particleBuffer[id.x].angularVelocity = quat_axis_angle(angularDirection, angularSpeed);
+  }
+
+  if (lifetime.w < 0.0)
+    return;
+
+  // read out
+  float r = 0.5f * particleBuffer[id.x].scale;
+  float3 pos = particleBuffer[id.x].position;
+  float3 vel = particleBuffer[id.x].linearVelocity;
+
+  // gravity
+  vel.y -= dynamics.x * time.y;
+
+  CollisionResult res;
+
+  // spheres
+  for (int i = 0; i < 3; ++i)
+  {
+    float3 velRel = vel - aSphereVel[i].xyz;
+    res = sphereVsSphere(float4(pos, r), aSphere[i], velRel, dynamics.y, dynamics.z);
+    pos = res.position;
+    vel = res.velocity + aSphereVel[i].xyz;
+  }
+
+  // plane
+  res = sphereVsPlane(float4(pos, r), plane, vel, dynamics.y, dynamics.z);
+  pos = res.position;
+  vel = res.velocity;
+
+  // integrate
+  pos += vel * time.y;
+  float4 q = quat_pow(particleBuffer[id.x].angularVelocity, time.y);
+  particleBuffer[id.x].rotation = quat_concat(q, particleBuffer[id.x].rotation);
+
+  // write back
+  particleBuffer[id.x].position = pos;
+  particleBuffer[id.x].linearVelocity = vel;
+}
