@@ -287,10 +287,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_shader: {fileID: 7200000, guid: 230a25ffd14974e4da0aceca97604204, type: 3}
+  m_timeScale: 1
   m_gravity: 9.8
-  m_sphereRadius: 0.4
-  m_sphereSpeed: 0.2
-  m_floorHeight: -1
+  m_sphereRadius: 0.5
+  m_sphereSpeed: 0.1
+  m_floorTilt: 0
+  m_floorHeight: -2
+  m_restitution: 0.3
+  m_friction: 0.7
   m_spherePrefab: {fileID: 1904052554886110, guid: 808c6ede839820a4180c79912af3e1a2,
     type: 2}
   m_floorPrefab: {fileID: 1113924760286158, guid: 2b1a709b1fe816e4a8dd3f429ecbff09,
