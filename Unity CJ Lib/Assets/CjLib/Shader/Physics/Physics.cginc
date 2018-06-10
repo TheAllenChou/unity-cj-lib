@@ -27,11 +27,11 @@ struct CollisionResult
 
 inline CollisionResult resolveCollision(float3 pos, float3 norm, float3 vel, float penetration, float restitution, float friction)
 {
-  float d = dot(vel, norm);
-  float f = -d / length(vel);
-  float3 velPerp = d * norm;
-  float3 velPara = vel - velPerp;
-  float3 velResolution = -(1.0 + restitution) * velPerp - friction * f * velPara;
+  float d = dot(vel, norm);   // projected relative speed onto contact normal
+  float f = -d / length(vel); // ratio of relative speed along contact normal
+  float3 velN = d * norm;     // normal relative velocity
+  float3 velT = vel - velN;   // tangential relative
+  float3 velResolution = -(1.0 + restitution) * velN - friction * f * velT;
 
   CollisionResult res;
   res.position = pos + penetration * norm;
