@@ -32,7 +32,68 @@ namespace CjLib
     public static Quaternion Normalize(Quaternion q)
     {
       float magInv = 1.0f / Magnitude(q);
-      return new Quaternion(q.x * magInv, q.y * magInv, q.z * magInv, q.w * magInv);
+      return new Quaternion(magInv * q.x, magInv * q.y, magInv * q.z, magInv * q.w);
+    }
+
+    public static Quaternion AngularVector(Vector3 v)
+    {
+      float len = v.magnitude;
+      if (len < MathUtil.Epsilon)
+        return Quaternion.identity;
+
+      v /= len;
+
+      float h = 0.5f * len;
+      float s = Mathf.Sin(h);
+      float c = Mathf.Cos(h);
+
+      return new Quaternion(s * v.x, s * v.y, s * v.z, c);
+    }
+
+    // axis must be normalized
+    public static Quaternion AxisAngle(Vector3 axis, float angle)
+    {
+      float h = 0.5f * angle;
+      float s = Mathf.Sin(h);
+      float c = Mathf.Cos(h);
+
+      return new Quaternion(s * axis.x, s * axis.y, s * axis.z, c);
+    }
+
+    public static Vector3 GetAxis(Quaternion q)
+    {
+      Vector3 v = new Vector3(q.x, q.y, q.z);
+      float len = v.magnitude;
+      if (len < MathUtil.Epsilon)
+        return Vector3.left;
+
+      return v / len;
+    }
+
+    public static float GetAngle(Quaternion q)
+    {
+      return 2.0f * Mathf.Acos(q.w);
+    }
+
+    public static Quaternion Pow(Quaternion q, float exp)
+    {
+      Vector3 axis = GetAxis(q);
+      float angle = GetAngle(q);
+      return AxisAngle(axis, angle * exp);
+    }
+
+    // omega: angular velocity
+    public static Quaternion Integrate(Quaternion q, Vector3 omega, float dt)
+    {
+      omega *= 0.5f;
+      Quaternion p = (new Quaternion(omega.x, omega.y, omega.z, 0.0f)) * q;
+      return Normalize(new Quaternion(q.x + p.x * dt, q.y + p.y * dt, q.z + p.z * dt, q.w + p.w * dt));
+    }
+
+    // v: derivative of q
+    public static Quaternion Integrate(Quaternion q, Quaternion v, float dt)
+    {
+      return Pow(v, dt) * q;
     }
 
     // ------------------------------------------------------------------------
