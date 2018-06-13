@@ -58,10 +58,10 @@ v2f vert(appdata i)
 
   float3 posWs = 
     p.position 
-    + scale * quat_mul(p.rotation, i.posOs.xyz);
+    + scale * quat_rot(p.rotation, i.posOs.xyz);
 
   o.posCs = UnityObjectToClipPos(posWs);
-  o.normWs = quat_mul(p.rotation, i.normOs);
+  o.normWs = quat_rot(p.rotation, i.normOs);
   o.color = p.color;
 
   return o;

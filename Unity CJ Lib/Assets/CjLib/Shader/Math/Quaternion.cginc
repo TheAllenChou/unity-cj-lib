@@ -44,7 +44,7 @@ inline float4 quat_concat(float4 q1, float4 q2)
   return float4(q1.w * q2.xyz + q2.w * q1.xyz + cross(q1.xyz, q2.xyz), q1.w * q2.w - dot(q1.xyz, q2.xyz));
 }
 
-inline float3 quat_mul(float4 q, float3 v)
+inline float3 quat_rot(float4 q, float3 v)
 {
   return dot(q.xyz, v) * q.xyz + q.w * q.w * v + 2.0 * q.w * cross(q.xyz, v) - cross(cross(q.xyz, v), q.xyz);
 }

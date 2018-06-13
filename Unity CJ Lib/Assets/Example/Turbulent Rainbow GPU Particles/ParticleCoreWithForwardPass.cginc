@@ -70,7 +70,7 @@ v2f vert(appdata v, uint instance_id : SV_InstanceID)
 
   float3 posOs = v.vertex;
   float4 rotOs = particleBuffer[instance_id].rotation;
-  posOs = quat_mul(rotOs, posOs);
+  posOs = quat_rot(rotOs, posOs);
 
   float scale = particleBuffer[instance_id].scale;
   float4 lifetime = particleBuffer[instance_id].lifetime;
@@ -87,7 +87,7 @@ v2f vert(appdata v, uint instance_id : SV_InstanceID)
   o.pos = UnityObjectToClipPos(posWs);
 
 #if defined(PASS_FORWARD) || defined(PASS_DEFERRED)
-  float3 normWs = quat_mul(rotOs, v.normal);
+  float3 normWs = quat_rot(rotOs, v.normal);
   o.normWs = normWs;
   o.color = particleBuffer[instance_id].color;
 
