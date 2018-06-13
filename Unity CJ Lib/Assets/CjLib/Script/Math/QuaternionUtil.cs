@@ -82,18 +82,20 @@ namespace CjLib
       return AxisAngle(axis, angle * exp);
     }
 
-    // omega: angular velocity
+    // v: derivative of q
+    public static Quaternion Integrate(Quaternion q, Quaternion v, float dt)
+    {
+      return Pow(v, dt) * q;
+    }
+
+    // omega: angular velocity (direction is axis, magnitude is angle)
+    // https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
+    // https://gafferongames.com/post/physics_in_3d/
     public static Quaternion Integrate(Quaternion q, Vector3 omega, float dt)
     {
       omega *= 0.5f;
       Quaternion p = (new Quaternion(omega.x, omega.y, omega.z, 0.0f)) * q;
       return Normalize(new Quaternion(q.x + p.x * dt, q.y + p.y * dt, q.z + p.z * dt, q.w + p.w * dt));
-    }
-
-    // v: derivative of q
-    public static Quaternion Integrate(Quaternion q, Quaternion v, float dt)
-    {
-      return Pow(v, dt) * q;
     }
 
     // ------------------------------------------------------------------------
