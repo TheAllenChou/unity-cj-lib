@@ -287,10 +287,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_shader: {fileID: 7200000, guid: 230a25ffd14974e4da0aceca97604204, type: 3}
+  m_material: {fileID: 2100000, guid: 0695fc9db65d4d544a7abaf0e6bec756, type: 2}
   m_timeScale: 1
   m_gravity: 9.8
-  m_sphereRadius: 0.5
-  m_sphereSpeed: 0.1
+  m_sphereRadius: 0.8
+  m_sphereSpeed: 0.05
   m_floorTilt: 0
   m_floorHeight: -2
   m_restitution: 0.3

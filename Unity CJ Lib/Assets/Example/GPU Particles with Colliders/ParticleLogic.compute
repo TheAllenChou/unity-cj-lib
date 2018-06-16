@@ -62,7 +62,7 @@ void Init(uint3 id : SV_DispatchThreadID)
   seed = rand_vec(seed);
   float lifetimeCurrent = -t * (lifetime.x + lifetime.z + lifetime.w);
   particleBuffer[id.x].lifetime = float4(lifetime.x, lifetimeBody, lifetime.w, lifetimeCurrent);
-
+  
   particleBuffer[id.x].color = float4(hsv2rgb(float3(t, 1.0, 1.0)), 1.0);
 }
 

@@ -19,6 +19,10 @@ namespace GpuParticlesWithColliders
   public class Main : MonoBehaviour
   {
     public ComputeShader m_shader;
+    public Material m_material;
+
+    private ComputeShader m_prevShader;
+    private Material m_prevMaterial;
 
     [Range(0.0f, 2.0f)]
     public float m_timeScale = 1.0f;
@@ -60,7 +64,6 @@ namespace GpuParticlesWithColliders
     private ComputeBuffer m_instanceArgsBuffer;
 
     private Mesh m_mesh;
-    private Material m_material;
     private MaterialPropertyBlock m_materialProperties;
 
     private int m_csInitKernelId;
@@ -99,10 +102,10 @@ namespace GpuParticlesWithColliders
 
       uint[] instanceArgs = new uint[] { 0, 0, 0, 0, 0 };
       m_instanceArgsBuffer = new ComputeBuffer(1, instanceArgs.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-      instanceArgs[0] = (uint) m_mesh.GetIndexCount(0);
-      instanceArgs[1] = (uint) kNumParticles;
-      instanceArgs[2] = (uint) m_mesh.GetIndexStart(0);
-      instanceArgs[3] = (uint) m_mesh.GetBaseVertex(0);
+      instanceArgs[0] = (uint)m_mesh.GetIndexCount(0);
+      instanceArgs[1] = (uint)kNumParticles;
+      instanceArgs[2] = (uint)m_mesh.GetIndexStart(0);
+      instanceArgs[3] = (uint)m_mesh.GetBaseVertex(0);
       m_instanceArgsBuffer.SetData(instanceArgs);
 
       m_csInitKernelId = m_shader.FindKernel("Init");
@@ -119,55 +122,18 @@ namespace GpuParticlesWithColliders
       m_csASphereVel = Shader.PropertyToID("aSphereVel");
       m_csPlane = Shader.PropertyToID("plane");
 
-      m_material = new Material(Shader.Find("CjLib/Example/GpuParticlesWithColliders"));
-      m_material.enableInstancing = true;
-      m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
       m_materialProperties = new MaterialPropertyBlock();
 
-      m_shader.SetFloats(m_csScaleId, new float[] { 0.1f, 0.15f });
-      m_shader.SetFloats(m_csSpeedId, new float[] { 1.0f, 1.5f, 1.0f, 6.0f });
-      m_shader.SetFloats(m_csLifetimeId, new float[] { 0.1f, 3.0f, 3.0f, 0.1f });
-      m_shader.SetInt(m_csNumParticlesId, kNumParticles);
-
-      m_shader.SetBuffer(m_csInitKernelId, m_csParticleBufferId, m_computeBuffer);
-      m_shader.SetBuffer(m_csStepKernelId, m_csParticleBufferId, m_computeBuffer);
-
-      m_shader.Dispatch(m_csInitKernelId, kNumParticles, 1, 1);
+      InitParticles();
     }
 
     void Update()
     {
       if (!isActiveAndEnabled)
         return;
-
-      m_shader.SetFloats(m_csTimeId, new float[] { Time.time, m_timeScale * Time.fixedDeltaTime });
-      m_shader.SetFloats(m_csDynamics, new float[] { m_gravity, m_restitution, m_friction });
-
-      Vector4[] aSphere = new Vector4[kNumSpheres];
-      for (int i = 0; i < kNumSpheres; ++i)
-      {
-        m_aSpherePrevPos[i] = m_aSphere[i].transform.position;
-        m_spherePhase -= MathUtil.TwoPi * (Time.fixedDeltaTime * m_sphereSpeed) * m_timeScale;
-        float phase = m_spherePhase + MathUtil.TwoPi * (((float) i)  / kNumSpheres);
-        Vector3 pos = new Vector3(1.5f * Mathf.Cos(phase), 1.5f * Mathf.Sin(phase) - 0.5f, 0.0f);
-        m_aSphere[i].transform.position = pos;
-        m_aSphere[i].transform.localScale = 2.0f * new Vector3(m_sphereRadius, m_sphereRadius, m_sphereRadius);
-        aSphere[i].Set(pos.x, pos.y, pos.z, m_sphereRadius);
-        m_aSphereVel[i] = (pos - m_aSpherePrevPos[i]) / Time.fixedDeltaTime;
-      }
-      m_shader.SetVectorArray(m_csASphere, aSphere);
-      m_shader.SetVectorArray(m_csASphereVel, m_aSphereVel);
-
-      Quaternion floorRot = Quaternion.AngleAxis(20.0f * m_floorTilt, Vector3.left);
-      m_floor.transform.position = new Vector3(0.0f, m_floorHeight, 0.0f);
-      m_floor.transform.rotation = floorRot;
-      Vector3 floorNormal = floorRot * Vector3.up;
-      float floorD = -floorNormal.y * m_floorHeight;
-      m_shader.SetVector(m_csPlane, new Vector4(floorNormal.x, floorNormal.y, floorNormal.z, floorD));
       
-      m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);
-
-      Graphics.DrawMeshInstancedIndirect(m_mesh, 0, m_material, new Bounds(Vector3.zero, 20.0f * Vector3.one), m_instanceArgsBuffer, 0, m_materialProperties, UnityEngine.Rendering.ShadowCastingMode.On);
+      UpdateParticles();
+      RenderParticles();
     }
 
     void OnDisable()
@@ -183,6 +149,69 @@ namespace GpuParticlesWithColliders
         m_instanceArgsBuffer.Dispose();
         m_instanceArgsBuffer = null;
       }
+    }
+
+    private void SetUpMaterial()
+    {
+      m_material.enableInstancing = true;
+      m_material.SetBuffer(m_csParticleBufferId, m_computeBuffer);
+    }
+
+    private void SetUpShader()
+    {
+      m_shader.SetFloats(m_csScaleId, new float[] { 0.1f, 0.15f });
+      m_shader.SetFloats(m_csSpeedId, new float[] { 1.0f, 1.5f, 1.0f, 6.0f });
+      m_shader.SetFloats(m_csLifetimeId, new float[] { 0.1f, 3.0f, 3.0f, 0.1f });
+      m_shader.SetInt(m_csNumParticlesId, kNumParticles);
+
+      m_shader.SetBuffer(m_csInitKernelId, m_csParticleBufferId, m_computeBuffer);
+      m_shader.SetBuffer(m_csStepKernelId, m_csParticleBufferId, m_computeBuffer);
+    }
+
+    private void InitParticles()
+    {
+      SetUpMaterial();
+      SetUpShader();
+
+      m_shader.Dispatch(m_csInitKernelId, kNumParticles, 1, 1);
+    }
+
+    private void UpdateParticles()
+    {
+      SetUpMaterial();
+      SetUpShader();
+
+      m_shader.SetFloats(m_csTimeId, new float[] { Time.time, m_timeScale * Time.fixedDeltaTime });
+      m_shader.SetFloats(m_csDynamics, new float[] { m_gravity, m_restitution, m_friction });
+
+      Vector4[] aSphere = new Vector4[kNumSpheres];
+      for (int i = 0; i < kNumSpheres; ++i)
+      {
+        m_aSpherePrevPos[i] = m_aSphere[i].transform.position;
+        m_spherePhase -= MathUtil.TwoPi * (Time.fixedDeltaTime * m_sphereSpeed) * m_timeScale;
+        float phase = m_spherePhase + MathUtil.TwoPi * (((float)i) / kNumSpheres);
+        Vector3 pos = new Vector3(1.5f * Mathf.Cos(phase), 1.5f * Mathf.Sin(phase) - 0.5f, 0.0f);
+        m_aSphere[i].transform.position = pos;
+        m_aSphere[i].transform.localScale = 2.0f * new Vector3(m_sphereRadius, m_sphereRadius, m_sphereRadius);
+        aSphere[i].Set(pos.x, pos.y, pos.z, m_sphereRadius);
+        m_aSphereVel[i] = (pos - m_aSpherePrevPos[i]) / Time.fixedDeltaTime;
+      }
+      m_shader.SetVectorArray(m_csASphere, aSphere);
+      m_shader.SetVectorArray(m_csASphereVel, m_aSphereVel);
+
+      Quaternion floorRot = Quaternion.AngleAxis(20.0f * m_floorTilt, Vector3.left);
+      m_floor.transform.position = new Vector3(0.0f, m_floorHeight, 0.0f);
+      m_floor.transform.rotation = floorRot;
+      Vector3 floorNormal = floorRot * Vector3.up;
+      float floorD = -floorNormal.y * m_floorHeight;
+      m_shader.SetVector(m_csPlane, new Vector4(floorNormal.x, floorNormal.y, floorNormal.z, floorD));
+
+      m_shader.Dispatch(m_csStepKernelId, kNumParticles, 1, 1);
+    }
+
+    private void RenderParticles()
+    {
+      Graphics.DrawMeshInstancedIndirect(m_mesh, 0, m_material, new Bounds(Vector3.zero, 20.0f * Vector3.one), m_instanceArgsBuffer, 0, m_materialProperties, UnityEngine.Rendering.ShadowCastingMode.On);
     }
   }
 }
