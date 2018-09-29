@@ -134,19 +134,29 @@ namespace CjLib
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
-    public static void DrawLocator(Vector3 position, Quaternion rotation, Color rightColor, Color upColor, Color forwardColor, float size = 0.5f)
+    public static void DrawLocator(Vector3 position, Vector3 right, Vector3 up, Vector3 forward, Color rightColor, Color upColor, Color forwardColor, float size = 0.5f)
     {
-      Vector3 right = rotation * Vector3.right;
-      Vector3 up = rotation * Vector3.up;
-      Vector3 forward = rotation * Vector3.forward;
       DrawLine(position, position + right * size, rightColor);
       DrawLine(position, position + up * size, upColor);
       DrawLine(position, position + forward * size, forwardColor);
     }
 
+    public static void DrawLocator(Vector3 position, Vector3 right, Vector3 up, Vector3 forward, float size = 0.5f)
+    {
+      DrawLocator(position, right, up, forward, Color.red, Color.green, Color.blue, size);
+    }
+
+    public static void DrawLocator(Vector3 position, Quaternion rotation, Color rightColor, Color upColor, Color forwardColor, float size = 0.5f)
+    {
+      Vector3 right = rotation * Vector3.right;
+      Vector3 up = rotation * Vector3.up;
+      Vector3 forward = rotation * Vector3.forward;
+      DrawLocator(position, right, up, forward, rightColor, upColor, forwardColor, size);
+    }
+
     public static void DrawLocator(Vector3 position, Quaternion rotation, float size = 0.5f)
     {
-      DrawLocator(position, rotation, Color.red, Color.green, Color.blue);
+      DrawLocator(position, rotation, Color.red, Color.green, Color.blue, size);
     }
 
     // ------------------------------------------------------------------------
