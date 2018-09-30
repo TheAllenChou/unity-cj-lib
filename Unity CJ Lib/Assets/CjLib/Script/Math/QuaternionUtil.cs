@@ -102,18 +102,6 @@ namespace CjLib
     // end: basic stuff
 
 
-    // normalized lerp (nlerp)
-    // ------------------------------------------------------------------------
-
-    public static Quaternion Nlerp(Quaternion a, Quaternion b, float t)
-    {
-      return Normalize(Quaternion.Lerp(a, b, t));
-    }
-
-    // ------------------------------------------------------------------------
-    // end: normalized lerp (nlerp)
-
-
     // swing-twist decomposition & interpolation
     // ------------------------------------------------------------------------
 
@@ -236,8 +224,8 @@ namespace CjLib
       {
         default:
         case SterpMode.Nlerp:
-          swing = Nlerp(Quaternion.identity, swingFull, tSwing);
-          twist = Nlerp(Quaternion.identity, twistFull, tTwist);
+          swing = Quaternion.Lerp(Quaternion.identity, swingFull, tSwing);
+          twist = Quaternion.Lerp(Quaternion.identity, twistFull, tTwist);
           break;
         case SterpMode.Slerp:
           swing = Quaternion.Slerp(Quaternion.identity, swingFull, tSwing);
