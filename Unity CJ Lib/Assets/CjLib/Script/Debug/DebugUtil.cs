@@ -286,7 +286,7 @@ namespace CjLib
 
     public static void DrawCircle(Vector3 center, Vector3 normal, float radius, int numSegments, Color color, bool depthTest = true, Style style = Style.Wireframe)
     {
-      Vector3 normalCrosser = Vector3.Dot(normal, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 normalCrosser = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(normalCrosser, normal));
       Quaternion rotation = Quaternion.LookRotation(tangent, normal);
 
@@ -349,7 +349,7 @@ namespace CjLib
 
       Vector3 center = 0.5f * (point0 + point1);
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Mathf.Abs(Vector3.Dot(axisY.normalized, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
@@ -471,7 +471,7 @@ namespace CjLib
 
       Vector3 center = 0.5f * (point0 + point1);
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY.normalized, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Mathf.Abs(Vector3.Dot(axisY.normalized, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
@@ -560,7 +560,7 @@ namespace CjLib
 
       axisY.Normalize();
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Mathf.Abs(Vector3.Dot(axisY, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
@@ -583,7 +583,7 @@ namespace CjLib
 
       axisY.Normalize();
 
-      Vector3 axisYCrosser = Vector3.Dot(axisY, Vector3.up) < 0.5f ? Vector3.up : Vector3.forward;
+      Vector3 axisYCrosser = Mathf.Abs(Vector3.Dot(axisY, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
       Vector3 tangent = Vector3.Normalize(Vector3.Cross(axisYCrosser, axisY));
       Quaternion rotation = Quaternion.LookRotation(tangent, axisY);
 
