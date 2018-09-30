@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace CjLib
 {
-  public class EnumeratorUtil
+  public class CollectionUtil
   {
     public struct Pair<T>
     {
