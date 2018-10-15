@@ -45,13 +45,13 @@ inline float4 quat_axis_angle(float3 v, float a)
 inline float4 quat_from_to(float3 from, float3 to)
 {
   float3 c = cross(from, to);
-  float d = dot(c, c);
+  float cc = dot(c, c);
 
-  if (d < kEpsilon)
+  if (cc < kEpsilon)
     return quat_identity();
 
-  float3 axis = c / normalize(d);
-  float angle = asin(clamp(length(c), -1.0f, 1.0f));
+  float3 axis = c / sqrt(cc);
+  float angle = acos(clamp(dot(from, to), -1.0f, 1.0f));
   return quat_axis_angle(axis, angle);
 }
 
