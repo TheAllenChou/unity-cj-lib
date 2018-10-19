@@ -22,16 +22,15 @@ inline float3 find_ortho(float3 v)
     return float3(0.0, v.z, -v.y);
 }
 
-// both a & b must be unit vectors
 inline float3 slerp(float3 a, float3 b, float t)
 {
-  float d = dot(a, b);
-  if (d > 0.99999)
+  float d = dot(normalize(a), normalize(b));
+  if (d > kEpsilonComp)
   {
     return lerp(a, b, t);
   }
 
-  float r = acos(saturate(d));
+  float r = acos(clamp(d, -1.0f, 1.0f));
   return (sin((1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
 }
 

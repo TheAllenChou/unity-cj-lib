@@ -96,16 +96,15 @@ inline float4 quat_look_at(float3 front, float3 up)
   return quat_concat(quatB, quatA);
 }
 
-// both a & b must be unit quaternions
 inline float4 slerp(float4 a, float4 b, float t)
 {
-  float d = dot(a, b);
+  float d = dot(normalize(a), normalize(b));
   if (d > kEpsilonComp)
   {
     return lerp(a, b, t);
   }
 
-  float r = acos(saturate(d));
+  float r = acos(clamp(d, -1.0f, 1.0f));
   return (sin((1.0 - t) * r) * a + sin(t * r) * b) / sin(r);
 }
 
