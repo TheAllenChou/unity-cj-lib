@@ -25,8 +25,6 @@
 
 using UnityEngine;
 
-using CjLib;
-
 public class NoiseFragmentShaderTest : MonoBehaviour
 {
   public enum NoiseType
