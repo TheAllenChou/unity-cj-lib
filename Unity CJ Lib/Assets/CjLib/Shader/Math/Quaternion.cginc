@@ -13,6 +13,7 @@
 #define CJ_LIB_QUATERNION
 
 #include "Math.cginc"
+#include "Vector.cginc"
 
 inline float4 quat_identity()
 {
@@ -34,6 +35,15 @@ inline float4 quat_pow(float4 q, float p)
   float t = p * atan2(q.w, r);
 
   return float4(sin(t) * q.xyz / r, cos(t));
+}
+
+inline float3 quat_rot(float4 q, float3 v)
+{
+  return
+    dot(q.xyz, v) * q.xyz
+    + q.w * q.w * v
+    + 2.0 * q.w * cross(q.xyz, v)
+    - cross(cross(q.xyz, v), q.xyz);
 }
 
 inline float4 quat_axis_angle(float3 v, float a)
@@ -79,13 +89,64 @@ inline float4 quat_concat(float4 q1, float4 q2)
     );
 }
 
-inline float3 quat_rot(float4 q, float3 v)
+inline float4 quat_mat(float3x3 m)
 {
-  return
-    dot(q.xyz, v) * q.xyz
-    + q.w * q.w * v
-    + 2.0 * q.w * cross(q.xyz, v)
-    - cross(cross(q.xyz, v), q.xyz);
+  float tr = m._m00 + m._m11 + m._m22;
+  if (tr > 0.0f) {
+    float s = sqrt(tr + 1.0f) * 2.0f;
+    float sInv = 1.0f / s;
+    return
+      float4
+      (
+      (m._m21 - m._m12) * sInv,
+        (m._m02 - m._m20) * sInv,
+        (m._m10 - m._m01) * sInv,
+        0.25 * s
+        );
+  }
+  else if ((m._m00 > m._m11) && (m._m00 > m._m22))
+  {
+    float s = sqrt(1.0f + m._m00 - m._m11 - m._m22) * 2.0f;
+    float sInv = 1.0f / s;
+    return
+      float4
+      (
+        0.25f * s,
+        (m._m01 + m._m10) * sInv,
+        (m._m02 + m._m20) * sInv,
+        (m._m21 - m._m12) * sInv
+        );
+  }
+  else if (m._m11 > m._m22)
+  {
+    float s = sqrt(1.0f + m._m11 - m._m00 - m._m22) * 2.0f;
+    float sInv = 1.0f / s;
+    return
+      float4
+      (
+      (m._m01 + m._m10) * sInv,
+        0.25 * s,
+        (m._m12 + m._m21) * sInv,
+        (m._m02 - m._m20) * sInv
+        );
+  }
+  else {
+    float s = sqrt(1.0f + m._m22 - m._m00 - m._m11) * 2.0f;
+    float sInv = 1.0f / s;
+    return
+      float4
+      (
+      (m._m02 + m._m20) * sInv,
+        (m._m12 + m._m21) * sInv,
+        0.25 * s,
+        (m._m10 - m._m01) * sInv
+        );
+  }
+}
+
+inline float4 quat_look_at(float3 dir, float3 up)
+{
+  return quat_mat(mat_look_at(dir, up));
 }
 
 inline float4 slerp(float4 a, float4 b, float t)
