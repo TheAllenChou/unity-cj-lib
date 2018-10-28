@@ -29,7 +29,7 @@ namespace CjLib
     public static Vector3 NormalizeSafe(Vector3 v, Vector3 fallback)
     {
       return
-        v.sqrMagnitude < MathUtil.Epsilon
+        v.sqrMagnitude > MathUtil.Epsilon
         ? v.normalized
         : fallback;
     }

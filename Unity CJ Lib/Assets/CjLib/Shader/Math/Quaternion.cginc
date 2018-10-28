@@ -88,14 +88,6 @@ inline float3 quat_rot(float4 q, float3 v)
     - cross(cross(q.xyz, v), q.xyz);
 }
 
-inline float4 quat_look_at(float3 front, float3 up)
-{
-  float4 quatA = quat_from_to(float3(0.0f, 0.0f, 0.0f), front);
-  float3 upA = quat_rot(quatA, up);
-  float4 quatB = quat_from_to(upA, up);
-  return quat_concat(quatB, quatA);
-}
-
 inline float4 slerp(float4 a, float4 b, float t)
 {
   float d = dot(normalize(a), normalize(b));
