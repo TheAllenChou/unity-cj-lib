@@ -73,5 +73,17 @@ namespace CjLib
       return (Mathf.Sin((1.0f - t) * rad) * a + Mathf.Sin(t * rad) * b) / Mathf.Sin(rad);
     }
 
+    public static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+      float tt = t * t;
+      return
+        0.5f
+        * ((2.0f * p1)
+          + (-p0 + p2) * t
+          + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * tt
+          + (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * tt * t
+          );
+    }
+
   }
 }

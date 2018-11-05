@@ -30,7 +30,8 @@ namespace CjLib
     public static readonly float Sqrt3Inv = 1.0f / Mathf.Sqrt(3.0f);
 
 
-    public static readonly float Epsilon = 1.0e-16f;
+    public static readonly float Epsilon = 1.0e-9f;
+    public static readonly float EpsilonComp = 1.0f - Epsilon;
     public static readonly float Rad2Deg = 180.0f / Mathf.PI;
     public static readonly float Deg2Rad = Mathf.PI / 180.0f;
 
@@ -42,6 +43,18 @@ namespace CjLib
     public static float AcosSafe(float x)
     {
       return Mathf.Acos(Mathf.Clamp(x, -1.0f, 1.0f));
+    }
+
+    public static float CatmullRom(float p0, float p1, float p2, float p3, float t)
+    {
+      float tt = t * t;
+      return
+        0.5f
+        * ((2.0f * p1)
+          + (-p0 + p2) * t
+          + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * tt
+          + (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * tt * t
+          );
     }
 
   }
