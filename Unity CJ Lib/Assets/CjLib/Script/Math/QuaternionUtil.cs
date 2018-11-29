@@ -72,7 +72,7 @@ namespace CjLib
 
     public static float GetAngle(Quaternion q)
     {
-      return 2.0f * Mathf.Acos(q.w);
+      return 2.0f * Mathf.Acos(Mathf.Clamp(q.w, -1.0f, 1.0f));
     }
 
     public static Quaternion Pow(Quaternion q, float exp)
