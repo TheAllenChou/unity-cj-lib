@@ -98,6 +98,25 @@ namespace CjLib
       return Normalize(new Quaternion(q.x + p.x * dt, q.y + p.y * dt, q.z + p.z * dt, q.w + p.w * dt));
     }
 
+    public static Vector4 ToVector4(Quaternion q)
+    {
+      return new Vector4(q.x, q.y, q.z, q.w);
+    }
+
+    public static Quaternion FromVector4(Vector4 v, bool normalize = true)
+    {
+      if (normalize)
+      {
+        float magSqr = v.sqrMagnitude;
+        if (magSqr < MathUtil.Epsilon)
+          return Quaternion.identity;
+  
+        v /= Mathf.Sqrt(magSqr);
+      }
+
+      return new Quaternion(v.x, v.y, v.z, v.w);
+    }
+
     // ------------------------------------------------------------------------
     // end: basic stuff
 

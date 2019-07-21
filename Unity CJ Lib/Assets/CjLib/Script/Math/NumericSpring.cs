@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CjLib
 {
   [StructLayout(LayoutKind.Sequential, Pack = 0)]
-  public struct SpringFloat
+  public struct FloatSpring
   {
     public static readonly int Stride = 2 * sizeof(float);
 
@@ -91,7 +91,7 @@ namespace CjLib
 
 
   [StructLayout(LayoutKind.Sequential, Pack = 0)]
-  public struct SpringVector2
+  public struct Vector2Spring
   {
     public static readonly int Stride = 4 * sizeof(float);
 
@@ -177,7 +177,7 @@ namespace CjLib
 
 
   [StructLayout(LayoutKind.Sequential, Pack = 0)]
-  public struct SpringVector3
+  public struct Vector3Spring
   {
     public static readonly int Stride = 8 * sizeof(float);
 
@@ -265,7 +265,7 @@ namespace CjLib
 
 
   [StructLayout(LayoutKind.Sequential, Pack = 0)]
-  public struct SpringVector4
+  public struct Vector4Spring
   {
     public static readonly int Stride = 8 * sizeof(float);
 
@@ -351,7 +351,7 @@ namespace CjLib
 
 
   [StructLayout(LayoutKind.Sequential, Pack = 0)]
-  public struct SpringQuaternionLinear
+  public struct QuaternionSpring
   {
     public static readonly int Stride = 8 * sizeof(float);
 
@@ -372,7 +372,7 @@ namespace CjLib
 
     public void Reset()
     {
-      m_value = Vector4.zero;
+      m_value = QuaternionUtil.ToVector4(Quaternion.identity);
       m_velocity = Vector4.zero;
     }
 
@@ -390,12 +390,18 @@ namespace CjLib
 
     public Quaternion TrackDampingRatio(Quaternion targetValue, float angularFrequency, float dampingRatio, float deltaTime)
     {
-      Vector4 targetValueVec = QuaternionUtil.ToVector4(targetValue);
-
       if (angularFrequency < MathUtil.Epsilon)
       {
         m_velocity = QuaternionUtil.ToVector4(Quaternion.identity);
         return QuaternionUtil.FromVector4(m_value);
+      }
+
+      Vector4 targetValueVec = QuaternionUtil.ToVector4(targetValue);
+
+      // keep in same hemisphere for shorter track delta
+      if (Vector4.Dot(m_value, targetValueVec) < 0.0f)
+      {
+        targetValueVec = -targetValueVec;
       }
 
       Vector4 delta = targetValueVec - m_value;
