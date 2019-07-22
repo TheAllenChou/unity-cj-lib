@@ -355,83 +355,95 @@ namespace CjLib
   {
     public static readonly int Stride = 8 * sizeof(float);
 
-    private Vector4 m_value;
-    private Vector4 m_velocity;
+    public Vector4 ValueVec;
+    public Vector4 VelocityVec;
 
-    public Quaternion Value
+    public Quaternion ValueQuat
     {
-      get { return QuaternionUtil.FromVector4(m_value); }
-      set { m_value = QuaternionUtil.ToVector4(value); }
+      get { return QuaternionUtil.FromVector4(ValueVec); }
+      set { ValueVec = QuaternionUtil.ToVector4(value); }
     }
 
-    public Quaternion Velocity
+    public Quaternion VelocityQuat
     {
-      get { return QuaternionUtil.FromVector4(m_velocity, false); }
-      set { m_velocity = QuaternionUtil.ToVector4(value); }
+      get { return QuaternionUtil.FromVector4(VelocityVec, false); }
+      set { VelocityVec = QuaternionUtil.ToVector4(value); }
     }
 
     public void Reset()
     {
-      m_value = QuaternionUtil.ToVector4(Quaternion.identity);
-      m_velocity = Vector4.zero;
+      ValueVec = QuaternionUtil.ToVector4(Quaternion.identity);
+      VelocityVec = Vector4.zero;
+    }
+
+    public void Reset(Vector4 initValue)
+    {
+      ValueVec = initValue;
+      VelocityVec = Vector4.zero;
+    }
+
+    public void Reset(Vector4 initValue, Vector4 initVelocity)
+    {
+      ValueVec = initValue;
+      VelocityVec = initVelocity;
     }
 
     public void Reset(Quaternion initValue)
     {
-      m_value = QuaternionUtil.ToVector4(initValue);
-      m_velocity = Vector4.zero;
+      ValueVec = QuaternionUtil.ToVector4(initValue);
+      VelocityVec = Vector4.zero;
     }
 
     public void Reset(Quaternion initValue, Quaternion initVelocity)
     {
-      m_value = QuaternionUtil.ToVector4(initValue);
-      m_velocity = QuaternionUtil.ToVector4(initVelocity);
+      ValueVec = QuaternionUtil.ToVector4(initValue);
+      VelocityVec = QuaternionUtil.ToVector4(initVelocity);
     }
 
     public Quaternion TrackDampingRatio(Quaternion targetValue, float angularFrequency, float dampingRatio, float deltaTime)
     {
       if (angularFrequency < MathUtil.Epsilon)
       {
-        m_velocity = QuaternionUtil.ToVector4(Quaternion.identity);
-        return QuaternionUtil.FromVector4(m_value);
+        VelocityVec = QuaternionUtil.ToVector4(Quaternion.identity);
+        return QuaternionUtil.FromVector4(ValueVec);
       }
 
       Vector4 targetValueVec = QuaternionUtil.ToVector4(targetValue);
 
       // keep in same hemisphere for shorter track delta
-      if (Vector4.Dot(m_value, targetValueVec) < 0.0f)
+      if (Vector4.Dot(ValueVec, targetValueVec) < 0.0f)
       {
         targetValueVec = -targetValueVec;
       }
 
-      Vector4 delta = targetValueVec - m_value;
+      Vector4 delta = targetValueVec - ValueVec;
 
       float f = 1.0f + 2.0f * deltaTime * dampingRatio * angularFrequency;
       float oo = angularFrequency * angularFrequency;
       float hoo = deltaTime * oo;
       float hhoo = deltaTime * hoo;
       float detInv = 1.0f / (f + hhoo);
-      Vector4 detX = f * m_value + deltaTime * m_velocity + hhoo * targetValueVec;
-      Vector4 detV = m_velocity + hoo * delta;
+      Vector4 detX = f * ValueVec + deltaTime * VelocityVec + hhoo * targetValueVec;
+      Vector4 detV = VelocityVec + hoo * delta;
 
-      m_velocity = detV * detInv;
-      m_value = detX * detInv;
+      VelocityVec = detV * detInv;
+      ValueVec = detX * detInv;
 
-      if (m_velocity.magnitude < MathUtil.Epsilon && delta.magnitude < MathUtil.Epsilon)
+      if (VelocityVec.magnitude < MathUtil.Epsilon && delta.magnitude < MathUtil.Epsilon)
       {
-        m_velocity = QuaternionUtil.ToVector4(Quaternion.identity);;
-        m_value = targetValueVec;
+        VelocityVec = QuaternionUtil.ToVector4(Quaternion.identity);;
+        ValueVec = targetValueVec;
       }
 
-      return QuaternionUtil.FromVector4(m_value);
+      return QuaternionUtil.FromVector4(ValueVec);
     }
 
     public Quaternion TrackHalfLife(Quaternion targetValue, float frequencyHz, float halfLife, float deltaTime)
     {
       if (halfLife < MathUtil.Epsilon)
       {
-        m_velocity = QuaternionUtil.ToVector4(Quaternion.identity);
-        m_value = QuaternionUtil.ToVector4(targetValue);
+        VelocityVec = QuaternionUtil.ToVector4(Quaternion.identity);
+        ValueVec = QuaternionUtil.ToVector4(targetValue);
         return targetValue;
       }
 
@@ -444,8 +456,8 @@ namespace CjLib
     {
       if (halfLife < MathUtil.Epsilon)
       {
-        m_velocity = QuaternionUtil.ToVector4(Quaternion.identity);
-        m_value = QuaternionUtil.ToVector4(targetValue);
+        VelocityVec = QuaternionUtil.ToVector4(Quaternion.identity);
+        ValueVec = QuaternionUtil.ToVector4(targetValue);
         return targetValue;
       }
 
