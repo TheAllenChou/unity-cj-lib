@@ -1,4 +1,20 @@
-﻿using System.Runtime.InteropServices;
+﻿/******************************************************************************/
+/*
+  Project - Unity CJ Lib
+            https://github.com/TheAllenChou/unity-cj-lib
+  
+  Author  - Ming-Lun "Allen" Chou
+  Web     - http://AllenChou.net
+  Twitter - @TheAllenChou
+
+  Numeric Springs
+    Intro     - http://allenchou.net/2015/04/game-math-precise-control-over-numeric-springing/
+    Examples  - http://allenchou.net/2015/04/game-math-numeric-springing-examples/
+    More Info - http://allenchou.net/2015/04/game-math-more-on-numeric-springing/
+*/
+/******************************************************************************/
+
+using System.Runtime.InteropServices;
 
 using UnityEngine;
 
