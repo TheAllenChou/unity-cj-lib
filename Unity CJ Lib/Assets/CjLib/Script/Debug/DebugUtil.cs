@@ -134,6 +134,31 @@ namespace CjLib
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
     }
 
+    public static void DrawArc(Vector3 center, Vector3 from, Vector3 to, int numSegments, Color color, bool depthTest = true)
+    {
+      if (numSegments <= 0)
+        return;
+
+      var aVert = new Vector3[numSegments + 1];
+      aVert[0] = center + from;
+
+      float numSegmentsInv = 1.0f / numSegments;
+      for (int i = 1; i <= numSegments; ++i)
+      {
+        float t = Mathf.Min(1.0f, i * numSegmentsInv);
+        aVert[i] = center + Vector3.Slerp(from, to, t);
+      }
+
+      DrawLineStrip(aVert, color, depthTest);
+    }
+
+    public static void DrawArc(Vector3 center, Vector3 from, Vector3 to, float radius, int numSegments, Color color, bool depthTest = true)
+    {
+      from.Normalize();
+      to.Normalize();
+      DrawArc(center, radius * from, radius * to, numSegments, color, depthTest);
+    }
+
     public static void DrawLocator(Vector3 position, Vector3 right, Vector3 up, Vector3 forward, Color rightColor, Color upColor, Color forwardColor, float size = 0.5f)
     {
       DrawLine(position, position + right * size, rightColor);
