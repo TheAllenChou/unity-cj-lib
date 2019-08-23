@@ -102,6 +102,7 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
     public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true)
@@ -117,6 +118,7 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
     public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true)
@@ -132,31 +134,30 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
+      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
-    public static void DrawArc(Vector3 center, Vector3 from, Vector3 to, int numSegments, Color color, bool depthTest = true)
+    public static void DrawArc(Vector3 center, Vector3 from, Vector3 normal, float angle, float radius, int numSegments, Color color, bool depthTest = true)
     {
       if (numSegments <= 0)
         return;
+
+      from.Normalize();
+      from *= radius;
 
       var aVert = new Vector3[numSegments + 1];
       aVert[0] = center + from;
 
       float numSegmentsInv = 1.0f / numSegments;
+      Quaternion rotStep = QuaternionUtil.AxisAngle(normal, angle * numSegmentsInv);
+      Vector3 vec = rotStep * from;
       for (int i = 1; i <= numSegments; ++i)
       {
-        float t = Mathf.Min(1.0f, i * numSegmentsInv);
-        aVert[i] = center + Vector3.Slerp(from, to, t);
+        aVert[i] = center + vec;
+        vec = rotStep * vec;
       }
 
       DrawLineStrip(aVert, color, depthTest);
-    }
-
-    public static void DrawArc(Vector3 center, Vector3 from, Vector3 to, float radius, int numSegments, Color color, bool depthTest = true)
-    {
-      from.Normalize();
-      to.Normalize();
-      DrawArc(center, radius * from, radius * to, numSegments, color, depthTest);
     }
 
     public static void DrawLocator(Vector3 position, Vector3 right, Vector3 up, Vector3 forward, Color rightColor, Color upColor, Color forwardColor, float size = 0.5f)
