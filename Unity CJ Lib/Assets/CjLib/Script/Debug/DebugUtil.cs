@@ -54,12 +54,15 @@ namespace CjLib
         s_materialPool = new Dictionary<int, Material>();
 
       Material material;
-      if (!s_materialPool.TryGetValue(key, out material))
+      if (!s_materialPool.TryGetValue(key, out material) || material == null)
       {
-        string shaderName =
-          depthTest
-          ? "CjLib/Primitive"
-          : "CjLib/PrimitiveNoZTest";
+        if (material == null)
+          s_materialPool.Remove(key);
+
+        string shaderName = 
+          depthTest 
+            ? "CjLib/Primitive"
+            : "CjLib/PrimitiveNoZTest";
 
         Shader shader = Shader.Find(shaderName);
         if (shader == null)
@@ -102,7 +105,6 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
-      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
     public static void DrawLines(Vector3[] aVert, Color color, bool depthTest = true)
@@ -118,7 +120,6 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
-      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
     public static void DrawLineStrip(Vector3[] aVert, Color color, bool depthTest = true)
@@ -134,7 +135,6 @@ namespace CjLib
       materialProperties.SetFloat("_ZBias", s_wireframeZBias);
 
       Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0, null, 0, materialProperties, false, false, false);
-      Object.Destroy(mesh, 3.0f * Time.fixedDeltaTime);
     }
 
     public static void DrawArc(Vector3 center, Vector3 from, Vector3 normal, float angle, float radius, int numSegments, Color color, bool depthTest = true)

@@ -23,10 +23,40 @@ namespace CjLib
     // line
     // ------------------------------------------------------------------------
 
+    private static int s_lastDrawLineFrame = -1;
+    private static int s_iPooledMesh = 0;
+    private static List<Mesh> s_lineMeshPool;
+
+    private static Mesh GetPooledLineMesh()
+    {
+      if (s_lineMeshPool == null)
+      {
+        s_lineMeshPool = new List<Mesh>();
+        s_lineMeshPool.Add(new Mesh());
+      }
+
+      if (s_lastDrawLineFrame != Time.frameCount)
+      {
+        s_iPooledMesh = 0;
+        s_lastDrawLineFrame = Time.frameCount;
+      }
+
+      if (s_iPooledMesh == s_lineMeshPool.Count)
+      {
+        s_lineMeshPool.Capacity *= 2;
+        for (int i = s_iPooledMesh; i < s_lineMeshPool.Capacity; ++i)
+          s_lineMeshPool.Add(new Mesh());
+      }
+
+      return s_lineMeshPool[s_iPooledMesh++];
+    }
+
     public static Mesh Line(Vector3 v0, Vector3 v1)
     {
-      Mesh mesh = new Mesh();
-
+      Mesh mesh = GetPooledLineMesh();
+      if (mesh == null)
+        return null;
+      
       Vector3[] aVert = { v0, v1 };
       int[] aIndex = { 0, 1 };
 
@@ -41,7 +71,9 @@ namespace CjLib
       if (aVert.Length <= 1)
         return null;
 
-      Mesh mesh = new Mesh();
+      Mesh mesh = GetPooledLineMesh();
+      if (mesh == null)
+        return null;
 
       int[] aIndex = new int[aVert.Length];
       for (int i = 0; i < aVert.Length; ++i)
@@ -60,7 +92,9 @@ namespace CjLib
       if (aVert.Length <= 1)
         return null;
 
-      Mesh mesh = new Mesh();
+      Mesh mesh = GetPooledLineMesh();
+      if (mesh == null)
+        return null;
 
       int[] aIndex = new int[aVert.Length];
       for (int i = 0; i < aVert.Length; ++i)
