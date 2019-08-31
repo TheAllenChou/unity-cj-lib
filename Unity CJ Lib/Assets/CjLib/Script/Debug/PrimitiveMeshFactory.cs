@@ -48,7 +48,11 @@ namespace CjLib
           s_lineMeshPool.Add(new Mesh());
       }
 
-      return s_lineMeshPool[s_iPooledMesh++];
+      var mesh = s_lineMeshPool[s_iPooledMesh++];
+      if (mesh == null)
+        mesh = s_lineMeshPool[s_iPooledMesh - 1] = new Mesh();
+
+      return mesh;
     }
 
     public static Mesh Line(Vector3 v0, Vector3 v1)
