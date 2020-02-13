@@ -89,6 +89,7 @@ namespace CjLib
     }
 
     // omega: angular velocity (direction is axis, magnitude is angle)
+    // https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/
     // https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     // https://gafferongames.com/post/physics_in_3d/
     public static Quaternion Integrate(Quaternion q, Vector3 omega, float dt)
