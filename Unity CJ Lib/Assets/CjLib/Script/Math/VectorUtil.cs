@@ -52,6 +52,11 @@ namespace CjLib
       b = Vector3.Cross(a, v);
     }
 
+    public static Vector3 Integrate(Vector3 x, Vector3 v, float dt)
+    {
+      return x + v * dt;
+    }
+
     // Both vectors must be unit vectors.
     public static Vector3 Slerp(Vector3 a, Vector3 b, float t)
     {
