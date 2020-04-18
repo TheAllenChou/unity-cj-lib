@@ -1,5 +1,5 @@
 ## CJ Lib - Utility Library for Unity
-by **Ming-Lun "Allen" Chou** / [AllenChou.net](http://AllenChou.net) / [@TheAllenChou](http://twitter.com/TheAllenChou)  
+by **Ming-Lun "Allen" Chou** / [AllenChou.net](http://AllenChou.net) / [@TheAllenChou](http://twitter.com/TheAllenChou) / [Patreon](https://www.patreon.com/TheAllenChou)
 
 ![turbulent-rainbow-cubes](/img/turbulent-rainbow-cubes.gif) ![gpu-particles-with-primitive-collider-physics](/img/gpu-particles-with-primitive-collider-physics.gif)
   
