@@ -67,7 +67,7 @@ namespace CjLib
       Velocity = detV * detInv;
       Value = detX * detInv;
 
-      if (Velocity < MathUtil.Epsilon && delta < MathUtil.Epsilon)
+      if ( Mathf.Abs(Velocity) < MathUtil.Epsilon && Mathf.Abs(delta) < MathUtil.Epsilon)
       {
         Velocity = 0.0f;
         Value = targetValue;
